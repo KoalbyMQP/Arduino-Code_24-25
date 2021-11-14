@@ -53,6 +53,9 @@ void loop(){
       for(int i = 0;i<sizeof(idArr);i++){
         Herkulex.torqueON(idArr[i][0]);
         Herkulex.moveOneAngle(idArr[i][0], idArr[i][3], 1000, LED_BLUE);
+
+        //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
+        Serial.println(Herkulex.getAngle(idArr[i][0]));
       }
       
     }else if(cmd == GetPosition){//TODO - return motor position
@@ -125,8 +128,5 @@ void loop(){
 
     //delay(100);
   }
-
-  //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
- Serial.println(Herkulex.getAngle(0x11));
  delay(20); 
 }
