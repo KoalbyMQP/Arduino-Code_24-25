@@ -7,7 +7,7 @@ ArduinoPoppy robot;
 
 void setup()
 {
-robot.Setup();
+  robot.Setup();
 }
 
 void loop() {
@@ -17,7 +17,6 @@ void loop() {
   switch (readCommand) {
     case Init:
       robot.Initialize(idArr);
-
       break;
 
     case GetPosition:
@@ -25,7 +24,6 @@ void loop() {
       break;
 
     case SetPosition:
-
       robot.SetPosition(idArr);
       break;
 
