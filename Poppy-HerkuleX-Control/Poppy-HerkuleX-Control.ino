@@ -1,7 +1,7 @@
 #include <Herkulex.h>
-#include "Constants.h"
 #include "ArduinoPoppy.h"
 
+int readCommand = 0;
 
 ArduinoPoppy robot;
 
@@ -16,7 +16,7 @@ void loop() {
 
   switch (readCommand) {
     case Init:
-      robot.Initialize(idArr);
+      robot.Initialize();
       break;
 
     case GetPosition:
@@ -24,21 +24,21 @@ void loop() {
       break;
 
     case SetPosition:
-      robot.SetPosition(idArr);
+      robot.SetPosition();
       break;
 
     case SetPositionT:
-      robot.SetPositionT(idArr);
+      robot.SetPositionT();
       break;
     case ArmMirror:
-      robot.ArmMirror(idArr, mirrorArray, armMirrorModeOn, lastMirror);
+      robot.ArmMirror();
       break;
-
     default:
       break;
-
   }
 
+  //Do other tasks
+  robot.UpdateRobot();
   delay(20);
 
 }

@@ -1,5 +1,27 @@
 #include "ArduinoPoppy.h"
+#include "Constants.h"
 
+//Constants are here because there was an include error when I tried to get constants accessible from both ArduinoPoppy and Poppy-Herkulex
+int idArr[][4] = {{0x01,   -3, -145,           -5}, //0
+  {0x02,   -56, 126,             30},  //1
+  {0x03,   -16, 160,           0}, //2 TEMP
+  {0x0F,   107, -15,           70}, //3 TEMP
+  {0x07,   13, 143,             55},  //4 R shoulder
+  {0x06,   13, -160,           0}, //5 Arm R
+  {0x0B,   -3, 124,           2}, //26 Arm R
+  {0x0A,   97, 166,           97}, //7 Arm R
+  {0x12,   -30, 55,             20},  //8
+  {0x11,   -163, -17,           -94}, //9
+  {0x13,   -166, 166,           0} //10
+};
+int mirrorArray[4][2] = {{3, 4},
+  {2, 5},
+  {1, 7},
+  {0, 6}
+};
+
+bool armMirrorModeOn = false;
+int lastMirror = 0;
 
 ArduinoPoppy::ArduinoPoppy() {
 
@@ -19,14 +41,14 @@ void ArduinoPoppy::Setup() {
 int ArduinoPoppy::ReadCommand() {
   int readCommand = -1;
   if (Serial.available() != 0) {
-    int readCommand = Serial.parseInt();
+    readCommand = Serial.parseInt();
     Serial.print("Command: ");
     Serial.println(readCommand);
   }
   return readCommand;
 }
 
-void ArduinoPoppy::Initialize(int idArr[][4]) {
+void ArduinoPoppy::Initialize() {  
   Herkulex.initialize(); //initialize motors
   for (int i = 0; i < sizeof(idArr); i++)
     Herkulex.reboot(idArr[i][0]);
@@ -45,7 +67,7 @@ void ArduinoPoppy::GetPosition() { // Todo
   Serial.println("Motor position here");
 }
 
-void ArduinoPoppy::SetPosition(int idArr[][4]) { //Set position, use default time of motion
+void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
   //Read motor number
   Serial.println("Enter Motor Index ");        //Prompt User for input
   while (Serial.available() == 0) {}          // wait for user input
@@ -60,7 +82,7 @@ void ArduinoPoppy::SetPosition(int idArr[][4]) { //Set position, use default tim
   Herkulex.moveOneAngle(idArr[motorNum][0], map(positionPerc, 0, 100, idArr[motorNum][1], idArr[motorNum][2]), 1000, LED_BLUE); //move motor with 300 speed
 }
 
-void ArduinoPoppy::SetPositionT(int idArr[][4]) { //Set position with time of motion
+void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   //Read motor number
   Serial.println("Enter Motor Index ");
   while (Serial.available() == 0) {}
@@ -80,7 +102,7 @@ void ArduinoPoppy::SetPositionT(int idArr[][4]) { //Set position with time of mo
   Herkulex.moveOneAngle(idArr[motorNum][0], map(positionPerc, 0, 100, idArr[motorNum][1], idArr[motorNum][2]), tTime, LED_BLUE); //move motor with 300 speed
 }
 
-void ArduinoPoppy::ArmMirror(int idArr[][4], int mirrorArray[4][2], bool armMirrorModeOn, int lastMirror) { //Set position, use default time of motion
+void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int lastMirror*/) { //Set position, use default time of motion
   //Read motor number
   Serial.println("Enter Value (0 off, 1 on) ");        //Prompt User for input
   while (Serial.available() == 0) {}          // wait for user input
@@ -97,7 +119,9 @@ void ArduinoPoppy::ArmMirror(int idArr[][4], int mirrorArray[4][2], bool armMirr
       Herkulex.torqueON(idArr[mirrorArray[i][0]][0]);
     }
   }
+}
 
+void ArduinoPoppy::UpdateRobot(){
   if (armMirrorModeOn) {
     lastMirror = millis();
     for (int i = 0; i < 4; i++) {
