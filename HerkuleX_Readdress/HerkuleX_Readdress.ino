@@ -2,7 +2,7 @@
 
 //NEVER RUN THIS PROGRAM ON THE ACTUAL ROBOT IT WILL RESET EVERYTHING
 int n=0xfd; //set the motor ID - cant be FE
-int newId=0x13; //set the motor ID
+int newId=0x07; //set the motor ID
 
 void setup()  
 {
