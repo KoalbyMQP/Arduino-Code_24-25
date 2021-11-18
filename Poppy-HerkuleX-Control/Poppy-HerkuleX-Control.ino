@@ -1,8 +1,6 @@
 #include <Herkulex.h>
 #include "ArduinoPoppy.h"
 
-int readCommand = 0;
-
 ArduinoPoppy robot;
 
 void setup()
@@ -12,9 +10,9 @@ void setup()
 
 void loop() {
 
-  readCommand = robot.ReadCommand();
+  robot.command = robot.ReadCommand();
 
-  switch (readCommand) {
+  switch (robot.command) {
     case Init:
       robot.Initialize();
       break;
@@ -33,6 +31,7 @@ void loop() {
     case ArmMirror:
       robot.ArmMirror();
       break;
+
     default:
       break;
   }

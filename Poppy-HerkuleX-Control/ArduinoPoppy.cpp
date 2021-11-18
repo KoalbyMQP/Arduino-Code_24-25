@@ -1,31 +1,9 @@
 #include "ArduinoPoppy.h"
-#include "Constants.h"
-
-//Constants are here because there was an include error when I tried to get constants accessible from both ArduinoPoppy and Poppy-Herkulex
-int idArr[][4] = {{0x01,   -3, -145,           -5}, //0
-  {0x02,   -56, 126,             30},  //1
-  {0x03,   -16, 160,           0}, //2 TEMP
-  {0x0F,   107, -15,           70}, //3 TEMP
-  {0x07,   13, 143,             55},  //4 R shoulder
-  {0x06,   13, -160,           0}, //5 Arm R
-  {0x0B,   -3, 124,           2}, //26 Arm R
-  {0x0A,   97, 166,           97}, //7 Arm R
-  {0x12,   -30, 55,             20},  //8
-  {0x11,   -163, -17,           -94}, //9
-  {0x13,   -166, 166,           0} //10
-};
-int mirrorArray[4][2] = {{3, 4},
-  {2, 5},
-  {1, 7},
-  {0, 6}
-};
-
-bool armMirrorModeOn = false;
-int lastMirror = 0;
 
 ArduinoPoppy::ArduinoPoppy() {
 
 }
+
 
 void ArduinoPoppy::Setup() {
   delay(2000);  //a delay to have time for serial monitor opening
@@ -48,7 +26,7 @@ int ArduinoPoppy::ReadCommand() {
   return readCommand;
 }
 
-void ArduinoPoppy::Initialize() {  
+void ArduinoPoppy::Initialize() {
   Herkulex.initialize(); //initialize motors
   for (int i = 0; i < sizeof(idArr); i++)
     Herkulex.reboot(idArr[i][0]);
@@ -121,7 +99,7 @@ void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int 
   }
 }
 
-void ArduinoPoppy::UpdateRobot(){
+void ArduinoPoppy::UpdateRobot() {
   if (armMirrorModeOn) {
     lastMirror = millis();
     for (int i = 0; i < 4; i++) {
