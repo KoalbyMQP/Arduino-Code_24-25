@@ -1,6 +1,6 @@
 #ifndef config_h
 #define config_h
-//File For Reference Only
+//File For Reference Only Possible use Later maybe
 
 /*
  * Motor 1 - Herkulex, Right Forearm
