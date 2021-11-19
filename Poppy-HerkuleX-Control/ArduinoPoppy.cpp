@@ -60,8 +60,10 @@ void ArduinoPoppy::Initialize() {
 
 void ArduinoPoppy::Shutdown() {
   Serial.println("Robot Shutdown");
-  for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++)
+  for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++) {
     Herkulex.torqueOFF(idArr[motorNum][0]);
+    Herkulex.setLed(idArr[motorNum][0], LED_RED); 
+  }
 }
 
 void ArduinoPoppy::GetPosition() {
