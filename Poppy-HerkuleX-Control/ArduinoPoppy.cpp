@@ -34,7 +34,7 @@ int ArduinoPoppy::ReadCommand() {
 void ArduinoPoppy::Initialize() {
   Herkulex.initialize(); //initialize motors
   for (int i = 0; i < MOTOR_COUNT; i++)
-    if(idArr[i][TYPE_FIELD] == HERK)
+    if (idArr[i][TYPE_FIELD] == HERK)
       Herkulex.reboot(idArr[i][ID_FIELD]);
     else//Dynamixel
     {
@@ -46,12 +46,12 @@ void ArduinoPoppy::Initialize() {
   delay(500);
   //Move each motor to initialized position
   for (int i = 0; i < MOTOR_COUNT; i++) {
-    if(idArr[i][TYPE_FIELD] == HERK){
+    if (idArr[i][TYPE_FIELD] == HERK) {
       Herkulex.torqueON(idArr[i][ID_FIELD]);
       Herkulex.moveOneAngle(idArr[i][ID_FIELD], idArr[i][3], 1000, LED_BLUE);
       //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
       Serial.println(Herkulex.getAngle(idArr[i][ID_FIELD]));
-    }else{
+    } else {
       //Not tested
       dxl.setGoalPosition(idArr[i][ID_FIELD], idArr[i][3]);
     }
@@ -59,7 +59,13 @@ void ArduinoPoppy::Initialize() {
 }
 
 void ArduinoPoppy::GetPosition() { // Todo
-  Serial.println("Motor position here");
+  Serial.println("Enter Motor Index to Get Position");        //Prompt User for input
+  while (Serial.available() == 0) {}          // wait for user input
+  int motorNum = Serial.parseInt();                    //Read user input and hold it in a variable
+  Herkulex.torqueOFF(idArr[motorNum][0]);
+  while (Serial.available() == 0) {
+    Serial.println(Herkulex.getAngle(idArr[motorNum][0]));
+  }
 }
 
 void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
@@ -75,7 +81,7 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
 
   //Send parsed command to the motor
   int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum][1], idArr[motorNum][2]);//map 0-100 input to the motor's range
-  if(idArr[motorNum][TYPE_FIELD] == HERK)
+  if (idArr[motorNum][TYPE_FIELD] == HERK)
     Herkulex.moveOneAngle(idArr[motorNum][0], mappedTarget, 1000, LED_BLUE); //move motor with 300 speed
   else //Dynamixel
     dxl.setGoalPosition(idArr[motorNum][0], mappedTarget);
@@ -99,7 +105,7 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
 
   //Send parsed command to the motor
   int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum][1], idArr[motorNum][2]);//map 0-100 input to the motor's range
-  if(idArr[motorNum][TYPE_FIELD] == HERK)
+  if (idArr[motorNum][TYPE_FIELD] == HERK)
     Herkulex.moveOneAngle(idArr[motorNum][0], mappedTarget, tTime, LED_BLUE); //move motor with 300 speed
   else //Dynamixel
     //TODO: timed motrion for Dynamixel
@@ -128,7 +134,7 @@ void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int 
 }
 
 void ArduinoPoppy::UpdateRobot() {
-  
+
   if (armMirrorModeOn) {
     lastMirror = millis();
     for (int i = 0; i < 4; i++) {
