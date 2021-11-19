@@ -58,11 +58,22 @@ void ArduinoPoppy::Initialize() {
   }
 }
 
-void ArduinoPoppy::GetPosition() { // Todo
-  Serial.println("Enter Motor Index to Get Position");        //Prompt User for input
-  while (Serial.available() == 0) {}          // wait for user input
-  int motorNum = Serial.parseInt();                    //Read user input and hold it in a variable
+void ArduinoPoppy::Shutdown() {
+  Serial.println("Robot Shutdown");
+  for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++)
+    Herkulex.torqueOFF(idArr[motorNum][0]);
+}
+
+void ArduinoPoppy::GetPosition() {
+  // Get motor id
+  Serial.println("Enter Motor Id");
+  while (Serial.available() == 0) {}
+  int motorNum =  Serial.parseInt();
+
+  //Turn off torque
   Herkulex.torqueOFF(idArr[motorNum][0]);
+
+  //Print the Angle
   while (Serial.available() == 0) {
     Serial.println(Herkulex.getAngle(idArr[motorNum][0]));
   }
@@ -147,4 +158,5 @@ void ArduinoPoppy::UpdateRobot() {
 
     //delay(100);
   }
+
 }

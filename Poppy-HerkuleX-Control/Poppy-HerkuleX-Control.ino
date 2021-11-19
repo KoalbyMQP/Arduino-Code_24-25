@@ -28,10 +28,15 @@ void loop() {
     case SetPositionT:
       robot.SetPositionT();
       break;
+      
     case ArmMirror:
       robot.ArmMirror();
       break;
-
+      
+    case Shutdown:
+      robot.Shutdown();
+      break;
+      
     default:
       break;
   }

@@ -14,7 +14,7 @@
 //List of possible numeric commands to send
 enum Commands { Init = 0, GetPosition = 1, SetPosition = 2,
                 SetPositionT/*Set position with ID and time of motion*/ = 3,
-                ArmMirror = 4
+                ArmMirror = 4, Shutdown = 100
               };//TODO - switch to an enum-based setup when testing with physical robot
 
 
@@ -32,6 +32,7 @@ class ArduinoPoppy {
     void Setup();
     int ReadCommand();
     void Initialize();
+    void Shutdown();
     void GetPosition();
     void SetPosition();
     void SetPositionT();
@@ -45,6 +46,7 @@ class ArduinoPoppy {
   private:
     // Private Methods
 
+    //Private Objects
     DynamixelShield dxl;
 
     //Private Variables
@@ -53,33 +55,26 @@ class ArduinoPoppy {
 
     //Private Constants - This defines the robot's motor setup
     const int MOTOR_COUNT = 11;//sizeOF(IdArr) not working right, using manual definition
-    
-    int idArr[11][5] = {
-      {0x01,   -3, -145,           -5,        HERK},           //0 * Motor 1 - Herkulex, Right Forearm
-      {0x02,   -56, 126,           -150,      HERK},       //1 * Motor 2 - Herkulex, Right Upper Arm  *** Wrong Limit
-      {0x03,   -16, 160,           0,         HERK},            //2 * Motor 3 - Herkulex, Right Arm Connector
-      {0x0F,   107, -15,           70,        HERK}, //3 TEMP
-      {0x07,   13, 143,             55,        HERK},  //4 R shoulder
-      {0x06,   13, -160,           0,        HERK}, //5 Arm R
-      {0x0B,   -3, 124,           2,        HERK}, //26 Arm R
-      {0x0A,   97, 166,           97,        HERK}, //7 Arm R
-      {0x12,   -30, 55,             20,        HERK},  //8
-      {0x11,   -163, -17,           -94,        HERK}, //9S
-      {0x13,   -166, 166,           0,        HERK} //10
-    };
 
-    /*
-   * Motor 7 - Herkulex, Right Shoulder
-   * 
-   * Motor B - Herkulex, Left Forearm
-   * Motor A - Herkulex, Right Upper Arm
-   * Motor C - Herkulex, Right Arm Connector
-   * Motor F - Herkulex, Right Shoulder
-   * 
-   * Motor 11 - Herkulex, Torso Double Rotation Backside
-   * Motor 12 - Herkulex, Torso Double Rotation Frontside
-   * Motor 13 - Herkluex, Abdomen 
-   */
+    /**
+       idArr[Motor Count][Parameter Count]
+       {Motor ID, Lower Limit, Upper Limit, Initialize Position, Motor Type}
+    */
+    int idArr[11][5] = {
+      {0x01,     -3,   -145,     -5,        HERK},    //0   * Motor 1 - Herkulex, Right Forearm
+      {0x02,    -56,    160,   -150,        HERK},    //1   * Motor 2 - Herkulex, Right Upper Arm  *** Wrong Limit Motor Needs to be adjusted
+      {0x03,    -16,    160,      0,        HERK},    //2   * Motor 3 - Herkulex, Right Arm Connector
+      {0x0F,    107,    -15,     78,        HERK},    //3   * Motor F - Herkulex, Right Shoulder
+
+      {0x0B,     -3,    140,      2,        HERK},    //4   * Motor B - Herkulex, Left Forearm
+      {0x0A,     50,    130,     97,        HERK},    //5   * Motor A - Herkulex, Left Upper Arm
+      {0x06,     13,   -160,     -5,        HERK},    //6   * Motor 6 - Herkulex, Left Arm Connector
+      {0x07,   -120,    143,     55,        HERK},    //7   * Motor F - Herkulex, Left Shoulder
+
+      {0x11,   -150,    -30,    -94,        HERK},    //8   * Motor 11 - Herkulex, Torso Double Rotation Backside
+      {0x12,    -30,     55,     31,        HERK},    //9   * Motor 12 - Herkulex, Torso Double Rotation Frontside
+      {0x13,   -166,    166,      0,        HERK}     //10  * Motor 13 - Herkluex, Abdomen
+    };
 
     int mirrorArray[4][2] = {{3, 4},
       {2, 5},
