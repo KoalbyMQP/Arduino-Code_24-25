@@ -32,6 +32,10 @@ void loop() {
     case ArmMirror:
       robot.ArmMirror();
       break;
+
+    case SetTorque:
+      robot.SetTorque();
+      break;
       
     case Shutdown:
       robot.Shutdown();

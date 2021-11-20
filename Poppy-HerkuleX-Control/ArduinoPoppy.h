@@ -14,7 +14,9 @@
 //List of possible numeric commands to send
 enum Commands { Init = 0, GetPosition = 1, SetPosition = 2,
                 SetPositionT/*Set position with ID and time of motion*/ = 3,
-                ArmMirror = 4, Shutdown = 100
+                ArmMirror = 4,
+                SetTorque = 5,/*Set torque to "on" or "off" based on ID*/
+                Shutdown = 100
               };//TODO - switch to an enum-based setup when testing with physical robot
 
 
@@ -36,6 +38,7 @@ class ArduinoPoppy {
     void GetPosition();
     void SetPosition();
     void SetPositionT();
+    void SetTorque();
     void ArmMirror();
     void PuppetMaster();
     void UpdateRobot();

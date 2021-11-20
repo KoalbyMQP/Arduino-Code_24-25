@@ -76,10 +76,10 @@ void ArduinoPoppy::GetPosition() {
   //Turn off torque - Why would we do this? They can turn off the torque beforehad if they need to. This could be used to check position as part of a long motion or something
   //Herkulex.torqueOFF(idArr[motorNum][0]);
 
-  //Print the Angle - This should return in the same range (0-100) as set position
-  while (Serial.available() == 0) {
+  //Print the Angle - This should return in the same range (0-100) as set position, and only return once. This is meant for the Pi to use, if you need motor position just run the other program.
+  //while (Serial.available() == 0) {
     Serial.println(Herkulex.getAngle(idArr[motorNum][0]));
-  }
+  //}
 }
 
 void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
@@ -145,6 +145,30 @@ void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int 
       Herkulex.torqueON(idArr[mirrorArray[i][0]][0]);
     }
   }
+}
+
+void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
+  //Read motor number
+  Serial.println("Enter Motor Index ");        //Prompt User for input
+  while (Serial.available() == 0) {}          // wait for user input
+  int motorNum = Serial.parseInt();                    //Read user input and hold it in a variable
+
+  //Read motor target position
+  Serial.println("Enter Motor Torque(0 = off, 1 = on) ");
+  while (Serial.available() == 0) {}
+  int setTorqueOn = Serial.parseInt();
+
+  //Send parsed command to the motor
+  if (idArr[motorNum][TYPE_FIELD] == HERK)
+    if(setTorqueOn)
+      Herkulex.torqueON(idArr[motorNum][ID_FIELD]);
+    else
+      Herkulex.torqueOFF(idArr[motorNum][ID_FIELD]);
+  else //Dynamixel
+    if(setTorqueOn)
+      dxl.torqueOn(idArr[motorNum][ID_FIELD]);
+    else
+      dxl.torqueOff(idArr[motorNum][ID_FIELD]);
 }
 
 void ArduinoPoppy::UpdateRobot() {
