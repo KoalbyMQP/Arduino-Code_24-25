@@ -66,16 +66,17 @@ void ArduinoPoppy::Shutdown() {
   }
 }
 
+//OK, for starters we should set up the code to support Dynamixel motors, so check the motor is a HerkuleX before sending commands. We share ID's between mototr types so it could go weird
 void ArduinoPoppy::GetPosition() {
   // Get motor id
   Serial.println("Enter Motor Id");
   while (Serial.available() == 0) {}
   int motorNum =  Serial.parseInt();
 
-  //Turn off torque
-  Herkulex.torqueOFF(idArr[motorNum][0]);
+  //Turn off torque - Why would we do this? They can turn off the torque beforehad if they need to. This could be used to check position as part of a long motion or something
+  //Herkulex.torqueOFF(idArr[motorNum][0]);
 
-  //Print the Angle
+  //Print the Angle - This should return in the same range (0-100) as set position
   while (Serial.available() == 0) {
     Serial.println(Herkulex.getAngle(idArr[motorNum][0]));
   }

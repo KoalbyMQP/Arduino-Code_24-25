@@ -69,17 +69,18 @@ class ArduinoPoppy {
       {0x0B,     -3,    140,      2,        HERK},    //4   * Motor B - Herkulex, Left Forearm
       {0x0A,     50,    130,     97,        HERK},    //5   * Motor A - Herkulex, Left Upper Arm
       {0x06,     13,   -160,     -5,        HERK},    //6   * Motor 6 - Herkulex, Left Arm Connector
-      {0x07,   -120,    143,     55,        HERK},    //7   * Motor F - Herkulex, Left Shoulder
+      {0x07,     13,    143,     55,        HERK},    //7   * Motor F - Herkulex, Left Shoulder
 
       {0x11,   -150,    -30,    -94,        HERK},    //8   * Motor 11 - Herkulex, Torso Double Rotation Backside
       {0x12,    -30,     55,     31,        HERK},    //9   * Motor 12 - Herkulex, Torso Double Rotation Frontside
       {0x13,   -166,    166,      0,        HERK}     //10  * Motor 13 - Herkluex, Abdomen
     };
 
-    int mirrorArray[4][2] = {{3, 4},
-      {2, 5},
-      {1, 7},
-      {0, 6}
+    int mirrorArray[4][2] = {
+      {0, 4},
+      {1, 5},
+      {2, 6},
+      {3, 7}
     };
 
 
