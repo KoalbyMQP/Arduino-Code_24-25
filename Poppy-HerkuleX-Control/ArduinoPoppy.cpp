@@ -34,26 +34,26 @@ int ArduinoPoppy::ReadCommand() {
 void ArduinoPoppy::Initialize() {
   Herkulex.initialize(); //initialize motors
   for (int i = 0; i < MOTOR_COUNT; i++)
-    if (idArr[i][TYPE_FIELD] == HERK)
-      Herkulex.reboot(idArr[i][ID_FIELD]);
+    if (idArr[i].type == HERK)
+      Herkulex.reboot(idArr[i].hexID);
     else//Dynamixel
     {
       // Turn off torque when configuring items in EEPROM area
-      dxl.torqueOff(idArr[i][ID_FIELD]);
-      dxl.setOperatingMode(idArr[i][ID_FIELD], OP_POSITION);
-      dxl.torqueOn(idArr[i][ID_FIELD]);
+      dxl.torqueOff(idArr[i].hexID);
+      dxl.setOperatingMode(idArr[i].hexID, OP_POSITION);
+      dxl.torqueOn(idArr[i].hexID);
     }
   delay(500);
   //Move each motor to initialized position
   for (int i = 0; i < MOTOR_COUNT; i++) {
-    if (idArr[i][TYPE_FIELD] == HERK) {
-      Herkulex.torqueON(idArr[i][ID_FIELD]);
-      Herkulex.moveOneAngle(idArr[i][ID_FIELD], idArr[i][3], 1000, LED_BLUE);
+    if (idArr[i].type == HERK) {
+      Herkulex.torqueON(idArr[i].hexID);
+      Herkulex.moveOneAngle(idArr[i].hexID, idArr[i].homePos, 1000, LED_BLUE);
       //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
-      Serial.println(Herkulex.getAngle(idArr[i][ID_FIELD]));
+      Serial.println(Herkulex.getAngle(idArr[i].hexID));
     } else {
       //Not tested
-      dxl.setGoalPosition(idArr[i][ID_FIELD], idArr[i][3]);
+      dxl.setGoalPosition(idArr[i].hexID, idArr[i].homePos);
     }
   }
 }
@@ -61,8 +61,8 @@ void ArduinoPoppy::Initialize() {
 void ArduinoPoppy::Shutdown() {
   Serial.println("Robot Shutdown");
   for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++) {
-    Herkulex.torqueOFF(idArr[motorNum][0]);
-    Herkulex.setLed(idArr[motorNum][0], LED_RED); 
+    Herkulex.torqueOFF(idArr[motorNum].hexID);
+    Herkulex.setLed(idArr[motorNum].hexID, LED_RED); 
   }
 }
 
@@ -76,9 +76,9 @@ void ArduinoPoppy::GetPosition() {
   //Turn off torque - Why would we do this? They can turn off the torque beforehad if they need to. This could be used to check position as part of a long motion or something
   //Herkulex.torqueOFF(idArr[motorNum][0]);
 
-  //Print the Angle - This should return in the same range (0-100) as set position, and only return once. This is meant for the Pi to use, if you need motor position just run the other program.
+  //Print the Angle - This should return in the same range (0-100) as set position, and only return once. This is meant for the Pi to use, if you need motor position just run the other program or hard code it into the loop for a bit and delete it.
   //while (Serial.available() == 0) {
-    Serial.println(Herkulex.getAngle(idArr[motorNum][0]));
+    Serial.println(Herkulex.getAngle(idArr[motorNum].hexID));
   //}
 }
 
@@ -94,11 +94,11 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
   int positionPerc = Serial.parseInt();
 
   //Send parsed command to the motor
-  int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum][1], idArr[motorNum][2]);//map 0-100 input to the motor's range
-  if (idArr[motorNum][TYPE_FIELD] == HERK)
-    Herkulex.moveOneAngle(idArr[motorNum][0], mappedTarget, 1000, LED_BLUE); //move motor with 300 speed
+  int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum].minPos, idArr[motorNum].maxPos);//map 0-100 input to the motor's range
+  if (idArr[motorNum].type == HERK)
+    Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, 1000, LED_BLUE); //move motor with 300 speed
   else //Dynamixel
-    dxl.setGoalPosition(idArr[motorNum][0], mappedTarget);
+    dxl.setGoalPosition(idArr[motorNum].hexID, mappedTarget);
 }
 
 void ArduinoPoppy::SetPositionT() { //Set position with time of motion
@@ -118,12 +118,12 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   int tTime = Serial.parseInt();
 
   //Send parsed command to the motor
-  int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum][1], idArr[motorNum][2]);//map 0-100 input to the motor's range
-  if (idArr[motorNum][TYPE_FIELD] == HERK)
-    Herkulex.moveOneAngle(idArr[motorNum][0], mappedTarget, tTime, LED_BLUE); //move motor with 300 speed
+  int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum].minPos, idArr[motorNum].maxPos);//map 0-100 input to the motor's range
+  if (idArr[motorNum].type == HERK)
+    Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, tTime, LED_BLUE); //move motor with 300 speed
   else //Dynamixel
     //TODO: timed motrion for Dynamixel
-    dxl.setGoalPosition(idArr[motorNum][0], mappedTarget);
+    dxl.setGoalPosition(idArr[motorNum].hexID, mappedTarget);
 }
 
 //Caution: might move FAST when starting, no safties currently implemented for that
@@ -137,12 +137,12 @@ void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int 
   if (motorNum) {
     armMirrorModeOn = true;
     for (int i = 0; i < 4; i++) {
-      Herkulex.torqueOFF(idArr[mirrorArray[i][0]][0]);
+      Herkulex.torqueOFF(idArr[mirrorArray[i][0]].hexID);
     }
   } else {
     armMirrorModeOn = false;
     for (int i = 0; i < 4; i++) {
-      Herkulex.torqueON(idArr[mirrorArray[i][0]][0]);
+      Herkulex.torqueON(idArr[mirrorArray[i][0]].hexID);
     }
   }
 }
@@ -159,16 +159,16 @@ void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
   int setTorqueOn = Serial.parseInt();
 
   //Send parsed command to the motor
-  if (idArr[motorNum][TYPE_FIELD] == HERK)
+  if (idArr[motorNum].type == HERK)
     if(setTorqueOn)
-      Herkulex.torqueON(idArr[motorNum][ID_FIELD]);
+      Herkulex.torqueON(idArr[motorNum].hexID);
     else
-      Herkulex.torqueOFF(idArr[motorNum][ID_FIELD]);
+      Herkulex.torqueOFF(idArr[motorNum].hexID);
   else //Dynamixel
     if(setTorqueOn)
-      dxl.torqueOn(idArr[motorNum][ID_FIELD]);
+      dxl.torqueOn(idArr[motorNum].hexID);
     else
-      dxl.torqueOff(idArr[motorNum][ID_FIELD]);
+      dxl.torqueOff(idArr[motorNum].hexID);
 }
 
 void ArduinoPoppy::UpdateRobot() {
@@ -178,9 +178,9 @@ void ArduinoPoppy::UpdateRobot() {
     for (int i = 0; i < 4; i++) {
       int rowRead = mirrorArray[i][0];
       int rowSet = mirrorArray[i][1];
-      int pos1 = Herkulex.getAngle(idArr[rowRead][0]);
+      int pos1 = Herkulex.getAngle(idArr[rowRead].hexID);
 
-      Herkulex.moveOneAngle(idArr[rowSet][0], map(pos1, idArr[rowRead][1], idArr[rowRead][2], idArr[rowSet][1], idArr[rowSet][2]), 100, LED_BLUE); //move motor
+      Herkulex.moveOneAngle(idArr[rowSet].hexID, map(pos1, idArr[rowRead].minPos, idArr[rowRead].maxPos, idArr[rowSet].minPos, idArr[rowSet].maxPos), 100, LED_BLUE); //move motor
     }
 
     //delay(100);
