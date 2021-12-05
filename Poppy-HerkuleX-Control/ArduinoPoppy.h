@@ -3,6 +3,15 @@
 #include <Herkulex.h>
 #include <DynamixelShield.h>
 
+//define this to use serial2 as output, comment out this definition to use USB
+#define DYNAMIXEL_CONTROL
+
+#ifdef DYNAMIXEL_CONTROL
+  #define SERIAL_MONITOR Serial2 //output to USB-Serial adapter
+#else
+  #define SERIAL_MONITOR Serial  //output to upload USB
+#endif
+
 //Motor types
 #define HERK 0
 #define DYN  1
@@ -51,6 +60,8 @@ class ArduinoPoppy {
 
   private:
     // Private Methods
+    int getIntFromSerial();
+    int getIntFromSerial(char* msg);
 
     //Private Objects
     DynamixelShield dxl;

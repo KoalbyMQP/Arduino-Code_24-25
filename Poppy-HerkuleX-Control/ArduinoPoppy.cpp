@@ -7,12 +7,15 @@ ArduinoPoppy::ArduinoPoppy() {
 
 void ArduinoPoppy::Setup() {
   delay(2000);  //a delay to have time for serial monitor opening
-  Serial2.begin(115200);    // Open serial communications
-  Serial2.println("Begin");
+  SERIAL_MONITOR.begin(115200);    // Open serial communications
+  SERIAL_MONITOR.println("Begin");
 
   //Start Dynamixel shield
   // Set Port baudrate to 115200. This has to match with DYNAMIXEL baudrate.
+  #ifdef DYNAMIXEL_CONTROL
   dxl.begin(115200); //UNCOMMENT LINE WHEN USING SERIAL ADAPTOR - THIS CONFLICTS WITH USB SERIAL
+  #endif
+  
   // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version - 1.0 for our motors
   dxl.setPortProtocolVersion(1.0);
 
@@ -23,10 +26,10 @@ void ArduinoPoppy::Setup() {
 
 int ArduinoPoppy::ReadCommand() {
   int readCommand = -1;
-  if (Serial2.available() != 0) {
-    readCommand = Serial2.parseInt();
-    Serial2.print("Command: ");
-    Serial2.println(readCommand);
+  if (SERIAL_MONITOR.available() != 0) {
+    readCommand = SERIAL_MONITOR.parseInt();
+    SERIAL_MONITOR.print("Command: ");
+    SERIAL_MONITOR.println(readCommand);
   }
   return readCommand;
 }
@@ -50,16 +53,17 @@ void ArduinoPoppy::Initialize() {
       Herkulex.torqueON(idArr[i].hexID);
       Herkulex.moveOneAngle(idArr[i].hexID, idArr[i].homePos, 1000, LED_BLUE);
       //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
-      Serial.println(Herkulex.getAngle(idArr[i].hexID));
+      SERIAL_MONITOR.println(Herkulex.getAngle(idArr[i].hexID));
     } else {
-      //Not tested
+      //Not completely tested, capable of moving motor
       dxl.setGoalPosition(idArr[i].hexID, idArr[i].homePos,UNIT_DEGREE);
     }
   }
 }
 
+//TODO - update for DXL
 void ArduinoPoppy::Shutdown() {
-  Serial2.println("Robot Shutdown");
+  SERIAL_MONITOR.println("Robot Shutdown");
   for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++) {
     Herkulex.torqueOFF(idArr[motorNum].hexID);
     Herkulex.setLed(idArr[motorNum].hexID, LED_RED); 
@@ -69,26 +73,24 @@ void ArduinoPoppy::Shutdown() {
 //In progress
 void ArduinoPoppy::GetPosition() {
   // Get motor id
-  Serial2.println("Enter Motor Id");
-  while (Serial.available() == 0) {}
-  int motorNum =  Serial.parseInt();
+  int motorNum =  getIntFromSerial("Enter Motor Id");
 
 
-  //TODO - return in 0-100 range and support Dynamixel motors
   //Print the Angle - This should return in the same range (0-100) as set position for the Pi
-    Serial2.println(Herkulex.getAngle(idArr[motorNum].hexID));
+  //SERIAL_MONITOR.println(Herkulex.getAngle(idArr[motorNum].hexID));
+  if (idArr[motorNum].type == HERK) {
+    SERIAL_MONITOR.println(map(Herkulex.getAngle(idArr[motorNum].hexID),    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
+  } else {
+    SERIAL_MONITOR.println(map(dxl.getPresentPosition(idArr[motorNum].hexID, UNIT_DEGREE),    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
+  }
 }
 
 void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
   //Read motor number
-  Serial2.println("Enter Motor Index ");        //Prompt User for input
-  while (Serial2.available() == 0) {}          // wait for user input
-  int motorNum = Serial2.parseInt();                    //Read user input and hold it in a variable
+  int motorNum = getIntFromSerial("Enter Motor Index ");   
 
   //Read motor target position
-  Serial2.println("Enter Motor Position ");
-  while (Serial2.available() == 0) {}
-  int positionPerc = Serial2.parseInt();
+  int positionPerc = getIntFromSerial("Enter Motor Position ");
 
   //Send parsed command to the motor
   int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum].minPos, idArr[motorNum].maxPos);//map 0-100 input to the motor's range
@@ -100,26 +102,24 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
 
 void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   //Read motor number
-  Serial2.println("Enter Motor Index ");
-  while (Serial2.available() == 0) {}
-  int motorNum = Serial2.parseInt();
+  SERIAL_MONITOR.println("Enter Motor Index ");
+  while (SERIAL_MONITOR.available() == 0) {}
+  int motorNum = SERIAL_MONITOR.parseInt();
 
   //Read motor target position
-  Serial2.println("Enter Motor Position ");
-  while (Serial2.available() == 0) {}
-  int positionPerc = Serial2.parseInt();
+  SERIAL_MONITOR.println("Enter Motor Position ");
+  while (SERIAL_MONITOR.available() == 0) {}
+  int positionPerc = SERIAL_MONITOR.parseInt();
 
   //Read time of motion
-  Serial2.println("Enter travel time (millis) ");
-  while (Serial2.available() == 0) {}
-  int tTime = Serial2.parseInt();
+  int tTime = getIntFromSerial("Enter travel time (millis) ");
 
   //Send parsed command to the motor
   int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum].minPos, idArr[motorNum].maxPos);//map 0-100 input to the motor's range
   if (idArr[motorNum].type == HERK)
     Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, tTime, LED_BLUE); //move motor with 300 speed
   else //Dynamixel
-    //TODO: timed motrion for Dynamixel
+    //TODO: timed motion for Dynamixel
     dxl.setGoalPosition(idArr[motorNum].hexID, mappedTarget, UNIT_DEGREE);
 }
 
@@ -127,9 +127,9 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
 void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int lastMirror*/) { //Set position, use default time of motion
   //Assumes all arm motors being used in this function are HerkuleX motors, not Dynamixels
   //Read motor number
-  Serial2.println("Enter Value (0 off, 1 on) ");        //Prompt User for input
-  while (Serial2.available() == 0) {}          // wait for user input
-  int motorNum = Serial2.parseInt();
+  SERIAL_MONITOR.println("Enter Value (0 off, 1 on) ");        //Prompt User for input
+  while (SERIAL_MONITOR.available() == 0) {}          // wait for user input
+  int motorNum = SERIAL_MONITOR.parseInt();
 
   if (motorNum) {
     armMirrorModeOn = true;
@@ -146,14 +146,12 @@ void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int 
 
 void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
   //Read motor number
-  Serial2.println("Enter Motor Index ");        //Prompt User for input
-  while (Serial2.available() == 0) {}          // wait for user input
-  int motorNum = Serial2.parseInt();                    //Read user input and hold it in a variable
+  SERIAL_MONITOR.println("Enter Motor Index ");        //Prompt User for input
+  while (SERIAL_MONITOR.available() == 0) {}          // wait for user input
+  int motorNum = SERIAL_MONITOR.parseInt();                    //Read user input and hold it in a variable
 
   //Read motor target position
-  Serial2.println("Enter Motor Torque(0 = off, 1 = on) ");
-  while (Serial2.available() == 0) {}
-  int setTorqueOn = Serial2.parseInt();
+  int setTorqueOn = getIntFromSerial("Enter Motor Torque(0 = off, 1 = on) ");
 
   //Send parsed command to the motor
   if (idArr[motorNum].type == HERK)
@@ -179,4 +177,15 @@ void ArduinoPoppy::UpdateRobot() {
       Herkulex.moveOneAngle(idArr[rowSet].hexID, map(pos1, idArr[rowRead].minPos, idArr[rowRead].maxPos, idArr[rowSet].minPos, idArr[rowSet].maxPos), 200, LED_BLUE); //move motor
     }
   }
+}
+
+//Return an integer entered over serial - options with and without a message
+int ArduinoPoppy::getIntFromSerial(){
+  while (SERIAL_MONITOR.available() == 0) {}
+  return SERIAL_MONITOR.parseInt();
+}
+
+int ArduinoPoppy::getIntFromSerial(char* msg){
+  SERIAL_MONITOR.println(msg);
+  return getIntFromSerial();
 }
