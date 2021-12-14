@@ -36,6 +36,10 @@ void loop() {
     case SetTorque:
       robot.SetTorque();
       break;
+
+    case SetCompliant:
+      robot.SetCompliant();
+      break;
       
     case Shutdown:
       robot.Shutdown();
@@ -47,6 +51,6 @@ void loop() {
 
   //Do other tasks
   robot.UpdateRobot();
-  delay(20);
+  delay(5);
 
 }

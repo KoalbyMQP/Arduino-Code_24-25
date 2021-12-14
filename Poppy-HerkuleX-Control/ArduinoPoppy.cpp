@@ -70,13 +70,12 @@ void ArduinoPoppy::Shutdown() {
   }
 }
 
-//In progress
+// Return position in the same range as setPosition
 void ArduinoPoppy::GetPosition() {
   // Get motor id
   int motorNum =  getIntFromSerial("Enter Motor Id");
 
-
-  //Print the Angle - This should return in the same range (0-100) as set position for the Pi
+  //Print the Angle - This should return in the same range (0-100) as set position for the Pi - reverses earlier mapping
   //SERIAL_MONITOR.println(Herkulex.getAngle(idArr[motorNum].hexID));
   if (idArr[motorNum].type == HERK) {
     SERIAL_MONITOR.println(map(Herkulex.getAngle(idArr[motorNum].hexID),    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
@@ -101,15 +100,11 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
 }
 
 void ArduinoPoppy::SetPositionT() { //Set position with time of motion
-  //Read motor number
-  SERIAL_MONITOR.println("Enter Motor Index ");
-  while (SERIAL_MONITOR.available() == 0) {}
-  int motorNum = SERIAL_MONITOR.parseInt();
+  //Read motor number}
+  int motorNum = getIntFromSerial("Enter Motor Index ");
 
   //Read motor target position
-  SERIAL_MONITOR.println("Enter Motor Position ");
-  while (SERIAL_MONITOR.available() == 0) {}
-  int positionPerc = SERIAL_MONITOR.parseInt();
+  int positionPerc = getIntFromSerial("Enter Motor Position ");
 
   //Read time of motion
   int tTime = getIntFromSerial("Enter travel time (millis) ");
@@ -126,18 +121,14 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
 //Caution: might move FAST when starting, no safties currently implemented for that
 void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int lastMirror*/) { //Set position, use default time of motion
   //Assumes all arm motors being used in this function are HerkuleX motors, not Dynamixels
-  //Read motor number
-  SERIAL_MONITOR.println("Enter Value (0 off, 1 on) ");        //Prompt User for input
-  while (SERIAL_MONITOR.available() == 0) {}          // wait for user input
-  int motorNum = SERIAL_MONITOR.parseInt();
+  //Read setting number
+  armMirrorModeOn = getIntFromSerial("Enter Value (0 off, 1 on) ");
 
-  if (motorNum) {
-    armMirrorModeOn = true;
+  if (armMirrorModeOn) {
     for (int i = 0; i < 4; i++) {
       Herkulex.torqueOFF(idArr[mirrorArray[i][0]].hexID);
     }
   } else {
-    armMirrorModeOn = false;
     for (int i = 0; i < 4; i++) {
       Herkulex.torqueON(idArr[mirrorArray[i][0]].hexID);
     }
@@ -166,6 +157,27 @@ void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
       dxl.torqueOff(idArr[motorNum].hexID);
 }
 
+void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
+  //Read motor number
+  SERIAL_MONITOR.println("Enter Motor Index ");        //Prompt User for input
+  while (SERIAL_MONITOR.available() == 0) {}          // wait for user input
+  int motorNum = SERIAL_MONITOR.parseInt();                    //Read user input and hold it in a variable
+
+  //Read value
+  int setTorqueOn = getIntFromSerial("Enter Motor Compliance (0 = off, 1 = on) ");
+
+  //Send parsed command to the motor
+  if (idArr[motorNum].type == HERK)
+    if(setTorqueOn)
+      compliantMotorSet.add(motorNum);
+    else
+      compliantMotorSet.sub(motorNum);
+  else //Dynamixel
+  {
+    //TODO implement
+  }
+}
+
 void ArduinoPoppy::UpdateRobot() {
   if (armMirrorModeOn) {
     lastMirror = millis();
@@ -177,6 +189,20 @@ void ArduinoPoppy::UpdateRobot() {
       Herkulex.moveOneAngle(idArr[rowSet].hexID, map(pos1, idArr[rowRead].minPos, idArr[rowRead].maxPos, idArr[rowSet].minPos, idArr[rowSet].maxPos), 200, LED_BLUE); //move motor
     }
   }
+
+  //Iterate over compliant motors
+  int n = compliantMotorSet.first();
+  
+  while (n != -1)
+  {
+    if(compliancePWMCounter%10 < 2)
+      Herkulex.torqueOFF(idArr[n].hexID);
+    else
+      Herkulex.torqueON(idArr[n].hexID);
+    Herkulex.moveOneAngle(idArr[n].hexID, Herkulex.getAngle(idArr[n].hexID), 200, 2);
+    n = compliantMotorSet.next();
+  }
+  compliancePWMCounter++;
 }
 
 //Return an integer entered over serial - options with and without a message
