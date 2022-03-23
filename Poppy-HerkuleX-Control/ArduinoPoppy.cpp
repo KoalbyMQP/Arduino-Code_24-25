@@ -5,7 +5,7 @@ ArduinoPoppy::ArduinoPoppy() {
 }
 
 
-void ArduinoPoppy::Setup() {\
+void ArduinoPoppy::Setup() {
   delay(2000);  //a delay to have time for serial monitor opening
   SERIAL_MONITOR.begin(115200);    // Open serial communications
   //Serial2.begin(115200);
@@ -161,7 +161,24 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   int tTime = getIntFromSerial("Enter travel time (millis) ");
 
   //Send parsed command to the motor
-  int mappedTarget = map(positionPerc, 0, 100, idArr[motorNum].minPos, idArr[motorNum].maxPos);//map 0-100 input to the motor's range
+  int mappedTarget=0;
+  //Account for motor direction when setting limits
+  if(positionPerc,idArr[motorNum].minPos<idArr[motorNum].maxPos){
+    positionPerc = positionPerc+idArr[motorNum].homePos;
+    mappedTarget = min(max(positionPerc,idArr[motorNum].minPos),idArr[motorNum].maxPos); 
+    /*SERIAL_MONITOR.print("Val: ");
+    SERIAL_MONITOR.print(positionPerc);
+    SERIAL_MONITOR.print("actual: ");
+    SERIAL_MONITOR.println(mappedTarget);*/
+  }else{
+    positionPerc = -positionPerc+idArr[motorNum].homePos;
+    mappedTarget = max(min(positionPerc,idArr[motorNum].minPos),idArr[motorNum].maxPos); 
+    /*SERIAL_MONITOR.print("Val2: ");
+    SERIAL_MONITOR.print(positionPerc);
+    SERIAL_MONITOR.print("actual: ");
+    SERIAL_MONITOR.println(mappedTarget);*/
+  }
+      
   if (idArr[motorNum].type == HERK)
     Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, tTime, LED_BLUE); //move motor with 300 speed
   else //Dynamixel

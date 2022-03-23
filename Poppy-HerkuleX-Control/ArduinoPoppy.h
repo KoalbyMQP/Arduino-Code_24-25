@@ -7,7 +7,7 @@
 
 //define this to use serial2 as output, comment out this definition to use USB
 #define DYNAMIXEL_CONTROL
-#define HUMAN_CONTROL
+//#define HUMAN_CONTROL
 
 #ifdef DYNAMIXEL_CONTROL
   #define SERIAL_MONITOR Serial2 //output to USB-Serial adapter
@@ -92,17 +92,17 @@ class ArduinoPoppy {
     Motor LeftShoulder =          {0x07,     95,    -83,   2,        HERK};    //7   * Motor F - Herkulex, Left Shoulder
 
     Motor TorsoDRRear =           {0x11,   -150,    -30,    -94,        HERK};    //8   * Motor 11 - Herkulex, Torso Double Rotation Backside
-    Motor TorsoDRFront =          {0x12,    -30,     55,     31,        HERK};    //9   * Motor 12 - Herkulex, Torso Double Rotation Frontside
+    Motor TorsoDRFront =          {0x12,    1.63,     -70,    -21,        HERK};    //9   * Motor 12 - Herkulex, Torso Double Rotation Frontside
     Motor Abdomen =               {0x13,   -166,    0,      -95,        HERK};    //10  * Motor 13 - Herkluex, Abdomen
 
-    Motor LHipX    =              {0x09,   -105,    -60,      -100,        HERK};    //11  * Herkluex, right hip 1
+    Motor LHipX    =              {0x09,   0,    16,      13,        HERK};    //11  * Herkluex, right hip 1
     Motor LHipZ    =              {0x0E,   25,    -5,      8,        HERK};    //12  * Herkluex, right hip 2 - NEEDS ADJUSTMENT
     Motor LHipY    =              {0x05,   2,    146,      77,        DYN};    //13  * Dynamixel, left hip 3 //2 ,146, 77
     Motor LKnee    =              {0x0C,   -63,  22,      19,        HERK};    //14  * Herkluex, right knee
     Motor LAnkle   =              {0x05,  -84.17, -146.58,      -126.92,        HERK};    //15  * Herkluex, right ankle
 
-    Motor RHipX    =              {0x08,   -27,    -74,      -50,        HERK};    //16  * Herkluex, right  hip 1
-    Motor RHipZ    =              {0x04,   -160, -119 , -140,        HERK};    //17  * Herkluex, right hip 2
+    Motor RHipX    =              {0x08,   17.55,    -14,      6,        HERK};    //16  * Herkluex, right  hip 1
+    Motor RHipZ    =              {0x04,   -62, 40 , -10,        HERK};    //17  * Herkluex, right hip 2
     Motor RHipY    =              {0x02,   171,    4,      90,        DYN};    //18  * Dynamixel, right hip 3
     Motor RKnee    =              {0x14,    43,      -50,      -47,        HERK};    //19  * Herkluex, right knee
     Motor RAnkle   =              {0x0D,    112,     45,      66,        HERK};    //20  * Herkluex, right ankle - unplugged ???

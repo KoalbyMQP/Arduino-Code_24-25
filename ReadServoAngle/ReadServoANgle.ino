@@ -1,6 +1,6 @@
 //Disable torque for a specific motor and constantly print its position, used to figure out limits and home position
 #include <Herkulex.h>
-int n=0x05; //motor ID - verify your ID !!!!
+int n=0x08; //motor ID - verify your ID !!!!
 // -60,  -161, -154
 
 //Left E right 4
