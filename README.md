@@ -1,7 +1,7 @@
 # Arduino-Code
-##Arduino Side of Poppy
+## Arduino Side of Poppy
 
-###Included Programs
+### Included Programs
 - Dynamixel_Readdress - Readdress a Dynamixel motor. Currently in need of fixing/commenting
 - HerkuleX_Check - Checks all attached HerkuleX’s (prints any ID’s that return an anlg)
 - HerkuleX_Readdress - set the address of a HerkuleX motor. NEVER run this on the real robot. It checks and resets all attached HerkuleX’s, so *only* the motor which you want to change should be connected
@@ -13,5 +13,5 @@
 - TestProtocolSwap - Test program used to check speed switching between Dynamixel protocols, not useful in most cases but left here anyway
 - scan_dynamixel_mega - Prints all attached Dynamixels at any baud rate or protocol. Directly from a library example
 
-###Firmware
+### Firmware
 
