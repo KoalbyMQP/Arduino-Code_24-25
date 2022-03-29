@@ -8,7 +8,6 @@ ArduinoPoppy::ArduinoPoppy() {
 void ArduinoPoppy::Setup() {
   delay(2000);  //a delay to have time for serial monitor opening
   SERIAL_MONITOR.begin(115200);    // Open serial communications
-  //Serial2.begin(115200);
   #ifdef HUMAN_CONTROL
   SERIAL_MONITOR.println("Begin");
   #endif
@@ -16,14 +15,14 @@ void ArduinoPoppy::Setup() {
   //Start Dynamixel shield
   // Set Port baudrate to 115200. This has to match with DYNAMIXEL baudrate.
   #ifdef DYNAMIXEL_CONTROL
-  dxl.begin(115200); //UNCOMMENT LINE WHEN USING SERIAL ADAPTOR - THIS CONFLICTS WITH USB SERIAL
+  dxl.begin(115200); 
   #endif
   
   // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version - 1.0 for our motors
-  dxl.setPortProtocolVersion(1.0);
+  dxl.setPortProtocolVersion(1.0); //This differs for Dynamixel 320's, will need to check before each command
 
   //Start HerkuleX
-  Herkulex.beginSerial1(115200); //open serial port 1
+  Herkulex.beginSerial1(115200); //open serial port 1 for HerkuleX's
   delay(100);
 }
 
@@ -39,8 +38,7 @@ int ArduinoPoppy::ReadCommand() {
   return readCommand;
 }
 
-void ArduinoPoppy::Initialize() {  
-  Serial.println("INIT");
+void ArduinoPoppy::Initialize() {   
   Herkulex.initialize(); //initialize motors
   for (int i = 0; i < MOTOR_COUNT; i++)
     if (idArr[i].type == HERK)

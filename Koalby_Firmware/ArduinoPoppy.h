@@ -8,6 +8,7 @@
 //define this to use serial2 as output, comment out this definition to use USB
 #define DYNAMIXEL_CONTROL
 //#define HUMAN_CONTROL
+#define DEBUG
 
 #ifdef DYNAMIXEL_CONTROL
   #define SERIAL_MONITOR Serial2 //output to USB-Serial adapter

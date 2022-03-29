@@ -14,8 +14,11 @@
 * limitations under the License.
 *******************************************************************************/
 
+//This code is almost exactly coppied from the library example
 #include <DynamixelShield.h>
 
+//Serial line of attached Serial to USB converter. 
+//We use Serial for Dynamixel control(not changable), Serial1 for HerkuleX's, and Serial2 for the adaptor
 #define DEBUG_SERIAL Serial2
 
 #define MAX_BAUD  5
@@ -34,7 +37,8 @@ void setup() {
   // For Uno, Nano, Mini, and Mega, use UART port of DYNAMIXEL Shield to debug.
   DEBUG_SERIAL.begin(115200);   //set debugging port baudrate to 115200bps
   while(!DEBUG_SERIAL);         //Wait until the serial port is opened
-    
+
+  delay(1000);
   for(int8_t protocol = 1; protocol < 3; protocol++) {
     // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version.
     dxl.setPortProtocolVersion((float)protocol);
@@ -65,5 +69,5 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // No loop, runs once
 }
