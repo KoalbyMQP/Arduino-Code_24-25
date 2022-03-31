@@ -13,18 +13,11 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *******************************************************************************/
-//ID : 3, Model Number: 310 - Pelvic thrust
-//ID : 4, Model Number: 12
-//ID : 5, Model Number: 310
-//DXL2?
-
-
-
 #include <DynamixelShield.h>
 
 #define DEBUG_SERIAL Serial2
 
-const uint8_t DXL_ID = 0x03;
+const uint8_t DXL_ID = 0x02;
 const float DXL_PROTOCOL_VERSION = 1.0;
 
 //2 ,146, 77
@@ -51,14 +44,17 @@ void setup() {
   dxl.torqueOff(DXL_ID);
   dxl.setOperatingMode(DXL_ID, OP_POSITION);
   //dxl.torqueOn(DXL_ID);
+   
 }
+
+//225,229, 227
 
 void loop() {
   // put your main code here, to run repeatedly:
   
   // Please refer to e-Manual(http://emanual.robotis.com/docs/en/parts/interface/dynamixel_shield/) for available range of value. 
   // Set Goal Position in RAW value
-  //dxl.setGoalPosition(DXL_ID, 180, UNIT_DEGREE);
+  //dxl.setGoalPosition(DXL_ID, 20, UNIT_DEGREE);
   delay(1000);
   // Print present position in raw value
   DEBUG_SERIAL.print("Present Position(raw) : ");
@@ -66,7 +62,7 @@ void loop() {
   delay(1000);
 
   // Set Goal Position in DEGREE value
-  //dxl.setGoalPosition(DXL_ID, 150, UNIT_DEGREE);
+  //dxl.setGoalPosition(DXL_ID, 60, UNIT_DEGREE);
   delay(1000);
   // Print present position in degree value
   DEBUG_SERIAL.print("Present Position(degree) : ");

@@ -8,7 +8,7 @@
 //define this to use serial2 as output, comment out this definition to use USB
 #define DYNAMIXEL_CONTROL
 //#define HUMAN_CONTROL
-#define DEBUG
+//#define DEBUG
 
 #ifdef DYNAMIXEL_CONTROL
   #define SERIAL_MONITOR Serial2 //output to USB-Serial adapter
@@ -79,7 +79,7 @@ class ArduinoPoppy {
     int lastMirror = 0;
 
     //Private Constants - This defines the robot's motor setup
-    const static int MOTOR_COUNT = 24;//sizeOF(IdArr) not working right, using manual definition
+    const static int MOTOR_COUNT = 26;//sizeOF(IdArr) not working right, using manual definition
 
     //List of motors
     Motor RightForearm =          {0x01,     -1,    -125,     -7,        HERK};    //0   * Motor 1 - Herkulex, Right Forearm
@@ -98,24 +98,23 @@ class ArduinoPoppy {
 
     Motor LHipX    =              {0x09,   0,    16,      13,        HERK};    //11  * Herkluex, right hip 1
     Motor LHipZ    =              {0x0E,   25,    -5,      8,        HERK};    //12  * Herkluex, right hip 2 - NEEDS ADJUSTMENT
-    Motor LHipY    =              {0x05,   2,    146,      77,        DYN};    //13  * Dynamixel, left hip 3 //2 ,146, 77
+    Motor LHipY    =              {0x05,   297,    297,      297,        DYN};    //13  * Dynamixel, left hip 3 //2 ,146, 77
     Motor LKnee    =              {0x0C,   -63,  22,      19,        HERK};    //14  * Herkluex, right knee
     Motor LAnkle   =              {0x05,  -84.17, -146.58,      -126.92,        HERK};    //15  * Herkluex, right ankle
 
     Motor RHipX    =              {0x08,   17.55,    -14,      6,        HERK};    //16  * Herkluex, right  hip 1
     Motor RHipZ    =              {0x04,   -62, 40 , -10,        HERK};    //17  * Herkluex, right hip 2
-    Motor RHipY    =              {0x02,   171,    4,      90,        DYN};    //18  * Dynamixel, right hip 3
-    Motor RKnee    =              {0x14,    43,      -50,      -47,        HERK};    //19  * Herkluex, right knee
+    Motor RHipY    =              {0x02,   116,    116,      116,        DYN};    //18  * Dynamixel, right hip 3
+    Motor RKnee    =              {0x14,    43,      -11,      -9,        HERK};    //19  * Herkluex, right knee
     Motor RAnkle   =              {0x0D,    112,     45,      66,        HERK};    //20  * Herkluex, right ankle - unplugged ???
 
-    Motor AbsY =            {0x03,   180,    120,      150,        DYN};     //21  * Motor X - Dynamixel, test motor
-    Motor AbsX =             {0x01,   140,    304,      219,        DYN};     //22  * Motor X - Dynamixel, test motor
+    Motor AbsY =            {0x03,   150,    150,      150,        DYN};     //21  * Motor X - Dynamixel, test motor
+    Motor AbsX =             {0x01,   230,    230,      230,        DYN};     //22  * Motor X - Dynamixel, test motor
 
+    Motor HeadZ =            {0x7,   10,    110,      60,        DYN};     //23  * Neck rotation
+    Motor HeadY =             {0x4,   120,    140,      140,        DYN};     //24  * Head nodding
 
-    Motor HeadZ =            {0x55,   180,    120,      150,        DYN};     //23  * Neck rotation
-    Motor HeadY =             {0x55,   140,    304,      219,        DYN};     //24  * Head nodding
-
-    Motor dxlTest =               {0x02,   -100,    100,      0,        DYN};     //25  * Motor X - Dynamixel, test motor
+    Motor dxlTest =               {0x100,   -100,    100,      0,        DYN};     //25  * Motor X - Dynamixel, test motor
     
   ///1,3,4,5,6,7,8,9,A,C,E,F,11,12,13,14 //171, 4,90
     //Hips out:
@@ -131,6 +130,7 @@ class ArduinoPoppy {
                        LHipX, LHipZ, LHipY, LKnee, LAnkle,
                        RHipX, RHipZ, RHipY, RKnee, RAnkle,
                        AbsY,AbsX,
+                       HeadZ,HeadY,
                        dxlTest};
 
     //Pairs of motors to mirror - 2nd motor sets position to match first motor

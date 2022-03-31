@@ -59,10 +59,6 @@ void ArduinoPoppy::Initialize() {
       //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
       Herkulex.getAngle(idArr[i].hexID);
     } else {
-      //Not completely tested, capable of moving motor
-      //dxl.writeControlTableItem(108, idArr[i].hexID, 50); //acceleration limit
-      //dxl.writeControlTableItem(112, idArr[i].hexID, 100); //velocity limit
-      
       dxl.setGoalPosition(idArr[i].hexID, idArr[i].homePos,UNIT_DEGREE);
     }
   }
@@ -75,8 +71,12 @@ void ArduinoPoppy::Shutdown() {
   #endif
   
   for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++) {
-    Herkulex.torqueOFF(idArr[motorNum].hexID);
-    Herkulex.setLed(idArr[motorNum].hexID, LED_RED); 
+    if (idArr[motorNum].type == HERK) {
+      Herkulex.torqueOFF(idArr[motorNum].hexID);
+      Herkulex.setLed(idArr[motorNum].hexID, LED_RED); 
+    }else{
+      dxl.torqueOff(idArr[motorNum].hexID);
+    }
   }
 }
 
@@ -86,9 +86,8 @@ void ArduinoPoppy::GetPosition() {
   // Get motor id
   int motorNum =  getIntFromSerial("Enter Motor Id");
 
-  //Print the Angle - This should return in the same range (0-100) as set position for the Pi - reverses earlier mapping
+  //Print the Angle
   //UPDATE: returns distance from home
-  //SERIAL_MONITOR.println(Herkulex.getAngle(idArr[motorNum].hexID));
   if (idArr[motorNum].type == HERK) {
     
     float angle=0;
@@ -104,13 +103,16 @@ void ArduinoPoppy::GetPosition() {
     else
       SERIAL_MONITOR.println((int)(-angle+idArr[motorNum].homePos));
 
-    /*Serial.print("get position: ");
-    Serial.println(angle-idArr[motorNum].homePos);*/
-    //delay(5);
-    //Serial.println(map(angle,    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
   } else {
-    //TODO fix
-    SERIAL_MONITOR.println((int)(map(dxl.getPresentPosition(idArr[motorNum].hexID, UNIT_DEGREE),    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100)));
+    float angle=0;
+    angle = dxl.getPresentPosition(idArr[motorNum].hexID, UNIT_DEGREE);
+    
+    //Serial2.println(angle);
+    //Serial2.println(map(angle,    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
+    if(idArr[motorNum].minPos<idArr[motorNum].maxPos)
+      SERIAL_MONITOR.println((int)(angle-idArr[motorNum].homePos));
+    else
+      SERIAL_MONITOR.println((int)(-angle+idArr[motorNum].homePos));
   }
 }
 
@@ -129,10 +131,6 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
   if(positionPerc,idArr[motorNum].minPos<idArr[motorNum].maxPos){
     positionPerc = positionPerc+idArr[motorNum].homePos;
     mappedTarget = min(max(positionPerc,idArr[motorNum].minPos),idArr[motorNum].maxPos); 
-    /*SERIAL_MONITOR.print("Val: ");
-    SERIAL_MONITOR.print(positionPerc);
-    SERIAL_MONITOR.print("actual: ");
-    SERIAL_MONITOR.println(mappedTarget);*/
   }else{
     positionPerc = -positionPerc+idArr[motorNum].homePos;
     mappedTarget = max(min(positionPerc,idArr[motorNum].minPos),idArr[motorNum].maxPos); 
