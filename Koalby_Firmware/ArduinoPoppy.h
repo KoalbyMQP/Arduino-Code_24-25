@@ -108,11 +108,11 @@ class ArduinoPoppy {
     Motor RKnee    =              {0x14,    43,      -11,      -9,        HERK};    //19  * Herkluex, right knee
     Motor RAnkle   =              {0x0D,    112,     45,      66,        HERK};    //20  * Herkluex, right ankle - unplugged ???
 
-    Motor AbsY =            {0x03,   150,    150,      150,        DYN};     //21  * Motor X - Dynamixel, test motor
+    Motor AbsY =            {0x03,   170,    170,      170,        DYN};     //21  * Motor X - Dynamixel, test motor
     Motor AbsX =             {0x01,   230,    230,      230,        DYN};     //22  * Motor X - Dynamixel, test motor
 
-    Motor HeadZ =            {0x7,   10,    110,      60,        DYN};     //23  * Neck rotation
-    Motor HeadY =             {0x4,   120,    140,      140,        DYN};     //24  * Head nodding
+    Motor HeadZ =            {0x7,   60,    60,      60,        DYN};     //23  * Neck rotation 10,    110,      60
+    Motor HeadY =             {0x4,   155,    155,      155,        DYN};     //24  * Head nodding 120,    140,      140
 
     Motor dxlTest =               {0x100,   -100,    100,      0,        DYN};     //25  * Motor X - Dynamixel, test motor
     

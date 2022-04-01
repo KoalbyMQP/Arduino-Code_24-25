@@ -286,9 +286,6 @@ void ArduinoPoppy::UpdateRobot() {
 //Return an integer entered over serial - options with and without a message
 int ArduinoPoppy::getIntFromSerial(){
   while (SERIAL_MONITOR.available() == 0) {}
-  /*int i = SERIAL_MONITOR.parseInt();
-  Serial.print(", ");
-  Serial.print(i);*/
   return SERIAL_MONITOR.parseInt();
 }
 
