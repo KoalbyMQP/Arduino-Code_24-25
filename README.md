@@ -15,3 +15,7 @@
 
 ### Firmware
 
+Include this library in ArduinoIDE as well as DynamixelShield
+https://robottini.altervista.org/dongbu-herkulex-arduino-library-2
+
+
