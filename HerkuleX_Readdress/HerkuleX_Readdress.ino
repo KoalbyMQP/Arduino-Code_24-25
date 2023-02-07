@@ -2,7 +2,7 @@
 
 //NEVER RUN THIS PROGRAM ON THE ACTUAL ROBOT IT WILL RESET EVERYTHING
 int n=0xfd; //set the motor ID - cant be FE
-int newId=0x0B; //set the motor ID
+int newId=1; //set the motor ID
 
 void setup()  
 {
@@ -15,8 +15,13 @@ void setup()
   Herkulex.initialize(); //initialize motors
   delay(500); 
 
-  for(int i =0;i<0xFE;i++)
+  for(int i=0;i<0xFE;i++){
     Herkulex.set_ID(i, newId);
+    Serial.println(i);
+    Herkulex.setLed(i, LED_PINK);
+//    delay(1200);
+  }
+    
   Herkulex.reboot(newId); //reboot first motor
 
   delay(500); 
@@ -26,12 +31,13 @@ void setup()
 
 void loop(){
   Serial.println("Move Angle: -100 degrees");
-  Herkulex.moveOneAngle(newId, -25, 1000, LED_BLUE); //move motor with 300 speed  
+//  Herkulex.setLed(newId, LED_GREEN);
+  Herkulex.moveOneAngle(newId, -25, 1000, LED_GREEN); //move motor with 300 speed  
   delay(1200);
   Serial.print("Get servo Angle:");
   Serial.println(Herkulex.getAngle(newId));
   Serial.println("Move Angle: 100 degrees");
-  Herkulex.moveOneAngle(newId, 25, 1000, LED_BLUE); //move motor with 300 speed  
+  Herkulex.moveOneAngle(newId, 25, 1000, LED_GREEN); //move motor with 300 speed  
   delay(1200);
   Serial.print("Get servo Angle:");
   Serial.println(Herkulex.getAngle(newId));

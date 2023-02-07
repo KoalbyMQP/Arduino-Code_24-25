@@ -7,6 +7,7 @@
 
 //define this to use serial2 as output, comment out this definition to use USB
 #define DYNAMIXEL_CONTROL
+
 //#define HUMAN_CONTROL
 //#define DEBUG
 
@@ -26,6 +27,10 @@ enum Commands { Init = 1, GetPosition = 5, SetPosition = 10,
                 ArmMirror = 15, /*set arms to mirror each other*/
                 SetTorque = 20,/*Set torque to "on" or "off" based on ID*/
                 SetCompliant = 21,/*Set torque to "on" or "off" based on ID*/
+                ReadBatteryLevel = 30,
+                InitIMU = 40,
+                ReadIMUData = 41,
+                ReadTFLunaData = 50,
                 Shutdown = 100
               };
 
@@ -49,6 +54,8 @@ class ArduinoPoppy {
 
     // Global Methods
     void Setup();
+    void SetupIMU();
+    void SetupTFLuna();
     int ReadCommand();
     void Initialize();
     void Shutdown();
@@ -57,6 +64,9 @@ class ArduinoPoppy {
     void SetPositionT();
     void SetTorque();
     void SetCompliant();
+    void ReadBatteryLevel();
+    void ReadIMUData();
+    void ReadTFLunaData();
     void ArmMirror();
     void PuppetMaster();
     void UpdateRobot();
@@ -82,7 +92,7 @@ class ArduinoPoppy {
     const static int MOTOR_COUNT = 26;//sizeOF(IdArr) not working right, using manual definition
 
     //List of motors
-    Motor RightForearm =          {0x01,     6,    -118,     0,        HERK};    //0   * Motor 1 - Herkulex, Right Forearm
+    Motor Right_Shoulder_Rotator_Joint =          {0x01,     6,    -118,     0,        HERK};    //0   * Motor 1 - Herkulex, Right Forearm
     Motor RightArmZ     =         {0x02,    97,    -90,       0,        HERK};    //1   * Motor 2 - Herkulex, Right Upper Arm  *** Wrong Limit Motor Needs to be adjusted ????
     Motor RightShoulderX =        {0x03,    133,     -17,      0,        HERK};    //2   * Motor 3 - Herkulex, Right Arm Connector
     Motor RightShoulderY =        {0x0F,    -95,   90,     0,       HERK};    //3   * Motor F - Herkulex, Right Shoulder
@@ -124,7 +134,7 @@ class ArduinoPoppy {
   
     //Remaining motor is 0x10
     
-    Motor idArr[MOTOR_COUNT] = {RightForearm, RightArmZ, RightShoulderX, RightShoulderY,
+    Motor idArr[MOTOR_COUNT] = {Right_Shoulder_Rotator_Joint, RightArmZ, RightShoulderX, RightShoulderY,
                        LeftForearm,  LeftUpperArm,  LeftUpperConnector,  LeftShoulder,
                        TorsoDRRear,  TorsoDRFront, Abdomen,
                        LHipX, LHipZ, LHipY, LKnee, LAnkle,

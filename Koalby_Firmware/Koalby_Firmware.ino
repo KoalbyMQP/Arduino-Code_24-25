@@ -28,6 +28,10 @@ void loop() {
       #endif
       break;
 
+   case InitIMU:
+    robot.SetupIMU();
+    break;
+
     case GetPosition:
       robot.GetPosition();
       #ifdef DEBUG 
@@ -57,7 +61,20 @@ void loop() {
     case SetCompliant:
       robot.SetCompliant();
       break;
-      
+
+    case ReadBatteryLevel:
+      robot.ReadBatteryLevel();
+      break;
+
+   case ReadIMUData:
+      robot.ReadIMUData();
+      break;
+
+   case ReadTFLunaData:
+      robot.SetupTFLuna();
+      robot.ReadTFLunaData();
+      break;
+       
     case Shutdown:
       robot.Shutdown();
       break;
