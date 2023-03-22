@@ -7,6 +7,7 @@ void setup()
   Serial.begin(115200);    // Open serial communications
   Serial.println("Begin");
   Herkulex.beginSerial1(115200); //open serial port 1 
+//  Herkulex.beginSerial2(115200); //open serial port 2 
 
   for(int i =0;i<0xFE;i++)
     Herkulex.reboot(i); //reboot first motor

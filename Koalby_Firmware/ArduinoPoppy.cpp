@@ -1,18 +1,22 @@
-#include <TFMini.h>
-
 #include "ArduinoPoppy.h"
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 #define BNO055_SAMPLERATE_PERIOD_MS 10
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 
-#include <TFMPlus.h>  // Include TFMini Plus Library v1.5.0
-TFMPlus tfmP;         // Create a TFMini Plus object
+//#include <SoftwareSerial.h>
+#include <HuskyLensProtocolCore.h>
+#include <HUSKYLENSMindPlus.h>
+#include <DFRobot_HuskyLens.h>
+#include <HUSKYLENS.h>
+//#define SoftwareSerial tfluna
+
+Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
+//SoftwareSerial tf(12, 13);
+
 
 ArduinoPoppy::ArduinoPoppy() {
-
 }
 
 
@@ -22,7 +26,6 @@ void ArduinoPoppy::Setup() {
 #ifdef HUMAN_CONTROL
   SERIAL_MONITOR.println("Begin");
 #endif
-
   //Start Dynamixel shield
   // Set Port baudrate to 115200. This has to match with DYNAMIXEL baudrate.
 #ifdef DYNAMIXEL_CONTROL
@@ -38,43 +41,56 @@ void ArduinoPoppy::Setup() {
 }
 
 void ArduinoPoppy::SetupIMU() {
-  if (!bno.begin())
-  {
-    if (SERIAL_MONITOR.available() != 0) {
-      /* There was a problem detecting the BNO055 ... check your connections */
-      SERIAL_MONITOR.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-      while (1);
-    }
 
-  }
-
-  delay(1000);
-
-  bno.setExtCrystalUse(true);
 
 }
 
-// Initialize variables
-int16_t tfDist = 0;    // Distance to object in centimeters
-int16_t tfFlux = 0;    // Strength or quality of return signal
-int16_t tfTemp = 0;    // Internal temperature of Lidar sensor chip
-
 void ArduinoPoppy::SetupTFLuna() {
-  Serial2.begin( 115200);  // Initialize TFMPLus device serial port.
-    delay(20);               // Give port time to initalize
-    tfmP.begin( &Serial2);   // Initialize device library object and...
-                             // pass device serial port to the object.
+  //  tf.begin(115200);
+  SERIAL_MONITOR.println ("Initializing...");
 
-    
-// - - Perform a system reset - - - - - - - - - - -
-    printf( "Soft reset: ");
-    if( tfmP.sendCommand( SOFT_RESET, 0))
-    {
-        printf( "passed.\r\n");
-    }
-    else tfmP.printReply();
-  
-    delay(500);  // added to allow the System Rest enough time to complete
+}
+
+//void printResult(HUSKYLENSResult result){
+//    if (result.command == COMMAND_RETURN_BLOCK){
+//        Serial.println(String()+F("Block:xCenter=")+result.xCenter+F(",yCenter=")+result.yCenter+F(",width=")+result.width+F(",height=")+result.height+F(",ID=")+result.ID);
+//    }
+//   // else if (result.command == COMMAND_RETURN_ARROW){
+//   //     Serial.println(String()+F("Arrow:xOrigin=")+result.xOrigin+F(",yOrigin=")+result.yOrigin+F(",xTarget=")+result.xTarget+F(",yTarget=")+result.yTarget+F(",ID=")+result.ID);
+//    }
+//    else{
+//        Serial.println("Object unknown!");
+//    }
+//}
+
+
+//void printResult(HUSKYLENSResult result);
+
+HUSKYLENS huskylens;
+SoftwareSerial huskySerial(10, 11);
+//int ledPin = 13;
+void printResult(HUSKYLENSResult result);
+
+void ArduinoPoppy::SetupHuskyLens() {
+
+  //    Serial.begin(115200);
+  huskySerial.begin(9600);
+  pinMode (2, OUTPUT);
+  pinMode (3, OUTPUT);
+  pinMode (4, OUTPUT);
+  pinMode (7, OUTPUT);
+  pinMode (5, OUTPUT);
+  pinMode (6, OUTPUT);
+  //    pinMode(ledPin, OUTPUT);
+  //    analogWrite(5, 180); //motor1 enable pin
+  //    analogWrite(6, 180); //motor2 enable pin
+  while (!huskylens.begin(huskySerial))
+  {
+    //Serial.println(F("Begin failed!"));
+    //Serial.println(F("1.Please recheck the "Protocol Type" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
+    //Serial.println(F("2.Please recheck the connection."));
+    delay(100);
+  }
 }
 
 int ArduinoPoppy::ReadCommand() {
@@ -111,7 +127,7 @@ void ArduinoPoppy::Initialize() {
       //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
       Herkulex.getAngle(idArr[i].hexID);
     } else {
-//      dxl.setGoalPosition(idArr[i].hexID, idArr[i].homePos, UNIT_DEGREE);
+      //      dxl.setGoalPosition(idArr[i].hexID, idArr[i].homePos, UNIT_DEGREE);
     }
   }
 }
@@ -196,6 +212,17 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
     Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, 1000, LED_BLUE); //move motor with 300 speed
   else //Dynamixel
     dxl.setGoalPosition(idArr[motorNum].hexID, mappedTarget, UNIT_DEGREE);
+}
+
+void ArduinoPoppy::SetRotationOn() {
+  int motorNum = getIntFromSerial("Enter Motor Index ");
+  int goalSpeed = getIntFromSerial("Enter Motor Position ");
+  Herkulex.moveSpeedOne(idArr[motorNum].hexID, goalSpeed, 1000, LED_BLUE);
+}
+
+void ArduinoPoppy::SetRotationOff() {
+  int motorNum = getIntFromSerial("Enter Motor Index ");
+  Herkulex.moveSpeedOne(idArr[motorNum].hexID, 0, 1000, LED_BLUE); //set speed to 0s
 }
 
 void ArduinoPoppy::SetPositionT() { //Set position with time of motion
@@ -291,7 +318,7 @@ void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
   //Send parsed command to the motor
   if (idArr[motorNum].type == HERK)
     if (setTorqueOn) {
-      SERIAL_MONITOR.print("Set to compliant: ");
+      //      SERIAL_MONITOR.print("Set to compliant: ");
       SERIAL_MONITOR.println(motorNum);
       compliantMotorSet.add(motorNum);
     } else
@@ -304,17 +331,17 @@ void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
 
 
 void ArduinoPoppy::ReadBatteryLevel() {
-  float analogValue = analogRead(A0);
-  float voltage = 0.0048*analogValue;
+  float analogValue = analogRead(A10);
+  float voltage = 0.0048 * analogValue;
   SERIAL_MONITOR.println(voltage);
 }
 
 // Return position in the same range as setPosition
 void ArduinoPoppy::ReadIMUData() {
 
-//  long int t1 = millis();
-//  SERIAL_MONITOR.print(t1);
-//  SERIAL_MONITOR.println("");
+  //  long int t1 = millis();
+  //  SERIAL_MONITOR.print(t1);
+  //  SERIAL_MONITOR.println("");
 
   /* Get a new sensor event */
   imu::Vector<3> gyroscope = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
@@ -351,24 +378,85 @@ void ArduinoPoppy::ReadIMUData() {
 
 }
 
+
 void ArduinoPoppy::ReadTFLunaData() {
-//  delay(50);   // Loop delay to match the 20Hz data frame rate
-//
-//    if( tfmP.getData( tfDist, tfFlux, tfTemp)) // Get data from the device.
-//    {
-////      SERIAL_MONITOR.print( "Dist:%04 ", tfDist);   // display distance,
-////      SERIAL_MONITOR.print( "Dist:%04icm ", tfDist);   // display distance,
-////      SERIAL_MONITOR.print( "Flux:%05i ",   tfFlux);   // display signal strength/quality,
-////      SERIAL_MONITOR.print( "Temp:%2i%s",  tfTemp, "C");   // display temperature,
-////      SERIAL_MONITOR.print( "\r\n");                   // end-of-line.
-//    }
-//    else                  // If the command fails...
-//    {
-//      SERIAL_MONITOR.print(tfmP.printFrame());  // display the error and HEX dataa
-//    }
+  //  tf.listen();
+  //  SERIAL_MONITOR.println(tf.read());
+
+
+  //const int HEADER = 0x59;
+  //const int HEADER = 173;
+  //int uart[9]; //save data measured by LiDAR
+  //int i;
+  //int dist; //actual distance measurements of LiDAR
+  //int check; //save check value
+
+  //  if (tf.available()) { //check if serial port has data input
+  //    if (tf.read() == HEADER) { //assess data package frame header 0x59
+  ////      Serial.println(HEADER);
+  //      uart[0] = HEADER;
+  //      if (tf.read() == HEADER) { //assess data package frame header 0x59
+  //        uart[1] = HEADER;
+  //        for (i = 2; i < 9; i++) { //save data in array
+  //          uart[i] = tf.read();
+  //        }
+  //        check = uart[0] + uart[1] + uart[2] + uart[3] + uart[4] + uart[5] + uart[6] + uart[7];
+  //        if (uart[8] == (check & 0xff)) { //verify the received data as per protocol
+  ////          uart[2] = uart[2] + 84;
+  ////          uart[3] = uart[3] + 84;
+  //          dist = uart[2] + uart[3] * 256; //calculate distance value
+  ////          Serial.print("2 = ");
+  ////          Serial.print(uart[2]); //output measure distance value of LiDAR
+  ////          Serial.print('\n');
+  ////          Serial.print("3 = ");
+  ////          Serial.print(uart[3]); //output measure distance value of LiDAR
+  ////          Serial.print('\n');
+  //
+  //          Serial.print("dist = ");
+  //          Serial.print(dist); //output measure distance value of LiDAR
+  //          Serial.print('\n');
+  //        }
+  //      }
+  //    }
+  //  }
 
 }
 
+void ArduinoPoppy::ReadHuskyLensData() {
+  Serial.print(huskylens.request());
+  if (!huskylens.request())
+    SERIAL_MONITOR.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+  else if (!huskylens.isLearned())
+    SERIAL_MONITOR.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+  else if (!huskylens.available())
+    SERIAL_MONITOR.println(F("No block or arrow appears on the screen!"));
+  else
+  {
+    SERIAL_MONITOR.println(F("###########"));
+    while (huskylens.available())
+    {
+      HUSKYLENSResult result = huskylens.read();
+      if (result.command == COMMAND_RETURN_BLOCK) {
+        SERIAL_MONITOR.print(result.xCenter);
+        SERIAL_MONITOR.print(",");
+        SERIAL_MONITOR.print(result.yCenter);
+        SERIAL_MONITOR.print(",");
+        SERIAL_MONITOR.print(result.width);
+        SERIAL_MONITOR.print(",");
+        SERIAL_MONITOR.print(result.height);
+        SERIAL_MONITOR.print(",");
+        SERIAL_MONITOR.print(result.ID);
+        SERIAL_MONITOR.println("");
+      }
+      else {
+        SERIAL_MONITOR.println("Object unknown!");
+      }
+      //driveBot(result);
+    }
+  }
+
+
+}
 void ArduinoPoppy::UpdateRobot() {
   if (armMirrorModeOn) {
     lastMirror = millis();
