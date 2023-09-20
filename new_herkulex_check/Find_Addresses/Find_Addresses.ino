@@ -1,7 +1,5 @@
-#include <Arduino.h>
 #include <Herkulex.h>
 
-// ripped straight from HerkuleX_Check, make green instead of blue
 //Checks which motors are attached and reading real values
 void setup()  
 {
@@ -22,12 +20,12 @@ void setup()
 void loop(){
   for(int i =0;i<0xFD;i++){
     int angle = Herkulex.getAngle(i);
-    if(angle != -166){
+    if(angle != -166 && angle != -83){
       Serial.print("Got servo ");
       Serial.print(i);
       Serial.print(" Angle: ");
       Serial.println(angle);
-      Herkulex.setLed(i,LED_GREEN);
+      Herkulex.setLed(i,LED_BLUE);
       Herkulex.torqueOFF(i);
     }
   }
