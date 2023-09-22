@@ -1,4 +1,4 @@
-# Arduino-Code
+# Arduino-Code_23-24
 ## Arduino Side of Koalby/Ava
 
 ### Included Programs
@@ -16,8 +16,8 @@
 ### Firmware
 
 Include this library
-https://robottini.altervista.org/dongbu-herkulex-arduino-library-2
-in ArduinoIDE as well as DynamixelShield library
+https://github.com/Arduinolibrary/DFRobot_Herkulex_library/raw/master/Herkulex.zip
+in ArduinoIDE
 
 ## Branches (Update as new branches are made)
 ### main
