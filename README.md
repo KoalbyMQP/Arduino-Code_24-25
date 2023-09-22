@@ -24,5 +24,3 @@ in ArduinoIDE
 Ready to deploy for good production codebase on Ava's Arduino
 ### dev
 Ready to test development codebase on Ava's Arduino
-### initialtesting
-Modified versions of 22-23 scripts to test with Ava's hardware
