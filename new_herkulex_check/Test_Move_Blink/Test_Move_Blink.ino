@@ -15,12 +15,12 @@ void setup()
 
 void loop(){
   Serial.println("Move Angle: -100 degrees");
-  Herkulex.setLED(n, LED_BLUE); //move motor with 300 speed
+  Herkulex.setLed(n, LED_BLUE); //move motor with 300 speed
   delay(1200);
   Serial.print("Get servo Angle:");
   Serial.println(Herkulex.getAngle(n));
   Serial.println("Move Angle: 100 degrees");
-  Herkulex.setLED(n, 0x00); //move motor with 300 speed
+  Herkulex.setLed(n, 0x00); //move motor with 300 speed
   delay(1200);
   Serial.print("Get servo Angle:");
   Serial.println(Herkulex.getAngle(n));
