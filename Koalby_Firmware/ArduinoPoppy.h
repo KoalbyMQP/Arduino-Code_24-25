@@ -100,69 +100,113 @@ class ArduinoPoppy {
     int lastMirror = 0;
 
     //Private Constants - This defines the robot's motor setup
-    const static int MOTOR_COUNT = 26;//sizeOF(IdArr) not working right, using manual definition
+    const static int MOTOR_COUNT = 27;//sizeOF(IdArr) not working right, using manual definition
 
-    //List of motors
-    Motor Right_Shoulder_Rotator_Joint =          {0x01,     6,    -118,     0,        HERK};    //0   * Motor 1 - Herkulex, Right Forearm
-    Motor RightArmZ     =         {0x02,    97,    -90,       1,        HERK};    //1   * Motor 2 - Herkulex, Right Upper Arm  *** Wrong Limit Motor Needs to be adjusted ????
-    Motor RightShoulderX =        {0x03,    133,     -17,      2,        HERK};    //2   * Motor 3 - Herkulex, Right Arm Connector
-    Motor RightShoulderY =        {0x0F,    -95,   90,     3,       HERK};    //3   * Motor F - Herkulex, Right Shoulder
+    // Left Arm (Wrist to Shoulder)
+    Motor Left_Wrist_Abductor               = {26, -160, 160, 0, HERK};
+    Motor Left_Elbow                        = {1, -160, 160, 0, HERK};
+    Motor Left_Arm_Rotator                  = {2, -160, 160, 0, HERK};
+    Motor Left_Arm_Abductor                 = {3, -160, 160, 0, HERK};
 
-    Motor LeftForearm =           {0x0B,     131,    -3,      4,        HERK};    //4   * Motor B - Herkulex, Left Forearm ???
-    Motor LeftUpperArm =          {0x0A,     90,    -90,     5,        HERK};    //5   * Motor A - Herkulex, Left Upper Arm
-    Motor LeftUpperConnector =    {0x06,     10,   -142,     6,        HERK};    //6   * Motor 6 - Herkulex, Left Arm Connector
-    Motor LeftShoulder =          {0x07,     93,    -85,   7,        HERK};    //7   * Motor F - Herkulex, Left Shoulder
+    // Right Arm (Wrist to Shoulder)
+    Motor Right_Wrist_Abductor              = {25, -160, 160, 0, HERK};
+    Motor Right_Elbow                       = {11, -160, 160, 0, HERK};
+    Motor Right_Arm_Rotator                 = {10, -160, 160, 0, HERK};
+    Motor Right_Arm_Abductor                = {6, -160, 160, 0, HERK};
 
-    Motor TorsoDRRear =           {0x11,   64,    -66,    17,        HERK};    //8   * Motor 11 - Herkulex, Torso Double Rotation Backside
-    Motor TorsoDRFront =          {0x12,    23,     -49,    16,        HERK};    //9   * Motor 12 - Herkulex, Torso Double Rotation Frontside
-    Motor Abdomen =               {0x13,   95,    -71,      8,        HERK};    //10  * Motor 13 - Herkluex, Abdomen
+    // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
+    Motor Top_Neck                          = {28, -160, 160, 0, HERK};
+    Motor Bottom_Neck                       = {27, -160, 160, 0, HERK};
+    Motor Left_Shoulder                     = {7, -160, 160, 0, HERK};
+    Motor Right_Shoulder                    = {15, -160, 160, 0, HERK};
+    Motor Front_chest                       = {18, -160, 160, 0, HERK};
+    Motor Back_chest                        = {17, -160, 160, 0, HERK};
 
-    Motor LHipX    =              {0x09,   3,    -13,      15,        HERK};    //11  * Herkluex, right hip 1
-    Motor LHipZ    =              {0x0E,   17,    -13,      -4,        HERK};    //12  * Herkluex, right hip 2 - NEEDS ADJUSTMENT
-    Motor LHipY    =              {0x1F,   297,    297,      0,        HERK};    //13  * Dynamixel, left hip 3 //2 ,146, 77  changed to 31
-    Motor LKnee    =              {0x0C,   -82,  3,      -8,        HERK};    //14  * Herkluex, right knee
-    Motor LAnkle   =              {0x05,  43,   -20,      4,        HERK};    //15  * Herkluex, right ankle
+    // Pelvis (Top to Bottom, Left to Right, Front to Back
+    Motor Hips_Rotate_Upper_Body            = {19, -160, 160, 0, HERK};
+    Motor Hips_Lean_Side_To_Side            = {21, -160, 160, 0, HERK};
+    Motor Hips_Bend_Over                    = {22, -160, 160, 0, HERK};
+    Motor Left_Leg_Abductor_Front_To_Back   = {9, -160, 160, 0, HERK};
+    Motor Right_Leg_Abductor_Front_To_Back  = {8, -160, 160, 0, HERK};
 
-    Motor RHipX    =              {0x08,   12,    -20,      19,        HERK};    //16  * Herkluex, right  hip 1
-    Motor RHipZ    =              {0x04,   -62, 40 , 20,        HERK};    //17  * Herkluex, right hip 2 **<------------ check this one with someone whose code isn't changed**
-    Motor RHipY    =              {0x1E,   116,    116,      11,        HERK};    //18  * Dynamixel, right hip - changed to 30
-    Motor RKnee    =              {0x14,    52,      -2,      12,        HERK};    //19  * Herkluex, right knee
-    Motor RAnkle   =              {0x0D,    46,     -21,      14,        HERK};    //20  * Herkluex, right ankle - unplugged ???
+    // Left Leg (Foot to Hip
+    Motor Left_Ankle                        = {5, -160, 160, 0, HERK};
+    Motor Left_Knee                         = {20, -160, 160, 0, HERK};
+    Motor Left_Leg_Abductor_Side_To_Side    = {31, -160, 160, 0, HERK};
+    Motor Left_Leg_Rotator                  = {4, -160, 160, 0, HERK};
 
-    Motor AbsY =            {0x15,   170,    170,      0,        HERK};     //21  * Motor X - Dynamixel, test motor
-    Motor AbsX =             {0x16,   230,    230,     0,        HERK};     //22  * Motor X - Dynamixel, test motor
+    // Right Leg (Foot to Hip)
+    Motor Right_Ankle                       = {13, -160, 160, 0, HERK};
+    Motor Right_Knee                        = {12, -160, 160, 0, HERK};
+    Motor Right_Leg_Abductor_Side_To_Side   = {30, -160, 160, 0, HERK};
+    Motor Right_Leg_Rotator                 = {14, -160, 160, 0, HERK};
 
-    Motor HeadZ =            {0x7,   60,    60,      4,        DYN};     //23  * Neck rotation 10,    110,      60
-    Motor HeadY =             {0x4,   155,    155,      0,        DYN};     //24  * Head nodding 120,    140,      140
+    Motor idArr[MOTOR_COUNT] = {Left_Wrist_Abductor, Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, 
+        Right_Wrist_Abductor, Right_Elbow, Right_Arm_Rotator, Right_Arm_Abductor, 
+        Top_Neck, Bottom_Neck, Left_Shoulder, Right_Shoulder, Front_chest, Back_chest, 
+        Hips_Rotate_Upper_Body, Hips_Lean_Side_To_Side, Hips_Bend_Over, Left_Leg_Abductor_Front_To_Back, Right_Leg_Abductor_Front_To_Back, 
+        Left_Ankle, Left_Knee, Left_Leg_Abductor_Side_To_Side, Left_Leg_Rotator, 
+        Right_Ankle, Right_Knee, Right_Leg_Abductor_Side_To_Side, Right_Leg_Rotator};
 
-    Motor dxlTest =               {0x100,   -100,    100,      0,        DYN};     //25  * Motor X - Dynamixel, test motor
+  //   //List of motors
+  //   Motor Right_Shoulder_Rotator_Joint =          {0x01,     6,    -118,     0,        HERK};    //0   * Motor 1 - Herkulex, Right Forearm
+  //   Motor RightArmZ     =         {0x02,    97,    -90,       1,        HERK};    //1   * Motor 2 - Herkulex, Right Upper Arm  *** Wrong Limit Motor Needs to be adjusted ????
+  //   Motor RightShoulderX =        {0x03,    133,     -17,      2,        HERK};    //2   * Motor 3 - Herkulex, Right Arm Connector
+  //   Motor RightShoulderY =        {0x0F,    -95,   90,     3,       HERK};    //3   * Motor F - Herkulex, Right Shoulder
+
+  //   Motor LeftForearm =           {0x0B,     131,    -3,      4,        HERK};    //4   * Motor B - Herkulex, Left Forearm ???
+  //   Motor LeftUpperArm =          {0x0A,     90,    -90,     5,        HERK};    //5   * Motor A - Herkulex, Left Upper Arm
+  //   Motor LeftUpperConnector =    {0x06,     10,   -142,     6,        HERK};    //6   * Motor 6 - Herkulex, Left Arm Connector
+  //   Motor LeftShoulder =          {0x07,     93,    -85,   7,        HERK};    //7   * Motor F - Herkulex, Left Shoulder
+
+  //   Motor TorsoDRRear =           {0x11,   64,    -66,    17,        HERK};    //8   * Motor 11 - Herkulex, Torso Double Rotation Backside
+  //   Motor TorsoDRFront =          {0x12,    23,     -49,    16,        HERK};    //9   * Motor 12 - Herkulex, Torso Double Rotation Frontside
+  //   Motor Abdomen =               {0x13,   95,    -71,      8,        HERK};    //10  * Motor 13 - Herkluex, Abdomen
+
+  //   Motor LHipX    =              {0x09,   3,    -13,      15,        HERK};    //11  * Herkluex, right hip 1
+  //   Motor LHipZ    =              {0x0E,   17,    -13,      -4,        HERK};    //12  * Herkluex, right hip 2 - NEEDS ADJUSTMENT
+  //   Motor LHipY    =              {0x1F,   297,    297,      0,        HERK};    //13  * Dynamixel, left hip 3 //2 ,146, 77  changed to 31
+  //   Motor LKnee    =              {0x0C,   -82,  3,      -8,        HERK};    //14  * Herkluex, right knee
+  //   Motor LAnkle   =              {0x05,  43,   -20,      4,        HERK};    //15  * Herkluex, right ankle
+
+  //   Motor RHipX    =              {0x08,   12,    -20,      19,        HERK};    //16  * Herkluex, right  hip 1
+  //   Motor RHipZ    =              {0x04,   -62, 40 , 20,        HERK};    //17  * Herkluex, right hip 2 **<------------ check this one with someone whose code isn't changed**
+  //   Motor RHipY    =              {0x1E,   116,    116,      11,        HERK};    //18  * Dynamixel, right hip - changed to 30
+  //   Motor RKnee    =              {0x14,    52,      -2,      12,        HERK};    //19  * Herkluex, right knee
+  //   Motor RAnkle   =              {0x0D,    46,     -21,      14,        HERK};    //20  * Herkluex, right ankle - unplugged ???
+
+  //   Motor AbsY =            {0x15,   170,    170,      0,        HERK};     //21  * Motor X - Dynamixel, test motor
+  //   Motor AbsX =             {0x16,   230,    230,     0,        HERK};     //22  * Motor X - Dynamixel, test motor
+
+  //   Motor HeadZ =            {0x7,   60,    60,      4,        DYN};     //23  * Neck rotation 10,    110,      60
+  //   Motor HeadY =             {0x4,   155,    155,      0,        DYN};     //24  * Head nodding 120,    140,      140
+
+  //   Motor dxlTest =               {0x100,   -100,    100,      0,        DYN};     //25  * Motor X - Dynamixel, test motor
     
-  ///1,3,4,5,6,7,8,9,A,C,E,F,11,12,13,14 //171, 4,90
-    //Hips out:
-    //10,6,100,  10,2,90,  10,11,100, 10,16,100
-    //Knees and arms back
-    //10,14,0,  10,19,0,  10,0,100,  10,4,100
+  // ///1,3,4,5,6,7,8,9,A,C,E,F,11,12,13,14 //171, 4,90
+  //   //Hips out:
+  //   //10,6,100,  10,2,90,  10,11,100, 10,16,100
+  //   //Knees and arms back
+  //   //10,14,0,  10,19,0,  10,0,100,  10,4,100
   
-    //Remaining motor is 0x10
+  //   //Remaining motor is 0x10
     
-    Motor idArr[MOTOR_COUNT] = {Right_Shoulder_Rotator_Joint, RightArmZ, RightShoulderX, RightShoulderY,
-                       LeftForearm,  LeftUpperArm,  LeftUpperConnector,  LeftShoulder,
-                       TorsoDRRear,  TorsoDRFront, Abdomen,
-                       LHipX, LHipZ, LHipY, LKnee, LAnkle,
-                       RHipX, RHipZ, RHipY, RKnee, RAnkle,
-                       AbsY,AbsX,
-                       HeadZ,HeadY,
-                       dxlTest};
+  //   Motor idArr[MOTOR_COUNT] = {Right_Shoulder_Rotator_Joint, RightArmZ, RightShoulderX, RightShoulderY,
+  //                      LeftForearm,  LeftUpperArm,  LeftUpperConnector,  LeftShoulder,
+  //                      TorsoDRRear,  TorsoDRFront, Abdomen,
+  //                      LHipX, LHipZ, LHipY, LKnee, LAnkle,
+  //                      RHipX, RHipZ, RHipY, RKnee, RAnkle,
+  //                      AbsY,AbsX,
+  //                      HeadZ,HeadY,
+  //                      dxlTest};
 
     //Pairs of motors to mirror - 2nd motor sets position to match first motor
     int mirrorArray[4][2] = {
-      {0, 4},
-      {1, 5},
-      {2, 6},
-      {3, 7}
+      {0, 0},
+      {1, 1},
+      {2, 2},
+      {3, 3}
     };
-
-
 };
 
 #endif
