@@ -115,7 +115,7 @@ class ArduinoPoppy {
     Motor Right_Arm_Abductor                = {6, -20, 50, 0, HERK}; // Severely limited by 0601 wire
 
     // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
-    Motor Top_Neck                          = {28, 35, 110, 90, HERK};
+    Motor Top_Neck                          = {28, 30, 120, 90, HERK};
     Motor Bottom_Neck                       = {27, 0, 160, 90, HERK};
     Motor Left_Shoulder                     = {7, -150, 160, -5, HERK};
     Motor Right_Shoulder                    = {15, -160, 40, -130, HERK};
