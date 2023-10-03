@@ -103,47 +103,47 @@ class ArduinoPoppy {
     const static int MOTOR_COUNT = 27;//sizeOF(IdArr) not working right, using manual definition
 
     // Left Arm (Wrist to Shoulder)
-    Motor Left_Wrist_Abductor               = {26, -160, 160, 0, HERK};
-    Motor Left_Elbow                        = {1, -160, 160, 0, HERK};
-    Motor Left_Arm_Rotator                  = {2, -160, 160, 0, HERK};
-    Motor Left_Arm_Abductor                 = {3, -160, 160, 0, HERK};
+    Motor Left_Wrist_Abductor               = {26, -130, 40, -10, HERK};
+    Motor Left_Elbow                        = {1, -90, 120, -46, HERK};
+    Motor Left_Arm_Rotator                  = {2, -15, 160, 90, HERK};
+    Motor Left_Arm_Abductor                 = {3, -150, 20, 0, HERK};
 
     // Right Arm (Wrist to Shoulder)
-    Motor Right_Wrist_Abductor              = {25, -160, 160, 0, HERK};
-    Motor Right_Elbow                       = {11, -160, 160, 0, HERK};
-    Motor Right_Arm_Rotator                 = {10, -160, 160, 0, HERK};
-    Motor Right_Arm_Abductor                = {6, -160, 160, 0, HERK};
+    Motor Right_Wrist_Abductor              = {25, -130, 40, -10, HERK};
+    Motor Right_Elbow                       = {11, -70, 130, -40, HERK};
+    Motor Right_Arm_Rotator                 = {10, -105, 160, 25, HERK};
+    Motor Right_Arm_Abductor                = {6, -20, 50, 0, HERK}; // Severely limited by 0601 wire
 
     // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
-    Motor Top_Neck                          = {28, -160, 160, 0, HERK};
-    Motor Bottom_Neck                       = {27, -160, 160, 0, HERK};
-    Motor Left_Shoulder                     = {7, -160, 160, 0, HERK};
-    Motor Right_Shoulder                    = {15, -160, 160, 0, HERK};
-    Motor Front_chest                       = {18, -160, 160, 0, HERK};
-    Motor Back_chest                        = {17, -160, 160, 0, HERK};
+    Motor Top_Neck                          = {28, 35, 110, 90, HERK};
+    Motor Bottom_Neck                       = {27, 0, 160, 90, HERK};
+    Motor Left_Shoulder                     = {7, -150, 160, -5, HERK};
+    Motor Right_Shoulder                    = {15, -160, 40, -130, HERK};
+    Motor Front_Chest                       = {18, -150, -66, -112, HERK};
+    Motor Back_Chest                        = {17, -160, 40, -60, HERK};
 
     // Pelvis (Top to Bottom, Left to Right, Front to Back
-    Motor Hips_Rotate_Upper_Body            = {19, -160, 160, 0, HERK};
-    Motor Hips_Lean_Side_To_Side            = {21, -160, 160, 0, HERK};
-    Motor Hips_Bend_Over                    = {22, -160, 160, 0, HERK};
-    Motor Left_Leg_Abductor_Front_To_Back   = {9, -160, 160, 0, HERK};
-    Motor Right_Leg_Abductor_Front_To_Back  = {8, -160, 160, 0, HERK};
+    Motor Hips_Rotate_Upper_Body            = {19, -160, 0, 145, HERK};
+    Motor Hips_Lean_Side_To_Side            = {21, -10, 160, -120, HERK};
+    Motor Hips_Bend_Over                    = {22, -90, 40, 30, HERK};
+    Motor Left_Leg_Abductor_Front_To_Back   = {9, -15, 30, 7, HERK};
+    Motor Right_Leg_Abductor_Front_To_Back  = {8, -55, -15, -25, HERK};
 
-    // Left Leg (Foot to Hip
-    Motor Left_Ankle                        = {5, -160, 160, 0, HERK};
-    Motor Left_Knee                         = {20, -160, 160, 0, HERK};
-    Motor Left_Leg_Abductor_Side_To_Side    = {31, -160, 160, 0, HERK};
-    Motor Left_Leg_Rotator                  = {4, -160, 160, 0, HERK};
+    // Left Leg (Foot to Hip)
+    Motor Left_Leg_Rotator                  = {14, 110, 160, 150, HERK};
+    Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 90, HERK};
+    Motor Left_Knee                         = {12, -130, 0, -40, HERK};
+    Motor Left_Ankle                        = {13, -25, 50, 30, HERK};
 
-    // Right Leg (Foot to Hip)
-    Motor Right_Ankle                       = {13, -160, 160, 0, HERK};
-    Motor Right_Knee                        = {12, -160, 160, 0, HERK};
-    Motor Right_Leg_Abductor_Side_To_Side   = {30, -160, 160, 0, HERK};
-    Motor Right_Leg_Rotator                 = {14, -160, 160, 0, HERK};
+    // Right Leg (Foot to Hip
+    Motor Right_Leg_Rotator                 = {4, -160, 0, -150, HERK};
+    Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 115, -90, HERK};
+    Motor Right_Knee                        = {20, -10, 120, 36, HERK};
+    Motor Right_Ankle                       = {5, -40, 40, -30, HERK};
 
     Motor idArr[MOTOR_COUNT] = {Left_Wrist_Abductor, Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, 
         Right_Wrist_Abductor, Right_Elbow, Right_Arm_Rotator, Right_Arm_Abductor, 
-        Top_Neck, Bottom_Neck, Left_Shoulder, Right_Shoulder, Front_chest, Back_chest, 
+        Top_Neck, Bottom_Neck, Left_Shoulder, Right_Shoulder, Front_Chest, Back_Chest, 
         Hips_Rotate_Upper_Body, Hips_Lean_Side_To_Side, Hips_Bend_Over, Left_Leg_Abductor_Front_To_Back, Right_Leg_Abductor_Front_To_Back, 
         Left_Ankle, Left_Knee, Left_Leg_Abductor_Side_To_Side, Left_Leg_Rotator, 
         Right_Ankle, Right_Knee, Right_Leg_Abductor_Side_To_Side, Right_Leg_Rotator};
@@ -200,6 +200,7 @@ class ArduinoPoppy {
   //                      HeadZ,HeadY,
   //                      dxlTest};
 
+    // Old, need to remove during code refactoring
     //Pairs of motors to mirror - 2nd motor sets position to match first motor
     int mirrorArray[4][2] = {
       {0, 0},

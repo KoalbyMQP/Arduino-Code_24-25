@@ -18,6 +18,7 @@ void setup()
   Herkulex.initialize(); //initialize motors
 
   Herkulex.torqueOFF(0xFE);
+  Herkulex.clearError(0xfe);
 }
 
 void loop(){
@@ -29,13 +30,17 @@ void loop(){
     if(angle != -166 && angle != -83) {
       count++;
       Herkulex.torqueOFF(i);
-      Serial.print("\nGot servo ");
-      Serial.print(i);
-      Serial.print(" Angle: ");
-      Serial.print(angle);
-      Herkulex.setLed(i,LED_BLUE);
+      
+      while (Serial.available() == 0) {
+        Serial.print("\nGot servo ");
+        Serial.print(i);
+        Serial.print(" Angle: ");
+        angle = Herkulex.getAngle(i);
+        Serial.print(angle);
+        Herkulex.setLed(i,LED_BLUE);
+        delay(10);
+      } //wait for data available, any input into serial monitor
 
-      while (Serial.available() == 0) {} //wait for data available, any input into serial monitor
       Serial.readString(); // eat input so serial is unavailable for next ID
 
       Herkulex.setLed(i,0);

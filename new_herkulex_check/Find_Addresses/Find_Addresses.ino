@@ -28,6 +28,7 @@ void loop(){
       Serial.print(i);
       Serial.print(" Angle: ");
       Serial.println(angle);
+      Herkulex.clearError(i);
       Herkulex.setLed(i,LED_BLUE);
       Herkulex.torqueOFF(i);
       count++;
