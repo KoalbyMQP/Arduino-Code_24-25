@@ -1,3 +1,7 @@
+; !!!Please remove the .txt for this file to add the INI to the project.!!!
+
+
+;-------ini contents-------
 ; PlatformIO Project Configuration File
 ;
 ;   Build options: build flags, source filter
@@ -15,4 +19,5 @@ framework = arduino
 lib_extra_dirs = 
     ~/Documents/Arduino/libraries
 lib_deps = 
-    /Users/dylannguyen/WPI/MQP/Arduino-Code_23-24/HerkuleX_Check/HerkuleX_Check_pio_conv/Herkulex
+    YOU'RE FILE PATH TO -->/Arduino-Code_23-24/HerkuleX_Check/HerkuleX_Check_pio_conv/Herkulex
+;------end--------
