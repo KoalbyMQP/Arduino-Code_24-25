@@ -15,7 +15,7 @@
  *******************************************************************************/
 
 #include <DynamixelShield.h>
-
+#include <Arduino.h>
 #define DEBUG_SERIAL Serial2
 
 const uint8_t DEFAULT_DXL_ID = 0x01;
