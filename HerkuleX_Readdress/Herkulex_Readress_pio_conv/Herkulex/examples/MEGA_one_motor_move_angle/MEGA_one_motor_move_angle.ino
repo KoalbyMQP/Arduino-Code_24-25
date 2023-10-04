@@ -1,10 +1,5 @@
-//Disable torque for a specific motor and constantly print its position, used to figure out limits and home position
 #include <Herkulex.h>
-int n=0x14; //motor ID - verify your ID !!!!
-// -60,  -161, -154
-
-//Left E right 4
-//R arm 1, 2, 3
+int n=0xfe; //motor ID - verify your ID !!!!
 
 void setup()  
 {
@@ -15,15 +10,21 @@ void setup()
   Herkulex.reboot(n); //reboot first motor
   delay(500); 
   Herkulex.initialize(); //initialize motors
-  delay(200);
+  delay(200);  
 }
 
 void loop(){
-  Herkulex.torqueOFF(n);
+  Serial.println("Move Angle: -100 degrees");
+  Herkulex.moveOneAngle(n, -100, 1000, LED_BLUE); //move motor with 300 speed  
+  delay(1200);
   Serial.print("Get servo Angle:");
   Serial.println(Herkulex.getAngle(n));
-  Herkulex.setLed(n,LED_GREEN);
-  //Herkulex.moveOneAngle(n, 0, 1000, LED_BLUE); //move motor with 300 speed  
+  Serial.println("Move Angle: 100 degrees");
+  Herkulex.moveOneAngle(n, 100, 1000, LED_BLUE); //move motor with 300 speed  
   delay(1200);
+  Serial.print("Get servo Angle:");
+  Serial.println(Herkulex.getAngle(n));
   
 }
+
+
