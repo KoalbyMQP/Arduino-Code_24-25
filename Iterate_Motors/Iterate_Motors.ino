@@ -51,4 +51,6 @@ void loop(){
 
   Serial.print("\nAll IDs scanned, found ");
   Serial.print(count);
+  while (Serial.available() == 0) {}
+  Serial.readString();
 }
