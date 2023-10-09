@@ -44,8 +44,8 @@ Motor Left_Knee                         = {12, -130, 0, -40, HERK};
 Motor Left_Ankle                        = {13, -25, 50, 14, HERK};
 
 // Right Leg (Foot to Hip
-Motor Right_Leg_Rotator                 = {4, -160, 0, -150, HERK};
-Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, -125, HERK};
+Motor Right_Leg_Rotator                 = {4, -160, 0, 60, HERK};
+Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, 0, HERK};
 Motor Right_Knee                        = {20, -10, 120, 15, HERK};
 Motor Right_Ankle                       = {5, -40, 40, 0, HERK};
 
@@ -60,7 +60,7 @@ Motor motors[27] = {
 
 int off[50];
 int angle = 0;
-int index = 25; // Up to 11 has been homed
+int index = 26; // Up to 11 has been homed
 Motor currMotor = motors[index];
 
 // int counter2 = 0;
