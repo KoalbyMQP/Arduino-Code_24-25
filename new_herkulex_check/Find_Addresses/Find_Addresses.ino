@@ -14,10 +14,13 @@ void setup()
 
   delay(500); 
   Herkulex.initialize(); //initialize motors
+  Herkulex.torqueOFF(0xfe);
  
 }
 
 void loop(){
+  int count = 0;
+
   for(int i =0;i<0xFD;i++){
     int angle = Herkulex.getAngle(i);
     if(angle != -166 && angle != -83){
@@ -27,8 +30,12 @@ void loop(){
       Serial.println(angle);
       Herkulex.setLed(i,LED_BLUE);
       Herkulex.torqueOFF(i);
+      count++;
     }
   }
+  Serial.print("Found ");
+  Serial.print(count);
+  Serial.println(" motors.");
   Serial.println("Cycle");
   delay(1000);
 }
