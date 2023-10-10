@@ -109,11 +109,11 @@ public:
   void  actionAll(int pTime);
   
   void  moveSpeedOne(int servoID, int Goal, int pTime, int iLed);
-  void  moveOne(int servoID, int Goal, int pTime, int iLed);
-  void  moveOneAngle(int servoID, float angle, int pTime, int iLed);
+  void  moveOne(int servoID, int Goal, int pTime, int iLed, bool is0601);
+  void  moveOneAngle(int servoID, float angle, int pTime, int iLed, bool is0601);
   
-  int   getPosition(int servoID);
-  float getAngle(int servoID);
+  int   getPosition(int servoID, bool is0601);
+  float getAngle(int servoID, bool is0601);
   int   getSpeed(int servoID);
 		
   void  reboot(int servoID);

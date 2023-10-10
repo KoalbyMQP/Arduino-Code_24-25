@@ -471,7 +471,7 @@ void HerkulexClass::actionAll(int pTime)
 }
 
 // get Position
- int HerkulexClass::getPosition(int servoID) {
+ int HerkulexClass::getPosition(int servoID, bool is0601) {
 	int Position  = 0;
 
     pSize = 0x09;               // 3.Packet size 7-58
@@ -518,14 +518,17 @@ void HerkulexClass::actionAll(int pTime)
     if (ck1 != dataEx[5]) return -1;
 	if (ck2 != dataEx[6]) return -1;
 
-	Position = ((dataEx[10]&0x03)<<8) | dataEx[9];
+    int maxMSB = is0601 ? 0x07 : 0x03;
+
+	Position = ((dataEx[10]&maxMSB)<<8) | dataEx[9];
         return Position;
 	
 }
 
-float HerkulexClass::getAngle(int servoID) {
+float HerkulexClass::getAngle(int servoID, bool is0601) {
 	int pos = (int)getPosition(servoID);
-	return (pos-512) * 0.325;
+    int conversionFactor = is0601 ? 2 : 1;
+	return (pos/conversionFactor - 512) * 0.325;
 }
 
 // reboot single servo - pay attention 253 - all servos doesn't work!
@@ -703,10 +706,12 @@ void HerkulexClass::moveSpeedOne(int servoID, int Goal, int pTime, int iLed)
 }
 
 // move one servo at goal position 0 - 1024
-void HerkulexClass::moveOne(int servoID, int Goal, int pTime, int iLed)
+void HerkulexClass::moveOne(int servoID, int Goal, int pTime, int iLed, bool is0601)
 {
-  if (Goal > 1023 || Goal < 0) return;              // speed (goal) non correct
-  if ((pTime <0) || (pTime > 2856)) return;
+  int goalLimit = is0601 ? 2047 : 1023;
+
+  if (Goal > goalLimit || Goal < 0) return;              // speed (goal) non correct
+  if ((pTime < 0) || (pTime > 2856)) return;
 
   // Position definition
   int posLSB=Goal & 0X00FF;								// MSB Pos
@@ -766,9 +771,10 @@ void HerkulexClass::moveOne(int servoID, int Goal, int pTime, int iLed)
 }
 
 // move one servo to an angle between -160 and 160
-void HerkulexClass::moveOneAngle(int servoID, float angle, int pTime, int iLed) {
+void HerkulexClass::moveOneAngle(int servoID, float angle, int pTime, int iLed, bool is0601) {
 	if (angle > 160.0|| angle < -160.0) return;	
-	int position = (int)(angle/0.325) + 512;
+    int conversionFactor = is0601 ? 2 : 1; // 0601 ranges from 0-2047, 2x that of 0201/0101
+	int position = (int)(conversionFactor * (angle/0.325 + 512));
 	moveOne(servoID, position, pTime, iLed);
 }
 
