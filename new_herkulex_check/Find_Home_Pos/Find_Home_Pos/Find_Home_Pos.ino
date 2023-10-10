@@ -1,6 +1,6 @@
 #include <Herkulex.h>
 
-#define MOTOR_ID 14
+#define MOTOR_ID 7
 
 void setup() {
   

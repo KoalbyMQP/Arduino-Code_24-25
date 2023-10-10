@@ -32,22 +32,22 @@ Motor Back_Chest                        = {17, -155, 20, -60, HERK};
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
 Motor Hips_Rotate_Upper_Body            = {19, -160, 120, -90, HERK};
-Motor Hips_Lean_Side_To_Side            = {21, -160, 110, -90, HERK};
+Motor Hips_Lean_Side_To_Side            = {21, -160, 110, 36, HERK};
 Motor Hips_Bend_Over                    = {22, -90, 40, 25, HERK};
 Motor Left_Leg_Abductor_Front_To_Back   = {9, -20, 35, 4, HERK};
 Motor Right_Leg_Abductor_Front_To_Back  = {8, -60, -5, -45, HERK};
 
 // Left Leg (Foot to Hip)
-Motor Left_Leg_Rotator                  = {14, 20, 160, 150, HERK};
-Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 0, HERK};
+Motor Left_Leg_Rotator                  = {14, 20, 160, -10, HERK};
+Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 30, HERK};
 Motor Left_Knee                         = {12, -130, 0, -40, HERK};
-Motor Left_Ankle                        = {13, -25, 50, 25, HERK};
+Motor Left_Ankle                        = {13, -25, 50, 14, HERK};
 
 // Right Leg (Foot to Hip
 Motor Right_Leg_Rotator                 = {4, -160, 0, -150, HERK};
 Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, -125, HERK};
-Motor Right_Knee                        = {20, -10, 120, 40, HERK};
-Motor Right_Ankle                       = {5, -40, 40, -20, HERK};
+Motor Right_Knee                        = {20, -10, 120, 15, HERK};
+Motor Right_Ankle                       = {5, -40, 40, 0, HERK};
 
 Motor motors[27] = {
   Left_Wrist_Abductor, Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, 
@@ -60,7 +60,7 @@ Motor motors[27] = {
 
 int off[50];
 int angle = 0;
-int index = 0; // Up to 11 has been homed
+int index = 25; // Up to 11 has been homed
 Motor currMotor = motors[index];
 
 // int counter2 = 0;
@@ -88,7 +88,7 @@ void setup()
   Serial.print(currMotor.hexID);
  
   for (Motor m : motors) {
-    Herkulex.torqueON(m.hexID);
+    // Herkulex.torqueON(m.hexID);
   }
 
   // Serial.print("Moving Motor ");
@@ -99,7 +99,22 @@ void setup()
   delay(1000);
 }
 
+int counter = 0;
+
 void loop() {
+  // THIS IS FOR MOTOR TESTING
+
+  Serial.println(Herkulex.getAngle(currMotor.hexID));
+  counter++;
+  if(counter == 1)
+  {
+    Serial.println(currMotor.hexID);
+    counter = 0;
+  }
+  delay(150);
+  return;
+  // DELETE BEFORE THIS COMMENT ONCE ALL MOTORS ARE HOMED PROPERLY
+
   Herkulex.moveOneAngle(currMotor.hexID, currMotor.homePos, 1000, LED_GREEN);
 
   angle = Herkulex.getAngle(currMotor.hexID);
