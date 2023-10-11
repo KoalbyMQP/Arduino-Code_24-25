@@ -1,5 +1,6 @@
 #include <Herkulex.h>
 int n=1; //motor ID - verify your ID !!!!
+bool is0601 = false;
 
 void setup()  
 {
@@ -15,15 +16,15 @@ void setup()
 
 void loop(){
   Serial.println("Move Angle: -100 degrees");
-  Herkulex.moveOneAngle(n, -100, 1000, LED_BLUE); //move motor with 300 speed  
+  Herkulex.moveOneAngle(n, -100, 1000, LED_BLUE, is0601); //move motor with 300 speed  
   delay(1200);
   Serial.print("Get servo Angle:");
-  Serial.println(Herkulex.getAngle(n));
+  Serial.println(Herkulex.getAngle(n, is0601));
   Serial.println("Move Angle: 100 degrees");
-  Herkulex.moveOneAngle(n, 100, 1000, LED_BLUE); //move motor with 300 speed  
+  Herkulex.moveOneAngle(n, 100, 1000, LED_BLUE, is0601); //move motor with 300 speed  
   delay(1200);
   Serial.print("Get servo Angle:");
-  Serial.println(Herkulex.getAngle(n));
+  Serial.println(Herkulex.getAngle(n, is0601));
   
 }
 

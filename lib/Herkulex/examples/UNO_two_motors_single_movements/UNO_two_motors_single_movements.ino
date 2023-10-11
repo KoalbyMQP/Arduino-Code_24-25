@@ -21,14 +21,14 @@ void setup()
   Serial.println("Move Position2: 820");
   
   delay(1);
-  Herkulex.moveOne(1, 200, 1500,2); //move to position 200 in 1500 milliseconds
-  Herkulex.moveOne(2, 820, 500,2); //move to 820 position in 500 milliseconds
+  Herkulex.moveOne(1, 200, 1500,2, false); //move to position 200 in 1500 milliseconds
+  Herkulex.moveOne(2, 820, 500,2, false); //move to 820 position in 500 milliseconds
   delay(1600);
   Serial.println("");
   Serial.print("Position servo 1:"); 
-  Serial.println(Herkulex.getPosition(1)); //get position
+  Serial.println(Herkulex.getPosition(1, false)); //get position
   Serial.print("Position servo 2:"); 
-  Serial.println(Herkulex.getPosition(2));//get position
+  Serial.println(Herkulex.getPosition(2, false));//get position
   
   Herkulex.setLed(2,LED_PINK); //set the led 
   Herkulex.setLed(1,LED_GREEN2); //set the led

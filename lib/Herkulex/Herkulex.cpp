@@ -526,7 +526,7 @@ void HerkulexClass::actionAll(int pTime)
 }
 
 float HerkulexClass::getAngle(int servoID, bool is0601) {
-	int pos = (int)getPosition(servoID);
+	int pos = (int)getPosition(servoID, is0601);
     int conversionFactor = is0601 ? 2 : 1;
 	return (pos/conversionFactor - 512) * 0.325;
 }
@@ -775,7 +775,7 @@ void HerkulexClass::moveOneAngle(int servoID, float angle, int pTime, int iLed, 
 	if (angle > 160.0|| angle < -160.0) return;	
     int conversionFactor = is0601 ? 2 : 1; // 0601 ranges from 0-2047, 2x that of 0201/0101
 	int position = (int)(conversionFactor * (angle/0.325 + 512));
-	moveOne(servoID, position, pTime, iLed);
+	moveOne(servoID, position, pTime, iLed, is0601);
 }
 
 // write registry in the RAM: one byte 

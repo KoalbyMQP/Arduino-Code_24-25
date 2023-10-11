@@ -1,13 +1,13 @@
 #include <Herkulex.h>
 
 #define MOTOR_ID 7
+#define IS_0601 true
 
 void setup() {
   
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
-  // Herkulex.beginSerial1(115200); //open serial port 1 
-  Herkulex.beginSerial1(115200); //open serial port 1 
+  Herkulex.beginSerial2(115200); //open serial port 2
   Serial.println("Begin");
 
   Herkulex.reboot(0xfe); //reboot first motor
@@ -31,7 +31,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println(Herkulex.getAngle(MOTOR_ID));
+  Serial.println(Herkulex.getAngle(MOTOR_ID, IS_0601));
   delay(10);
 
 }

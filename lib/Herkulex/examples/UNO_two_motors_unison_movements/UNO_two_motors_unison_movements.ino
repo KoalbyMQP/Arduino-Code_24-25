@@ -36,9 +36,9 @@ void setup()
   Herkulex.actionAll(1000); //start movement in 1500 milliseconds
   delay(1100);
   Serial.print("Get Position servo 1:"); 
-  Serial.println(Herkulex.getPosition(1)); //get position
+  Serial.println(Herkulex.getPosition(1, false)); //get position
   Serial.print("Get Position servo 2:"); 
-  Serial.println(Herkulex.getPosition(2));//get position
+  Serial.println(Herkulex.getPosition(2, false));//get position
   
   delay(10);
    
@@ -52,9 +52,9 @@ void setup()
   Herkulex.actionAll(2000);
   delay(2100);
   Serial.print("Get Angle1:"); 
-  Serial.println(Herkulex.getAngle(1));
+  Serial.println(Herkulex.getAngle(1, false));
   Serial.print("Get Angle2:"); 
-  Serial.println(Herkulex.getAngle(2));
+  Serial.println(Herkulex.getAngle(2, false));
   
   
   Herkulex.setLed(2,LED_PINK); //set the led 

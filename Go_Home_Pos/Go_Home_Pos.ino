@@ -5,49 +5,47 @@ struct Motor{
   int minPos;
   int maxPos;
   int homePos;
-  int isHerk; // useless but kept for easy copy paste from ArduinoPoppy.h
+  int is0601;
 };
 
-int HERK = 1;
-
 // Left Arm (Wrist to Shoulder)
-Motor Left_Wrist_Abductor               = {26, -40, 130, 20, HERK};
-Motor Left_Elbow                        = {1, -90, 120, -70, HERK};
-Motor Left_Arm_Rotator                  = {2, -160, 100, -100, HERK};
-Motor Left_Arm_Abductor                 = {3, -160, 20, -64, HERK};
+Motor Left_Wrist_Abductor               = {26, -40, 130, 20, false};
+Motor Left_Elbow                        = {1, -90, 120, -70, true};
+Motor Left_Arm_Rotator                  = {2, -160, 100, -100, false};
+Motor Left_Arm_Abductor                 = {3, -160, 20, -64, false};
 
 // Right Arm (Wrist to Shoulder)
-Motor Right_Wrist_Abductor              = {25, -135, 35, -20, HERK};
-Motor Right_Elbow                       = {11, -70, 130, -40, HERK};
-Motor Right_Arm_Rotator                 = {10, -160, 160, 20, HERK};
-Motor Right_Arm_Abductor                = {6, -30, 80, 15, HERK}; // Limited by 0601 wire
+Motor Right_Wrist_Abductor              = {25, -135, 35, -20, false};
+Motor Right_Elbow                       = {11, -70, 130, -40, true};
+Motor Right_Arm_Rotator                 = {10, -160, 160, 20, false};
+Motor Right_Arm_Abductor                = {6, -30, 80, 15, false}; // Limited by 0601 wire
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
-Motor Top_Neck                          = {28, 35, 110, 90, HERK};
-Motor Bottom_Neck                       = {27, -20, 160, 90, HERK};
-Motor Left_Shoulder                     = {7, -160, 160, 0, HERK};
-Motor Right_Shoulder                    = {15, -160, 90, 43, HERK};
-Motor Front_Chest                       = {18, -155, -65, -112, HERK};
-Motor Back_Chest                        = {17, -155, 20, -60, HERK};
+Motor Top_Neck                          = {28, 35, 110, 90, false};
+Motor Bottom_Neck                       = {27, -20, 160, 90, false};
+Motor Left_Shoulder                     = {7, -160, 160, 0, true};
+Motor Right_Shoulder                    = {15, -160, 90, 43, true};
+Motor Front_Chest                       = {18, -155, -65, -112, false};
+Motor Back_Chest                        = {17, -155, 20, -60, false};
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
-Motor Hips_Rotate_Upper_Body            = {19, -160, 120, -90, HERK};
-Motor Hips_Lean_Side_To_Side            = {21, -160, 110, 36, HERK};
-Motor Hips_Bend_Over                    = {22, -90, 40, 25, HERK};
-Motor Left_Leg_Abductor_Front_To_Back   = {9, -20, 35, 4, HERK};
-Motor Right_Leg_Abductor_Front_To_Back  = {8, -60, -5, -45, HERK};
+Motor Hips_Rotate_Upper_Body            = {19, -160, 120, -90, false};
+Motor Hips_Lean_Side_To_Side            = {21, -160, 110, 36, true};
+Motor Hips_Bend_Over                    = {22, -90, 40, 25, true};
+Motor Left_Leg_Abductor_Front_To_Back   = {9, -20, 35, 4, false};
+Motor Right_Leg_Abductor_Front_To_Back  = {8, -60, -5, -45, false};
 
 // Left Leg (Foot to Hip)
-Motor Left_Leg_Rotator                  = {14, 20, 160, -10, HERK};
-Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 30, HERK};
-Motor Left_Knee                         = {12, -130, 0, -40, HERK};
-Motor Left_Ankle                        = {13, -25, 50, 14, HERK};
+Motor Left_Leg_Rotator                  = {14, 20, 160, -10, false};
+Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 30, true};
+Motor Left_Knee                         = {12, -130, 0, -40, false};
+Motor Left_Ankle                        = {13, -25, 50, 14, false};
 
 // Right Leg (Foot to Hip
-Motor Right_Leg_Rotator                 = {4, -160, 0, 60, HERK};
-Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, 0, HERK};
-Motor Right_Knee                        = {20, -10, 120, 15, HERK};
-Motor Right_Ankle                       = {5, -40, 40, 0, HERK};
+Motor Right_Leg_Rotator                 = {4, -160, 0, 60, false};
+Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, 0, true};
+Motor Right_Knee                        = {20, -10, 120, 15, false};
+Motor Right_Ankle                       = {5, -40, 40, 0, false};
 
 Motor motors[27] = {
   Left_Wrist_Abductor, Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, 
@@ -71,8 +69,7 @@ void setup()
 {
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
-  // Herkulex.beginSerial1(115200); //open serial port 1 
-  Herkulex.beginSerial1(115200); //open serial port 1 
+  Herkulex.beginSerial2(115200); //open serial port 2 
   Serial.println("Begin");
 
   Herkulex.reboot(0xfe); //reboot first motor
@@ -104,7 +101,7 @@ int counter = 0;
 void loop() {
   // THIS IS FOR MOTOR TESTING
 
-  Serial.println(Herkulex.getAngle(currMotor.hexID));
+  Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
   counter++;
   if(counter == 1)
   {
@@ -115,9 +112,9 @@ void loop() {
   return;
   // DELETE BEFORE THIS COMMENT ONCE ALL MOTORS ARE HOMED PROPERLY
 
-  Herkulex.moveOneAngle(currMotor.hexID, currMotor.homePos, 1000, LED_GREEN);
+  Herkulex.moveOneAngle(currMotor.hexID, currMotor.homePos, 1000, LED_GREEN, currMotor.is0601);
 
-  angle = Herkulex.getAngle(currMotor.hexID);
+  angle = Herkulex.getAngle(currMotor.hexID, currMotor.is0601);
 
   if (off[currMotor.hexID] != 1 && (angle >= currMotor.maxPos || angle <= currMotor.minPos)) {
     Herkulex.torqueOFF(currMotor.hexID);
@@ -130,7 +127,7 @@ void loop() {
   }
 
   Serial.println(currMotor.hexID);
-  Serial.println(Herkulex.getAngle(currMotor.hexID));
+  Serial.println(Herkulex.getAngle(currMotor.hexID), currMotor.is0601);
   // Serial.println(off[currMotor.hexID]);
 
   // if (Serial.available() != 0) 
