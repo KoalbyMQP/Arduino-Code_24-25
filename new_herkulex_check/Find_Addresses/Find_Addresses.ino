@@ -14,7 +14,7 @@ void setup()
   delay(500); 
   Herkulex.initialize(); //initialize motors
   Herkulex.torqueOFF(0xfe);
- 
+  Herkulex.setLed(0xfe, LED_GREEN);
 }
 
 void loop(){
