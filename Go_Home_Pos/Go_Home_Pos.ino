@@ -1,5 +1,8 @@
 #include <Herkulex.h>
 
+#define HOMING false
+#define FIND_BROKEN false
+
 struct Motor{
   int hexID;
   int minPos;
@@ -9,43 +12,43 @@ struct Motor{
 };
 
 // Left Arm (Wrist to Shoulder)
-Motor Left_Wrist_Abductor               = {26, -40, 130, 20, false};
-Motor Left_Elbow                        = {1, -90, 120, -70, true};
-Motor Left_Arm_Rotator                  = {2, -160, 100, -100, false};
-Motor Left_Arm_Abductor                 = {3, -160, 20, -64, false};
+Motor Left_Wrist_Abductor               = {26, -40, 130, 20, false}; // Index 0
+Motor Left_Elbow                        = {1, -160, 160, -70, true}; // Index 1
+Motor Left_Arm_Rotator                  = {2, -160, 100, -100, false}; // Index 2
+Motor Left_Arm_Abductor                 = {3, -160, 160, -64, false}; // Index 3
 
 // Right Arm (Wrist to Shoulder)
-Motor Right_Wrist_Abductor              = {25, -135, 35, -20, false};
-Motor Right_Elbow                       = {11, -70, 130, -40, true};
-Motor Right_Arm_Rotator                 = {10, -160, 160, 20, false};
-Motor Right_Arm_Abductor                = {6, -30, 80, 15, false}; // Limited by 0601 wire
+Motor Right_Wrist_Abductor              = {25, -135, 35, -20, false}; // Index 4
+Motor Right_Elbow                       = {11, -70, 130, -40, true}; // Index 5
+Motor Right_Arm_Rotator                 = {10, -160, 160, 20, false}; // Index 6
+Motor Right_Arm_Abductor                = {6, -30, 80, 15, false};  // Index 7 Limited by 0601 wire
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
-Motor Top_Neck                          = {28, 35, 110, 90, false};
-Motor Bottom_Neck                       = {27, -20, 160, 90, false};
-Motor Left_Shoulder                     = {7, -160, 160, 0, true};
-Motor Right_Shoulder                    = {15, -160, 90, 43, true};
-Motor Front_Chest                       = {18, -155, -65, -112, false};
-Motor Back_Chest                        = {17, -155, 20, -60, false};
+Motor Top_Neck                          = {28, 35, 110, 90, false}; // Index 8
+Motor Bottom_Neck                       = {27, -20, 160, 90, false}; // Index 9
+Motor Left_Shoulder                     = {7, -160, 160, -50, true}; // Index 10
+Motor Right_Shoulder                    = {15, -160, 90, 43, true}; // Index 11
+Motor Front_Chest                       = {18, -155, 160, -112, false}; // Index 12
+Motor Back_Chest                        = {17, -155, 20, -60, false}; // Index 13
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
-Motor Hips_Rotate_Upper_Body            = {19, -160, 120, -90, false};
-Motor Hips_Lean_Side_To_Side            = {21, -160, 110, 36, true};
-Motor Hips_Bend_Over                    = {22, -90, 40, 25, true};
-Motor Left_Leg_Abductor_Front_To_Back   = {9, -20, 35, 4, false};
-Motor Right_Leg_Abductor_Front_To_Back  = {8, -60, -5, -45, false};
+Motor Hips_Rotate_Upper_Body            = {19, -160, 120, -90, false}; // Index 14
+Motor Hips_Lean_Side_To_Side            = {21, -160, 110, 100, true}; // Index 15
+Motor Hips_Bend_Over                    = {22, -90, 40, 25, true}; // Index 16
+Motor Left_Leg_Abductor_Front_To_Back   = {9, -20, 35, 4, false}; // Index 17
+Motor Right_Leg_Abductor_Front_To_Back  = {8, -60, -5, -45, false}; // Index 18
 
 // Left Leg (Foot to Hip)
-Motor Left_Leg_Rotator                  = {14, 20, 160, -10, false};
-Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 30, true};
-Motor Left_Knee                         = {12, -130, 0, -40, false};
-Motor Left_Ankle                        = {13, -25, 50, 14, false};
+Motor Left_Leg_Rotator                  = {14, 20, 160, -10, false}; // Index 19
+Motor Left_Leg_Abductor_Side_To_Side    = {30, -130, 160, 30, true}; // Index 20
+Motor Left_Knee                         = {12, -130, 0, -40, false}; // Index 21
+Motor Left_Ankle                        = {13, -25, 50, 14, false}; // Index 22
 
 // Right Leg (Foot to Hip
-Motor Right_Leg_Rotator                 = {4, -160, 0, 60, false};
-Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, 0, true};
-Motor Right_Knee                        = {20, -10, 120, 15, false};
-Motor Right_Ankle                       = {5, -40, 40, 0, false};
+Motor Right_Leg_Rotator                 = {4, -160, 160, 60, false}; // Index 23
+Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, 0, true}; // Index 24
+Motor Right_Knee                        = {20, -10, 120, 15, false}; // Index 25
+Motor Right_Ankle                       = {5, -40, 40, 0, false}; // Index 26
 
 Motor motors[27] = {
   Left_Wrist_Abductor, Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, 
@@ -58,8 +61,9 @@ Motor motors[27] = {
 
 int off[50];
 int angle = 0;
-int index = 26; // Up to 11 has been homed
+int index = 7; // Up to 11 has been homed
 Motor currMotor = motors[index];
+bool confirmedBroken[27];
 
 // int counter2 = 0;
 // int motorID = 1;
@@ -69,7 +73,7 @@ void setup()
 {
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
-  Herkulex.beginSerial2(115200); //open serial port 2 
+  Herkulex.beginSerial3(115200); //open serial port 2 
   Serial.println("Begin");
 
   Herkulex.reboot(0xfe); //reboot first motor
@@ -81,11 +85,14 @@ void setup()
   delay(10);
   Herkulex.clearError(0xfe);
 
-  Serial.print("Moving Motor ");
-  Serial.print(currMotor.hexID);
+  if(!HOMING && !FIND_BROKEN)
+  {
+    Serial.print("Moving Motor ");
+    Serial.print(currMotor.hexID);
  
-  for (Motor m : motors) {
-    // Herkulex.torqueON(m.hexID);
+    for (Motor m : motors) {
+      Herkulex.torqueON(m.hexID);
+    }
   }
 
   // Serial.print("Moving Motor ");
@@ -94,23 +101,62 @@ void setup()
   // // Serial.println(currMotor.homePos);
   // Herkulex.torqueON(motorID);
   delay(1000);
+
+  if(FIND_BROKEN)
+  {
+    for(int i = 0; i < 27; i++)
+    {
+      confirmedBroken[i] = false;
+    }
+  }
+
 }
 
 int counter = 0;
 
 void loop() {
-  // THIS IS FOR MOTOR TESTING
-
-  Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
-  counter++;
-  if(counter == 1)
+  if(FIND_BROKEN)
   {
-    Serial.println(currMotor.hexID);
-    counter = 0;
+    int counter = 0;
+    for(index = 0; index < 27; index++)
+    {
+      currMotor = motors[index];
+      if((Herkulex.getAngle(currMotor.hexID, currMotor.is0601) < -159 && !confirmedBroken[index]))
+      {
+        confirmedBroken[index] = true;
+        Serial.print(currMotor.hexID);
+        Serial.print(", ");
+        Serial.print(currMotor.is0601 ? "0601" : "0201");
+        Serial.print(": ");
+        Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
+        Serial.print("Error number: ");
+        Serial.println(Herkulex.stat(currMotor.hexID));
+        counter++;
+      }
+      delay(10);
+    }
+    if(counter > 0)
+    {
+      Serial.print(counter);
+      Serial.println(" motors broken");
+    }
+    delay(2000);
+    return;
   }
-  delay(150);
-  return;
-  // DELETE BEFORE THIS COMMENT ONCE ALL MOTORS ARE HOMED PROPERLY
+
+  // For motor home position testing
+  if(HOMING)
+  {
+    Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
+    counter++;
+    if(counter == 1)
+    {
+      Serial.println(currMotor.hexID);
+      counter = 0;
+    }
+    delay(150);
+    return;
+  }
 
   Herkulex.moveOneAngle(currMotor.hexID, currMotor.homePos, 1000, LED_GREEN, currMotor.is0601);
 
@@ -126,8 +172,8 @@ void loop() {
     off[currMotor.hexID] = 1;
   }
 
-  Serial.println(currMotor.hexID);
-  Serial.println(Herkulex.getAngle(currMotor.hexID), currMotor.is0601);
+  // Serial.println(currMotor.hexID);
+  // Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
   // Serial.println(off[currMotor.hexID]);
 
   // if (Serial.available() != 0) 
