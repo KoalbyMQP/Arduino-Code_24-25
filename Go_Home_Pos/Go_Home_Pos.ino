@@ -1,7 +1,7 @@
 #include <Herkulex.h>
 
 #define HOMING false
-#define FIND_BROKEN false
+#define FIND_BROKEN true
 
 struct Motor{
   int hexID;
@@ -118,7 +118,6 @@ void setup()
 int counter = 0;
 
 void loop() {
-  return;
   if(FIND_BROKEN)
   {
     int counter = 0;
