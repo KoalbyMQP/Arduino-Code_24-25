@@ -113,9 +113,11 @@ void setup()
 
   Herkulex.setLed(15, LED_GREEN);
   
+  delay(3000);
 }
 
 int counter = 0;
+int foundAngle = 0;
 
 void loop() {
   if(FIND_BROKEN)
@@ -124,8 +126,10 @@ void loop() {
     for(index = 0; index < 27; index++)
     {
       currMotor = motors[index];
-      if((Herkulex.getAngle(currMotor.hexID, currMotor.is0601) < -159 && !confirmedBroken[index]))
+      foundAngle = Herkulex.getAngle(currMotor.hexID, currMotor.is0601);
+      if((foundAngle < -160 && !confirmedBroken[index]))
       {
+        Herkulex.setLed(currMotor.hexID, LED_RED);
         confirmedBroken[index] = true;
         Serial.print(currMotor.hexID);
         Serial.print(", DRS-");
@@ -137,9 +141,10 @@ void loop() {
         Serial.println(Herkulex.stat(currMotor.hexID));
         counter++;
       }
-      else if(!confirmedBroken[index])
+      else if(!confirmedBroken[index] || foundAngle >= -160)
       {
         Herkulex.setLed(currMotor.hexID, LED_GREEN);
+        confirmedBroken[index] = false;
       }
       delay(10);
     }
