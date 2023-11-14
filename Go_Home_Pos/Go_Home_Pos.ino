@@ -1,7 +1,8 @@
 #include <Herkulex.h>
 
-#define HOMING false
-#define FIND_BROKEN true
+#define TEST_WAVE true
+#define HOMING true
+#define FIND_BROKEN false
 
 struct Motor{
   int hexID;
@@ -62,7 +63,7 @@ Motor motors[27] = {
 
 int off[50];
 int angle = 0;
-int index = 11;
+int index = 0;
 Motor currMotor = motors[index];
 bool confirmedBroken[27];
 
@@ -74,8 +75,20 @@ void setup()
 {
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
-  Herkulex.beginSerial3(115200); //open serial port 2 
+  Herkulex.beginSerial3(115200); //open serial port 3
   Serial.println("\nBegin");
+
+  // for(int i = 0; i < 27; i++)
+  // {
+  //   int registerNum = 12;
+  //   if(!motors[i].is0601)
+  //   {
+  //     Herkulex.writeRegistryEEP(motors[i].hexID, registerNum, 10);
+  //   }
+
+  // }
+
+  // Herkulex.writeRegistryEEP(26, 12, 92);
 
   Herkulex.reboot(0xfe); //reboot first motor
   delay(500); 
@@ -86,7 +99,7 @@ void setup()
   delay(10);
   Herkulex.clearError(0xfe);
 
-  if(!HOMING && !FIND_BROKEN)
+  if((!HOMING && !FIND_BROKEN) || TEST_WAVE)
   {
     Serial.print("Moving Motor ");
     Serial.print(currMotor.hexID);
@@ -101,6 +114,7 @@ void setup()
   // Serial.print(" to ");
   // // Serial.println(currMotor.homePos);
   // Herkulex.torqueON(motorID);
+
   delay(1000);
 
   if(FIND_BROKEN)
@@ -120,6 +134,25 @@ int counter = 0;
 int foundAngle = 0;
 
 void loop() {
+  if(TEST_WAVE)
+  {
+    Herkulex.moveOneAngle(15, 30, 1000, LED_GREEN, motors[11].is0601);
+    Herkulex.moveOneAngle(11, -82, 1000, LED_GREEN, motors[5].is0601);
+    Herkulex.moveOneAngle(25, -130, 1000, LED_GREEN, motors[4].is0601);
+    delay(1100);
+    while(true)
+    {
+      Herkulex.moveOneAngle(10, 30, 1000, LED_GREEN, motors[6].is0601);
+      Herkulex.moveOneAngle(6, -50, 1000, LED_GREEN, motors[0].is0601);
+      Herkulex.moveOneAngle(26, 0, 1000, LED_GREEN, motors[0].is0601);
+      delay(1000);
+      Herkulex.moveOneAngle(10, -30, 1000, LED_GREEN, motors[6].is0601);
+      Herkulex.moveOneAngle(6, -65, 1000, LED_GREEN, motors[7].is0601);
+      Herkulex.moveOneAngle(26, 90, 1000, LED_GREEN, motors[0].is0601);
+      delay(1000);
+    }
+  }
+
   if(FIND_BROKEN)
   {
     int counter = 0;
@@ -161,6 +194,7 @@ void loop() {
   if(HOMING)
   {
     Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
+    Serial.println(Herkulex.stat(currMotor.hexID));
     counter++;
     if(counter == 1)
     {

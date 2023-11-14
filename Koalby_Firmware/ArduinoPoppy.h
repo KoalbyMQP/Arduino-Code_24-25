@@ -153,7 +153,7 @@ class ArduinoPoppy {
                        RHipX, RHipZ, RHipY, RKnee, RAnkle,
                        AbsY,AbsX,
                        HeadZ,HeadY,
-                       dxlTest};
+                       };
 
     //Pairs of motors to mirror - 2nd motor sets position to match first motor
     int mirrorArray[4][2] = {

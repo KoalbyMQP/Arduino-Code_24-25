@@ -139,12 +139,9 @@ void ArduinoPoppy::Shutdown() {
 #endif
 
   for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++) {
-    if (idArr[motorNum].type == HERK) {
       Herkulex.torqueOFF(idArr[motorNum].hexID);
-      Herkulex.setLed(idArr[motorNum].hexID, LED_RED);
-    } else {
-    //   dxl.torqueOff(idArr[motorNum].hexID);
-    }
+      Herkulex.setLed(idArr[motorNum].hexID, LED_BLUE);
+    
   }
 }
 
@@ -318,17 +315,12 @@ void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
   int setTorqueOn = getIntFromSerial("Enter Motor Compliance (0 = off, 1 = on) ");
 
   //Send parsed command to the motor
-  if (idArr[motorNum].type == HERK)
-    if (setTorqueOn) {
-      //      SERIAL_MONITOR.print("Set to compliant: ");
-      SERIAL_MONITOR.println(motorNum);
-      compliantMotorSet.add(motorNum);
-    } else
-      compliantMotorSet.sub(motorNum);
-  else //Dynamixel
-  {
-    //TODO implement
-  }
+  if (setTorqueOn) {
+    //      SERIAL_MONITOR.print("Set to compliant: ");
+    SERIAL_MONITOR.println(motorNum);
+    compliantMotorSet.add(motorNum);
+  } else
+    compliantMotorSet.sub(motorNum);
 }
 
 
