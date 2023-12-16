@@ -1,7 +1,7 @@
 #include <Herkulex.h>
 
-#define HAND_LOOP true
-#define TEST_WAVE false
+#define HAND_LOOP false
+#define TEST_WAVE true
 #define HOMING false
 #define FIND_BROKEN false
 
@@ -16,9 +16,9 @@ struct Motor{
 
 // Left Arm (Wrist to Shoulder)
 Motor Left_Wrist_Abductor               = {26, -40, 130, 20, false, "Left_Wrist_Abductor"}; // Index 0
-Motor Left_Elbow                        = {1, -160, 160, -70, true, "Left_Elbow"}; // Index 1
-Motor Left_Arm_Rotator                  = {2, -160, 100, -100, false, "Left_Arm_Rotator"}; // Index 2
-Motor Left_Arm_Abductor                 = {3, -160, 160, -64, true, "Left_Arm_Abductor"}; // Index 3
+Motor Left_Elbow                        = {1, -135, 160, -125, true, "Left_Elbow"}; // Index 1
+Motor Left_Arm_Rotator                  = {2, -160, 100, 11, false, "Left_Arm_Rotator"}; // Index 2
+Motor Left_Arm_Abductor                 = {3, -160, 160, 36, true, "Left_Arm_Abductor"}; // Index 3
 
 // Right Arm (Wrist to Shoulder)
 Motor Right_Wrist_Abductor              = {25, -135, 35, -20, false, "Right_Wrist_Abductor"}; // Index 4
@@ -48,23 +48,26 @@ Motor Left_Knee                         = {12, -130, 0, -40, false, "Left_Knee"}
 Motor Left_Ankle                        = {13, -25, 50, 14, false, "Left_Ankle"}; // Index 19
 
 // Right Leg (Foot to Hip
-Motor Right_Leg_Rotator                 = {4, -160, 160, 60, false, "Right_Leg_Rotator"}; // Index 23
+Motor Right_Leg_Rotator                 = {4, -160, 160, 147, false, "Right_Leg_Rotator"}; // Index 23
 Motor Right_Leg_Abductor_Side_To_Side   = {31, -160, 110, 0, true, "Right_Leg_Abductor_Side_To_Side"}; // Index 24
 Motor Right_Knee                        = {20, -10, 120, 15, false, "Right_Knee"}; // Index 25
 Motor Right_Ankle                       = {5, -40, 40, 0, false, "Right_Ankle"}; // Index 26
 
+// Ordered by id
+// FYI ids 16, 23-24, and 29 are unused
+int motorsLen = 27;
 Motor motors[27] = {
-  Left_Wrist_Abductor, Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, 
-  Right_Wrist_Abductor, Right_Elbow, Right_Arm_Rotator, Right_Arm_Abductor, 
-  Top_Neck, Bottom_Neck, Left_Shoulder, Right_Shoulder, Front_Chest, Back_Chest, 
-  Hips_Rotate_Upper_Body, Hips_Lean_Side_To_Side, Hips_Bend_Over, Left_Leg_Abductor_Front_To_Back, Right_Leg_Abductor_Front_To_Back, 
-  Left_Ankle, Left_Knee, Left_Leg_Abductor_Side_To_Side, Left_Leg_Rotator, 
-  Right_Ankle, Right_Knee, Right_Leg_Abductor_Side_To_Side, Right_Leg_Rotator
+  Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, Right_Leg_Rotator, Right_Ankle, // 1-5
+  Right_Arm_Abductor, Left_Shoulder, Right_Leg_Abductor_Front_To_Back, Left_Leg_Abductor_Front_To_Back, Right_Arm_Rotator, // 6-10
+  Right_Elbow, Left_Knee, Left_Ankle, Left_Leg_Rotator, Right_Shoulder, // 11-15
+  Back_Chest, Front_Chest, Hips_Rotate_Upper_Body, Right_Knee, Hips_Lean_Side_To_Side, // 17 - 21
+  Hips_Bend_Over, Right_Wrist_Abductor, Left_Wrist_Abductor, Bottom_Neck, Top_Neck, // 22, 25-28
+  Left_Leg_Abductor_Side_To_Side, Right_Leg_Abductor_Side_To_Side // 30-31
 };
 
 int off[50];
 int angle = 0;
-int index = 2;
+int index = 1;
 Motor currMotor = motors[index];
 bool confirmedBroken[27];
 
@@ -100,7 +103,7 @@ void setup()
   delay(10);
   Herkulex.clearError(0xfe);
 
-  if((!HOMING && !FIND_BROKEN) || TEST_WAVE || HAND_LOOP)
+  if((!HOMING && !FIND_BROKEN) && (TEST_WAVE || HAND_LOOP))
   {
     Serial.print("Moving Motor ");
     Serial.print(currMotor.hexID);
@@ -126,9 +129,13 @@ void setup()
     }
   }
 
-  Herkulex.setLed(15, LED_GREEN);
+  // Send motors to home position
+  for (int i = 0; i < index; i++) {
+    Herkulex.torqueON(motors[i].hexID);
+    Herkulex.moveOneAngle(motors[i].hexID, motors[i].homePos, 2000, LED_GREEN, motors[i].is0601);
+  }
   
-  delay(3000);
+  delay(4000);
 }
 
 int counter = 0;
@@ -192,11 +199,11 @@ void loop() {
     delay(1100);
     while(true)
     {
-      Herkulex.moveOneAngle(Right_Arm_Rotator.hexID, -60, 500, LED_GREEN, Right_Arm_Rotator.is0601);
+      Herkulex.moveOneAngle(Right_Arm_Rotator.hexID, 30, 500, LED_GREEN, Right_Arm_Rotator.is0601);
       Herkulex.moveOneAngle(Right_Arm_Abductor.hexID, -40, 500, LED_GREEN, Right_Arm_Abductor.is0601);
       // Herkulex.moveOneAngle(Right_Wrist_Abductor.hexID, 0, 1000, LED_GREEN, Right_Wrist_Abductor.is0601);
       delay(500);
-      Herkulex.moveOneAngle(Right_Arm_Rotator.hexID, -110, 500, LED_GREEN, Right_Arm_Rotator.is0601);
+      Herkulex.moveOneAngle(Right_Arm_Rotator.hexID, 0, 500, LED_GREEN, Right_Arm_Rotator.is0601);
       Herkulex.moveOneAngle(Right_Arm_Abductor.hexID, -55, 500, LED_GREEN, Right_Arm_Abductor.is0601);
       // Herkulex.moveOneAngle(Right_Wrist_Abductor.hexID, 90, 1000, LED_GREEN, Right_Wrist_Abductor.is0601);
       delay(500);
@@ -206,7 +213,7 @@ void loop() {
   if(FIND_BROKEN)
   {
     int counter = 0;
-    for(index = 0; index < 27; index++)
+    for(index = 0; index < motorsLen; index++)
     {
       currMotor = motors[index];
       foundAngle = Herkulex.getAngle(currMotor.hexID, currMotor.is0601);
@@ -257,7 +264,8 @@ void loop() {
 
   // Herkulex.moveOneAngle(currMotor.hexID, currMotor.homePos, 1000, LED_GREEN, currMotor.is0601);
 
-  // angle = Herkulex.getAngle(currMotor.hexID, currMotor.is0601);
+  Herkulex.setLed(currMotor.hexID, LED_RED);
+  angle = Herkulex.getAngle(currMotor.hexID, currMotor.is0601);
 
   // if (off[currMotor.hexID] != 1 && (angle >= currMotor.maxPos || angle <= currMotor.minPos)) {
   //   Herkulex.torqueOFF(currMotor.hexID);
@@ -269,22 +277,27 @@ void loop() {
   //   off[currMotor.hexID] = 1;
   // }
 
-  // Serial.println(currMotor.hexID);
-  // Serial.println(Herkulex.getAngle(currMotor.hexID, currMotor.is0601));
+  Serial.println(currMotor.hexID);
+  Serial.println(angle);
   // Serial.println(off[currMotor.hexID]);
 
-  // if (Serial.available() != 0) 
-  // if(false)
-  // {
-  //   Serial.readString();
+  if (Serial.available() != 0) 
+  {
+    Serial.readString();
+    Herkulex.setLed(currMotor.hexID, 0);
+    Herkulex.torqueON(currMotor.hexID);
 
-  //   index++;
-  //   currMotor = motors[index];
+    index++;
 
-  //   Serial.print("Moving Motor ");
-  //   Serial.print(currMotor.hexID);
-  //   Serial.print(" to ");
-  //   Serial.println(currMotor.homePos);
-  // delay(3000);
-  // }
+    if (index == motorsLen)
+      index = 0;
+
+    currMotor = motors[index];
+
+    // Serial.print("Moving Motor ");
+    // Serial.print(currMotor.hexID);
+    // Serial.print(" to ");
+    // Serial.println(currMotor.homePos);
+    delay(1500);
+  }
 }

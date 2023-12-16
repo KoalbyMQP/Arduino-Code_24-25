@@ -1,8 +1,8 @@
 #include <Herkulex.h>
 
 //NEVER RUN THIS PROGRAM ON THE ACTUAL ROBOT IT WILL RESET EVERYTHING
-int oldID=23; //set the motor ID - cant be FE
-int newID=17; //set the motor ID
+int oldID=20; //set the motor ID - cant be FE
+int newID=9; //set the motor ID
 bool is0601 = false;
 
 void setup()  
@@ -30,7 +30,7 @@ void setup()
 
   delay(500); 
   Herkulex.initialize(); //initialize motors
-  Herkulex.torqueON(newID);
+  // Herkulex.torqueON(newID);
   Herkulex.setLed(0xfe, LED_RED);
   delay(10);
   Herkulex.setLed(newID, LED_GREEN);
@@ -49,11 +49,11 @@ void loop(){
 //  delay(1200);
 //  Serial.print("Get servo Angle:");
   
-   Herkulex.moveOneAngle(newID, 200, 1000, LED_GREEN, is0601);
+  //  Herkulex.moveOneAngle(newID, 200, 1000, LED_GREEN, is0601);
    delay(1500);
    Serial.println(Herkulex.getAngle(newID, is0601));
    delay(100);
-   Herkulex.moveOneAngle(newID, 1000, 1000, LED_GREEN, is0601);
+  //  Herkulex.moveOneAngle(newID, 1000, 1000, LED_GREEN, is0601);
    delay(1500);
    Serial.println(Herkulex.getAngle(newID, is0601));
    delay(100);
