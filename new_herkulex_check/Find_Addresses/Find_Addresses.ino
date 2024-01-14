@@ -80,7 +80,6 @@ void loop() {
   Herkulex.torqueOFF(0xfe);
   // int count = 0;
 
-<<<<<<< Updated upstream
   for(int i = 0; i < motorsLen; i++){
     int angle = Herkulex.getAngle(motors[i].hexID, motors[i].is0601);
     Serial.print("Servo ");
@@ -89,19 +88,6 @@ void loop() {
     Serial.println(angle);
     Herkulex.setLed(motors[i].hexID, LED_BLUE);
     // count++;
-=======
-  for(int i =0;i<0xFE;i++){
-    int angle = Herkulex.getAngle(i, false); // assume 0201, does not matter for finding connected motors
-    if(angle != -166 && angle != -83){
-      Serial.print("Got servo ");
-      Serial.print(i);
-      Serial.print(" Angle: ");
-      Serial.println(angle);
-      Herkulex.setLed(i,LED_BLUE);
-      Herkulex.torqueOFF(i);
-      count++;
-    }
->>>>>>> Stashed changes
   }
   // Serial.print("Found ");
   // Serial.print(count);
