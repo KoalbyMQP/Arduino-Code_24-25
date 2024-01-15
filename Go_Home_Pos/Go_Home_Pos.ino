@@ -133,10 +133,11 @@ void setup()
   }
 
   // Send motors to home position
-  // for (int i = 0; i < index; i++) {
-  //   Herkulex.torqueON(motors[i].hexID);
-  //   Herkulex.moveOneAngle(motors[i].hexID, motors[i].homePos, 2000, LED_GREEN, motors[i].is0601);
-  // }
+  // aka make t-pose
+//   for (int i = 0; i < motorsLen; i++) {
+//     Herkulex.torqueON(motors[i].hexID);
+//     Herkulex.moveOneAngle(motors[i].hexID, motors[i].homePos, 1000, LED_GREEN, motors[i].is0601);
+//   }
   
 //   delay(4000);
 }
@@ -264,6 +265,8 @@ void loop() {
     delay(150);
     return;
   }
+
+  return;
 
   // Herkulex.moveOneAngle(currMotor.hexID, currMotor.homePos, 1000, LED_GREEN, currMotor.is0601);
 
