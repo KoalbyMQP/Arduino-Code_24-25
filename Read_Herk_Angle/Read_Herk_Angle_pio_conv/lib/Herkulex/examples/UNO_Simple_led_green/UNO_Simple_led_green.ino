@@ -2,11 +2,11 @@
 
 void setup()  
 {
-  int n=0xfe; //set the motor ID
+  int n=1; //set the motor ID
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
   Serial.println("Begin");
-  Herkulex.begin(115200,10,11); //open serial with rx=10 and tx=11 
+  Herkulex.begin(57600,10,11); //open serial with rx=10 and tx=11 
   Herkulex.reboot(n); //reboot 
   delay(500); 
   Herkulex.initialize(); //initialize motors

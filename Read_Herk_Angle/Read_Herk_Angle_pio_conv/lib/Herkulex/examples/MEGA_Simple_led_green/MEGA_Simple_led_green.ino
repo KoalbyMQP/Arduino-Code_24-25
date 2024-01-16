@@ -2,7 +2,7 @@
 
 void setup()  
 {
-  int n=0xfe; //set the motor ID
+  int n=1; //set the motor ID
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
   Serial.println("Begin");

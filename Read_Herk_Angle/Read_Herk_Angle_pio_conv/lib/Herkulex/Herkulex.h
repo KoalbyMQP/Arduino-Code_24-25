@@ -109,11 +109,11 @@ public:
   void  actionAll(int pTime);
   
   void  moveSpeedOne(int servoID, int Goal, int pTime, int iLed);
-  void  moveOne(int servoID, int Goal, int pTime, int iLed);
-  void  moveOneAngle(int servoID, float angle, int pTime, int iLed);
+  void  moveOne(int servoID, int Goal, int pTime, int iLed, bool is0601);
+  void  moveOneAngle(int servoID, float angle, int pTime, int iLed, bool is0601);
   
-  int   getPosition(int servoID);
-  float getAngle(int servoID);
+  int   getPosition(int servoID, bool is0601);
+  float getAngle(int servoID, bool is0601);
   int   getSpeed(int servoID);
 		
   void  reboot(int servoID);
@@ -122,18 +122,9 @@ public:
   void  writeRegistryRAM(int servoID, int address, int writeByte);
   void  writeRegistryEEP(int servoID, int address, int writeByte);
 
-  
-// private area  
-private:
   void sendData(byte* buffer, int lenght);
   void readData(int size);
-  void addData(int GoalLSB, int GoalMSB, int set, int servoID);
-  int  checksum1(byte* data, int lenghtString);
   int  checksum2(int XOR);
-  void clearBuffer();
-  void printHexByte(byte x);
-
-  int port;
   
   int pSize;
   int pID;
@@ -141,15 +132,27 @@ private:
   int lenghtString;
   int ck1;
   int ck2;
+  byte dataEx[DATA_MOVE+8];
+  byte data[DATA_SIZE]; 
+  byte moveData[DATA_MOVE];
+
+// private area  
+private:
+  
+  
+  void addData(int GoalLSB, int GoalMSB, int set, int servoID);
+  int  checksum1(byte* data, int lenghtString);
+  
+  void clearBuffer();
+  void printHexByte(byte x);
+
+  int port;
+  
   
   int conta;
   
   int XOR;
   int playTime;
-    
-  byte data[DATA_SIZE]; 
-  byte dataEx[DATA_MOVE+8];
-  byte moveData[DATA_MOVE];
  
 };
 
