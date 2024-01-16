@@ -17,7 +17,7 @@ void setup()
 }
 
 void loop(){
-  for(int i =0;i<0xFD;i++){
+  for(int i =0;i<0xFE;i++){
     int angle = Herkulex.getAngle(i, false); // Assume 0201, just see if the motor is hooked up
     if(angle != -166){
       Serial.print("Got servo ");
