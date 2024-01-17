@@ -18,13 +18,13 @@ Motor Left_Arm_Abductor                 = {3, -120, 140, 35, true, "Left_Arm_Abd
 // Right Arm (Wrist to Shoulder)
 Motor Right_Wrist_Abductor              = {25, -2, 155, 27, false, "Right_Wrist_Abductor"};
 Motor Right_Elbow                       = {11, -116, -10, -110, true, "Right_Elbow"};
-Motor Right_Arm_Rotator                 = {10, -160, 160, -8, false, "Right_Arm_Rotator"};
+Motor Right_Arm_Rotator                 = {10, -160, 160, 90, false, "Right_Arm_Rotator"};
 Motor Right_Arm_Abductor                = {6, -73, 136, 32, true, "Right_Arm_Abductor"};
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
 Motor Top_Neck                          = {28, -103, -33, -83, false, "Top_Neck"};
 Motor Bottom_Neck                       = {27, -160, 100, -90, false, "Bottom_Neck"};
-Motor Left_Shoulder                     = {7, -160, 145, -50, true, "Left_Shoulder"};
+Motor Left_Shoulder                     = {7, -160, 145, -55, true, "Left_Shoulder"};
 Motor Right_Shoulder                    = {15, -160, 160, -79, true, "Right_Shoulder"};
 Motor Front_Chest                       = {18, -30, 43, 0, false, "Front_Chest"};
 Motor Back_Chest                        = {17, -70, 55, -5, false, "Back_Chest"};
@@ -76,28 +76,27 @@ void setup()
   delay(100);
 
   // Send motors to home position
-  //   aka make t-pose
   for (int i = 0; i < motorsLen; i++) {
     Herkulex.torqueON(motors[i].hexID);
     Herkulex.moveOneAngle(motors[i].hexID, motors[i].homePos, 1000, 0, motors[i].is0601);
   }
 
+  // Rotate palm to face forward
   Herkulex.moveOneAngle(Right_Arm_Rotator.hexID, Right_Arm_Rotator.homePos - 90, 1000, LED_GREEN, Right_Arm_Rotator.is0601);
+  
+  // Put left arm by side
   Herkulex.moveOneAngle(Left_Arm_Rotator.hexID, Left_Arm_Rotator.homePos + 180, 1000, LED_GREEN, Right_Arm_Rotator.is0601);
   Herkulex.moveOneAngle(Left_Arm_Abductor.hexID, Left_Arm_Abductor.homePos + 90, 1000, LED_GREEN, Right_Arm_Abductor.is0601);
 
   delay(1100);
 }
 
-void loop(){
-  // Arm Down
-  // Serial.println(Herkulex.stat(Left_Arm_Abductor.hexID));
-  // Serial.println(Herkulex.getAngle(Left_Shoulder.hexID, Left_Shoulder.is0601));
-  
+void loop() {
+  // Move right arm down
   Herkulex.moveOneAngle(Right_Arm_Abductor.hexID, Right_Arm_Abductor.homePos + 40, 700, LED_GREEN, Right_Arm_Abductor.is0601);
   delay(650);
 
-  // Arm Up
+  // Move right arm up
   Herkulex.moveOneAngle(Right_Arm_Abductor.hexID, Right_Arm_Abductor.homePos + 70, 700, LED_GREEN, Right_Arm_Abductor.is0601);
   delay(650);
 }

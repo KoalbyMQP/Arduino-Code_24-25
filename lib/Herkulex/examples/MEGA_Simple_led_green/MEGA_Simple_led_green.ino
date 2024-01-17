@@ -6,7 +6,7 @@ void setup()
   delay(2000);  //a delay to have time for serial monitor opening
   Serial.begin(115200);    // Open serial communications
   Serial.println("Begin");
-  Herkulex.beginSerial1(115200); //open serial port 1 
+  Herkulex.beginSerial3(115200); //open serial port 1 
   Herkulex.reboot(n); //reboot 
   delay(500); 
   Herkulex.initialize(); //initialize motors

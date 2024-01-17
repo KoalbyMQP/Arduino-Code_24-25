@@ -36,7 +36,7 @@ void ArduinoPoppy::Setup() {
 //   dxl.setPortProtocolVersion(1.0); //This differs for Dynamixel 320's, will need to check before each command
 
   //Start HerkuleX
-  Herkulex.beginSerial2(115200); //open serial port 1 for HerkuleX's
+  Herkulex.beginSerial3(115200); //open serial port 1 for HerkuleX's
   delay(100);
 }
 
