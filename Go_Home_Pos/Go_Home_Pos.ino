@@ -44,13 +44,13 @@ Motor Right_Leg_Abductor_Side_To_Side   = {8, -14, 16, -2, false, "Right_Leg_Abd
 // Left Leg (Foot to Hip)
 Motor Left_Leg_Rotator                  = {14, -20, 160, 3, false, "Left_Leg_Rotator"};
 Motor Left_Leg_Abductor_Front_To_Back   = {30, 19, 155, 122, true, "Left_Leg_Abductor_Front_To_Back"};
-Motor Left_Knee                         = {12, -120, 5, 0, false, "Left_Knee"};
+Motor Left_Knee                         = {12, -125, -8, -3, false, "Left_Knee"};
 Motor Left_Ankle                        = {13, -75, -5, -38, false, "Left_Ankle"};
 
 // Right Leg (Foot to Hip
 Motor Right_Leg_Rotator                 = {4, -120, 160, 0, false, "Right_Leg_Rotator"};
 Motor Right_Leg_Abductor_Front_To_Back  = {31, -160, 11, -89, true, "Right_Leg_Abductor_Front_To_Back"};
-Motor Right_Knee                        = {20, -120, 0, -115, false, "Right_Knee"};
+Motor Right_Knee                        = {20, -105, 18, -100, false, "Right_Knee"};
 Motor Right_Ankle                       = {5, -35, 40, 0, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
@@ -67,7 +67,7 @@ Motor motors[27] = {
 
 int off[50];
 int angle = 0;
-int index = 16;
+int index = 0;
 Motor currMotor = motors[index];
 bool confirmedBroken[27];
 
