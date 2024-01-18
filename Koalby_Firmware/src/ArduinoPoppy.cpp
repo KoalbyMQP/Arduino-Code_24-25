@@ -396,46 +396,46 @@ void ArduinoPoppy::ReadTFLunaData() {
 
 }
 
-void ArduinoPoppy::ReadHuskyLensData() {
-  Serial.print(huskylens.request());
-  if (!huskylens.request())
-    SERIAL_MONITOR.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
-  else if (!huskylens.isLearned())
-    SERIAL_MONITOR.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
-  else if (!huskylens.available())
-    SERIAL_MONITOR.println(F("No block or arrow appears on the screen!"));
-  else
+void ArduinoPoppy::ReadHuskyLensData()
+{
+  // This code (and much of the other HuskyLens code) Leads to errors,
+  // so I'm commenting it for now -Stephen
+  /*
+Serial.print(huskylens.request());
+if (!huskylens.request())
+  SERIAL_MONITOR.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+else if (!huskylens.isLearned())
+  SERIAL_MONITOR.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+else if (!huskylens.available())
+  SERIAL_MONITOR.println(F("No block or arrow appears on the screen!"));
+else
+{
+  SERIAL_MONITOR.println(F("###########"));
+
+  while (huskylens.available())
   {
-    SERIAL_MONITOR.println(F("###########"));
-
-    // This code (and much of the other HuskyLens code) Leads to errors,
-    // so I'm commenting it for now -Stephen
-    /*
-    while (huskylens.available())
-    {
-      HUSKYLENSResult result = huskylens.read();
-      if (result.command == COMMAND_RETURN_BLOCK) {
-        SERIAL_MONITOR.print(result.xCenter);
-        SERIAL_MONITOR.print(",");
-        SERIAL_MONITOR.print(result.yCenter);
-        SERIAL_MONITOR.print(",");
-        SERIAL_MONITOR.print(result.width);
-        SERIAL_MONITOR.print(",");
-        SERIAL_MONITOR.print(result.height);
-        SERIAL_MONITOR.print(",");
-        SERIAL_MONITOR.print(result.ID);
-        SERIAL_MONITOR.println("");
-      }
-      else {
-        SERIAL_MONITOR.println("Object unknown!");
-      }
-      //driveBot(result);
+    HUSKYLENSResult result = huskylens.read();
+    if (result.command == COMMAND_RETURN_BLOCK) {
+      SERIAL_MONITOR.print(result.xCenter);
+      SERIAL_MONITOR.print(",");
+      SERIAL_MONITOR.print(result.yCenter);
+      SERIAL_MONITOR.print(",");
+      SERIAL_MONITOR.print(result.width);
+      SERIAL_MONITOR.print(",");
+      SERIAL_MONITOR.print(result.height);
+      SERIAL_MONITOR.print(",");
+      SERIAL_MONITOR.print(result.ID);
+      SERIAL_MONITOR.println("");
     }
-    */
+    else {
+      SERIAL_MONITOR.println("Object unknown!");
+    }
+    //driveBot(result);
   }
-
-
 }
+  */
+}
+
 void ArduinoPoppy::UpdateRobot() {
   if (armMirrorModeOn) {
     lastMirror = millis();
