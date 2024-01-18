@@ -21,13 +21,13 @@ Motor Left_Arm_Abductor                 = {3, -120, 140, 35, true, "Left_Arm_Abd
 // Right Arm (Wrist to Shoulder)
 Motor Right_Wrist_Abductor              = {25, -2, 155, 27, false, "Right_Wrist_Abductor"};
 Motor Right_Elbow                       = {11, -116, -10, -110, true, "Right_Elbow"};
-Motor Right_Arm_Rotator                 = {10, -160, 160, -8, false, "Right_Arm_Rotator"};
+Motor Right_Arm_Rotator                 = {10, -160, 160, 90, false, "Right_Arm_Rotator"};
 Motor Right_Arm_Abductor                = {6, -73, 136, 32, true, "Right_Arm_Abductor"};
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
 Motor Top_Neck                          = {28, -103, -33, -83, false, "Top_Neck"};
 Motor Bottom_Neck                       = {27, -160, 100, -90, false, "Bottom_Neck"};
-Motor Left_Shoulder                     = {7, -160, 145, -50, true, "Left_Shoulder"};
+Motor Left_Shoulder                     = {7, -160, 145, -55, true, "Left_Shoulder"};
 Motor Right_Shoulder                    = {15, -160, 160, -79, true, "Right_Shoulder"};
 Motor Front_Chest                       = {18, -30, 43, 0, false, "Front_Chest"};
 Motor Back_Chest                        = {17, -70, 55, -5, false, "Back_Chest"};
