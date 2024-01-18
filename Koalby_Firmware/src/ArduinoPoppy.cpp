@@ -5,12 +5,12 @@
 #include <utility/imumaths.h>
 #define BNO055_SAMPLERATE_PERIOD_MS 10
 
-//#include <SoftwareSerial.h>
-#include <HuskyLensProtocolCore.h>
-#include <HUSKYLENSMindPlus.h>
-#include <DFRobot_HuskyLens.h>
-#include <HUSKYLENS.h>
-//#define SoftwareSerial tfluna
+// #include <SoftwareSerial.h>
+// #include <HuskyLensProtocolCore.h>
+// #include <HUSKYLENSMindPlus.h>
+// #include <DFRobot_HuskyLens.h>
+// #include <HUSKYLENS.h>
+// #define SoftwareSerial tfluna
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 //SoftwareSerial tf(12, 13);
@@ -66,15 +66,15 @@ void ArduinoPoppy::SetupTFLuna() {
 
 //void printResult(HUSKYLENSResult result);
 
-HUSKYLENS huskylens;
-SoftwareSerial huskySerial(10, 11);
+// HUSKYLENS huskylens;
+// SoftwareSerial huskySerial(10, 11);
 //int ledPin = 13;
-void printResult(HUSKYLENSResult result);
+// void printResult(HUSKYLENSResult result);
 
 void ArduinoPoppy::SetupHuskyLens() {
 
   //    Serial.begin(115200);
-  huskySerial.begin(9600);
+  // huskySerial.begin(9600);
   pinMode (2, OUTPUT);
   pinMode (3, OUTPUT);
   pinMode (4, OUTPUT);
@@ -84,13 +84,18 @@ void ArduinoPoppy::SetupHuskyLens() {
   //    pinMode(ledPin, OUTPUT);
   //    analogWrite(5, 180); //motor1 enable pin
   //    analogWrite(6, 180); //motor2 enable pin
-  while (!huskylens.begin(huskySerial))
-  {
+
+
+  // This code (and much of the other HuskyLens code) is causing errors,
+  // so I'm commenting it for now -Stephen
+
+  // while (!huskylens.begin(huskySerial))
+  // {
     //Serial.println(F("Begin failed!"));
     //Serial.println(F("1.Please recheck the "Protocol Type" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
     //Serial.println(F("2.Please recheck the connection."));
     delay(100);
-  }
+  // }
 }
 
 int ArduinoPoppy::ReadCommand() {
@@ -108,27 +113,15 @@ int ArduinoPoppy::ReadCommand() {
 void ArduinoPoppy::Initialize() {
   Herkulex.initialize(); //initialize motors
   for (int i = 0; i < MOTOR_COUNT; i++)
-    if (idArr[i].type == HERK)
-      Herkulex.reboot(idArr[i].hexID);
-    else//Dynamixel
-    {
-      // Turn off torque when configuring items in EEPROM area
-    //   dxl.torqueOff(idArr[i].hexID);
-    //   dxl.setOperatingMode(idArr[i].hexID, OP_POSITION);
-    //   dxl.torqueOn(idArr[i].hexID);
-    //   dxl.ledOn(idArr[i].hexID);
-    }
+    Herkulex.reboot(idArr[i].hexID);
   delay(500);
   //Move each motor to initialized position
   for (int i = 0; i < MOTOR_COUNT; i++) {
-    if (idArr[i].type == HERK) {
-      Herkulex.torqueON(idArr[i].hexID);
-      Herkulex.moveOneAngle(idArr[i].hexID, idArr[i].homePos, 1000, LED_GREEN, idArr[i].is0601);
-      //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
-      Herkulex.getAngle(idArr[i].hexID, idArr[i].is0601);
-    } else {
-      //      dxl.setGoalPosition(idArr[i].hexID, idArr[i].homePos, UNIT_DEGREE);
-    }
+    Herkulex.torqueON(idArr[i].hexID);
+    Herkulex.moveOneAngle(idArr[i].hexID, idArr[i].homePos, 1000, LED_GREEN, idArr[i].is0601);
+    //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
+    Herkulex.getAngle(idArr[i].hexID, idArr[i].is0601);
+    
   }
 }
 
@@ -205,11 +198,8 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
       SERIAL_MONITOR.println(mappedTarget);*/
   }
 
-  if (idArr[motorNum].type == HERK) {
-    Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, 1000, LED_BLUE, idArr[motorNum].is0601); //move motor with 300 speed
-  } else { //Dynamixel
-    // dxl.setGoalPosition(idArr[motorNum].hexID, mappedTarget, UNIT_DEGREE);
-  }
+  Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, 1000, LED_BLUE, idArr[motorNum].is0601); //move motor with 300 speed
+
 }
 
 void ArduinoPoppy::SetRotationOn() {
@@ -252,12 +242,8 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
       SERIAL_MONITOR.println(mappedTarget);*/
   }
 
-  if (idArr[motorNum].type == HERK)
-    Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, tTime, LED_BLUE, idArr[motorNum].is0601); //move motor with 300 speed
-  else {//Dynamixel
-    //TODO: timed motion for Dynamixel
-    // dxl.setGoalPosition(idArr[motorNum].hexID, mappedTarget, UNIT_DEGREE);
-  }
+  Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, tTime, LED_BLUE, idArr[motorNum].is0601); //move motor with 300 speed
+
 }
 
 //Caution: might move FAST when starting, no safties currently implemented for that
@@ -290,16 +276,10 @@ void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
   int setTorqueOn = getIntFromSerial("Enter Motor Torque(0 = off, 1 = on) ");
 
   //Send parsed command to the motor
-  if (idArr[motorNum].type == HERK)
-    if (setTorqueOn)
-      Herkulex.torqueON(idArr[motorNum].hexID);
-    else
-      Herkulex.torqueOFF(idArr[motorNum].hexID);
-  else //Dynamixel
-    if (setTorqueOn)
-      dxl.torqueOn(idArr[motorNum].hexID);
-    else
-      dxl.torqueOff(idArr[motorNum].hexID);
+  if (setTorqueOn)
+    Herkulex.torqueON(idArr[motorNum].hexID);
+  else
+    Herkulex.torqueOFF(idArr[motorNum].hexID);
 }
 
 void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
@@ -427,6 +407,10 @@ void ArduinoPoppy::ReadHuskyLensData() {
   else
   {
     SERIAL_MONITOR.println(F("###########"));
+
+    // This code (and much of the other HuskyLens code) Leads to errors,
+    // so I'm commenting it for now -Stephen
+    /*
     while (huskylens.available())
     {
       HUSKYLENSResult result = huskylens.read();
@@ -447,6 +431,7 @@ void ArduinoPoppy::ReadHuskyLensData() {
       }
       //driveBot(result);
     }
+    */
   }
 
 
@@ -478,7 +463,7 @@ void ArduinoPoppy::UpdateRobot() {
       Herkulex.torqueOFF(idArr[n].hexID);
     else
       Herkulex.torqueON(idArr[n].hexID);
-    Herkulex.moveOneAngle(idArr[n].hexID, Herkulex.getAngle(idArr[n].hexID), 200, 2, idArr[n].is0601);
+    Herkulex.moveOneAngle(idArr[n].hexID, Herkulex.getAngle(idArr[n].hexID, idArr[n].is0601), 200, 2, idArr[n].is0601);
     n = compliantMotorSet.next();
   }
   compliancePWMCounter++;
