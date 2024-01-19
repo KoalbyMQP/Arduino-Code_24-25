@@ -50,9 +50,6 @@ void ArduinoPoppy::Setup() {
   {
     motorIndices[motors[i].hexID] = i;
   }
-
-  Serial.print("TEST: ");
-  Serial.println(GetMotorByID(31).hexID);
 }
 
 // Returns the motor with the given hexID
@@ -197,9 +194,9 @@ void ArduinoPoppy::GetPosition() {
 //   }
 }
 
-void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
+void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of motion
   //Read motor number
-  int motorNum = getIntFromSerial("Enter Motor Index ");
+  int motorID = getIntFromSerial("Enter Motor Index ");
   /*SERIAL_MONITOR.print("out: ");
     SERIAL_MONITOR.println(motorNum);*/
 
@@ -208,13 +205,14 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
 
   //Send parsed command to the motor
   int mappedTarget = 0;
+  Motor motor = GetMotorByID(motorID);
   //Account for motor direction when setting limits
-  if (positionPerc, motors[motorNum].minPos < motors[motorNum].maxPos) {
-    positionPerc = positionPerc + motors[motorNum].homePos;
-    mappedTarget = min(max(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
+  if (positionPerc, motor.minPos < motor.maxPos) {
+    positionPerc = positionPerc + motor.homePos;
+    mappedTarget = min(max(positionPerc, motor.minPos), motor.maxPos);
   } else {
-    positionPerc = -positionPerc + motors[motorNum].homePos;
-    mappedTarget = max(min(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
+    positionPerc = -positionPerc + motor.homePos;
+    mappedTarget = max(min(positionPerc, motor.minPos), motor.maxPos);
     /*SERIAL_MONITOR.print("Val2: ");
       SERIAL_MONITOR.print(positionPerc);
       SERIAL_MONITOR.print("actual: ");
@@ -222,15 +220,15 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
   }
 
   Serial.print("Moving motor ");
-  Serial.print(motors[motorNum].hexID);
+  Serial.print(motor.hexID);
   Serial.print(" to ");
   Serial.println(mappedTarget);
   Serial.print("Status: ");
-  Serial.print(Herkulex.stat(motors[motorNum].hexID));
+  Serial.print(Herkulex.stat(motor.hexID));
   Serial.print(", Angle: ");
-  Serial.println(Herkulex.getAngle(motors[motorNum].hexID, motors[motorNum].is0601));
+  Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
 
-  Herkulex.moveOneAngle(motors[motorNum].hexID, mappedTarget, 1000, LED_BLUE, motors[motorNum].is0601); //move motor with 300 speed
+  Herkulex.moveOneAngle(motor.hexID, mappedTarget, 1000, LED_BLUE, motor.is0601); //move motor with 300 speed
 
 }
 
