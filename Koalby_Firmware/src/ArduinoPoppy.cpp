@@ -160,45 +160,31 @@ void ArduinoPoppy::Shutdown() {
 
 // Return position in the same range as setPosition
 void ArduinoPoppy::GetPosition() {
-  //SERIAL_MONITOR.println("get position");
   // Get motor id
-  int motorNum =  getIntFromSerial("Enter Motor Id");
+  int motorID =  getIntFromSerial("Enter Motor Id");
+  Motor motor = GetMotorByID(motorID);
 
-  //Print the Angle
-  //UPDATE: returns distance from home
-//   if (motors[motorNum].type == HERK) {
+  // Debug print statements
 
-    float angle = 0;
-    int attempt = 0;
-    do {
-      angle = Herkulex.getAngle(motors[motorNum].hexID, motors[motorNum].is0601);
-      attempt++;
-    } while (angle < -164 && attempt < 10);
-    //Serial.println(angle);
-    //Serial.println(map(angle,    motors[motorNum].minPos,motors[motorNum].maxPos,  0,100));
-    if (motors[motorNum].minPos < motors[motorNum].maxPos)
-      SERIAL_MONITOR.println((int)(angle - motors[motorNum].homePos));
-    else
-      SERIAL_MONITOR.println((int)(-angle + motors[motorNum].homePos));
+  // Serial.print("Getting position from motor ");
+  // Serial.println(motor.hexID);
+  // Serial.print("Angle: ");
+  // Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
 
-//   } else {
-//     float angle = 0;
-//     angle = dxl.getPresentPosition(motors[motorNum].hexID, UNIT_DEGREE);
+  float angle = 0;
+  int attempt = 0;
 
-//     //Serial2.println(angle);
-//     //Serial2.println(map(angle,    motors[motorNum].minPos,motors[motorNum].maxPos,  0,100));
-//     if (motors[motorNum].minPos < motors[motorNum].maxPos)
-//       SERIAL_MONITOR.println((int)(angle - motors[motorNum].homePos));
-//     else
-//       SERIAL_MONITOR.println((int)(-angle + motors[motorNum].homePos));
-//   }
+  do {
+    angle = Herkulex.getAngle(motor.hexID, motor.is0601);
+    attempt++;
+  } while (angle < -164 && attempt < 10);
+  
+  SERIAL_MONITOR.println((int)(angle - motor.homePos));
 }
 
 void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of motion
   //Read motor number
   int motorID = getIntFromSerial("Enter Motor Index ");
-  /*SERIAL_MONITOR.print("out: ");
-    SERIAL_MONITOR.println(motorNum);*/
 
   // Read motor target position
   int position = getIntFromSerial("Enter Motor Position ");
@@ -211,14 +197,16 @@ void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of mo
   position = position + motor.homePos;
   mappedTarget = min(max(position, motor.minPos), motor.maxPos);
 
-  Serial.print("Moving motor ");
-  Serial.print(motor.hexID);
-  Serial.print(" to ");
-  Serial.println(mappedTarget);
-  Serial.print("Status: ");
-  Serial.print(Herkulex.stat(motor.hexID));
-  Serial.print(", Angle: ");
-  Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
+  // Debug print statements
+
+  // Serial.print("Moving motor ");
+  // Serial.print(motor.hexID);
+  // Serial.print(" to ");
+  // Serial.println(mappedTarget);
+  // Serial.print("Status: ");
+  // Serial.print(Herkulex.stat(motor.hexID));
+  // Serial.print(", Angle: ");
+  // Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
 
   Herkulex.moveOneAngle(motor.hexID, mappedTarget, 1000, LED_BLUE, motor.is0601); //move motor with 300 speed
 

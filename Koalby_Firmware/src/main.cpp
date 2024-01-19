@@ -2,7 +2,7 @@
 
 //#include <Herkulex.h>
 #include "ArduinoPoppy.h"
-#define DEBUG true
+// #define DEBUG true
 
 //Defined in ArduinoPoppy.h, motor control methods
 ArduinoPoppy robot;
