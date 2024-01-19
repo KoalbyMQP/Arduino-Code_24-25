@@ -75,10 +75,6 @@ void loop() {
       robot.SetPositionT();
       break;
 
-    case ArmMirror:
-      robot.ArmMirror();
-      break;
-
     case SetTorque:
       robot.SetTorque();
       break;

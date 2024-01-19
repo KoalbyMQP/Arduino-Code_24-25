@@ -15,6 +15,8 @@
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 //SoftwareSerial tf(12, 13);
 
+uint8_t motorIndices[254]; // the index in the motors array of each motor ID
+
 
 ArduinoPoppy::ArduinoPoppy() {
 }
@@ -38,6 +40,25 @@ void ArduinoPoppy::Setup() {
   //Start HerkuleX
   Herkulex.beginSerial3(115200); //open serial port 1 for HerkuleX's
   delay(100);
+
+  // Initializes motorIndices array (for GetMotorByID)
+  for(int i = 0; i < 254; i++)
+  {
+    motorIndices[i] = -1;
+  }
+  for(int i = 0; i < MOTOR_COUNT; i++)
+  {
+    motorIndices[motors[i].hexID] = i;
+  }
+
+  Serial.print("TEST: ");
+  Serial.println(GetMotorByID(31).hexID);
+}
+
+// Returns the motor with the given hexID
+Motor ArduinoPoppy::GetMotorByID(int motorID)
+{
+  return motors[motorIndices[motorID]];
 }
 
 void ArduinoPoppy::SetupIMU() {
@@ -111,17 +132,19 @@ int ArduinoPoppy::ReadCommand() {
 }
 
 void ArduinoPoppy::Initialize() {
-  Herkulex.initialize(); //initialize motors
-  for (int i = 0; i < MOTOR_COUNT; i++)
-    Herkulex.reboot(idArr[i].hexID);
+  // initialize motors
+  Herkulex.initialize();
+  for (Motor motor : motors)
+    Herkulex.reboot(motor.hexID);
   delay(500);
-  //Move each motor to initialized position
-  for (int i = 0; i < MOTOR_COUNT; i++) {
-    Herkulex.torqueON(idArr[i].hexID);
-    Herkulex.moveOneAngle(idArr[i].hexID, idArr[i].homePos, 1000, LED_GREEN, idArr[i].is0601);
-    //I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
-    Herkulex.getAngle(idArr[i].hexID, idArr[i].is0601);
-    
+
+  // Move each motor to initialized position
+  for (Motor motor : motors)
+  {
+    Herkulex.torqueON(motor.hexID);
+    Herkulex.moveOneAngle(motor.hexID, motor.homePos, 1000, LED_GREEN, motor.is0601);
+    // I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
+    Herkulex.getAngle(motor.hexID, motor.is0601);
   }
 }
 
@@ -131,9 +154,9 @@ void ArduinoPoppy::Shutdown() {
   SERIAL_MONITOR.println("Robot Shutdown");
 #endif
 
-  for (int motorNum = 0; motorNum < MOTOR_COUNT; motorNum++) {
-      Herkulex.torqueOFF(idArr[motorNum].hexID);
-      Herkulex.setLed(idArr[motorNum].hexID, LED_BLUE);
+  for (Motor motor : motors) {
+      Herkulex.torqueOFF(motor.hexID);
+      Herkulex.setLed(motor.hexID, LED_BLUE);
     
   }
 }
@@ -146,31 +169,31 @@ void ArduinoPoppy::GetPosition() {
 
   //Print the Angle
   //UPDATE: returns distance from home
-//   if (idArr[motorNum].type == HERK) {
+//   if (motors[motorNum].type == HERK) {
 
     float angle = 0;
     int attempt = 0;
     do {
-      angle = Herkulex.getAngle(idArr[motorNum].hexID, idArr[motorNum].is0601);
+      angle = Herkulex.getAngle(motors[motorNum].hexID, motors[motorNum].is0601);
       attempt++;
     } while (angle < -164 && attempt < 10);
     //Serial.println(angle);
-    //Serial.println(map(angle,    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
-    if (idArr[motorNum].minPos < idArr[motorNum].maxPos)
-      SERIAL_MONITOR.println((int)(angle - idArr[motorNum].homePos));
+    //Serial.println(map(angle,    motors[motorNum].minPos,motors[motorNum].maxPos,  0,100));
+    if (motors[motorNum].minPos < motors[motorNum].maxPos)
+      SERIAL_MONITOR.println((int)(angle - motors[motorNum].homePos));
     else
-      SERIAL_MONITOR.println((int)(-angle + idArr[motorNum].homePos));
+      SERIAL_MONITOR.println((int)(-angle + motors[motorNum].homePos));
 
 //   } else {
 //     float angle = 0;
-//     angle = dxl.getPresentPosition(idArr[motorNum].hexID, UNIT_DEGREE);
+//     angle = dxl.getPresentPosition(motors[motorNum].hexID, UNIT_DEGREE);
 
 //     //Serial2.println(angle);
-//     //Serial2.println(map(angle,    idArr[motorNum].minPos,idArr[motorNum].maxPos,  0,100));
-//     if (idArr[motorNum].minPos < idArr[motorNum].maxPos)
-//       SERIAL_MONITOR.println((int)(angle - idArr[motorNum].homePos));
+//     //Serial2.println(map(angle,    motors[motorNum].minPos,motors[motorNum].maxPos,  0,100));
+//     if (motors[motorNum].minPos < motors[motorNum].maxPos)
+//       SERIAL_MONITOR.println((int)(angle - motors[motorNum].homePos));
 //     else
-//       SERIAL_MONITOR.println((int)(-angle + idArr[motorNum].homePos));
+//       SERIAL_MONITOR.println((int)(-angle + motors[motorNum].homePos));
 //   }
 }
 
@@ -186,31 +209,40 @@ void ArduinoPoppy::SetPosition() { //Set position, use default time of motion
   //Send parsed command to the motor
   int mappedTarget = 0;
   //Account for motor direction when setting limits
-  if (positionPerc, idArr[motorNum].minPos < idArr[motorNum].maxPos) {
-    positionPerc = positionPerc + idArr[motorNum].homePos;
-    mappedTarget = min(max(positionPerc, idArr[motorNum].minPos), idArr[motorNum].maxPos);
+  if (positionPerc, motors[motorNum].minPos < motors[motorNum].maxPos) {
+    positionPerc = positionPerc + motors[motorNum].homePos;
+    mappedTarget = min(max(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
   } else {
-    positionPerc = -positionPerc + idArr[motorNum].homePos;
-    mappedTarget = max(min(positionPerc, idArr[motorNum].minPos), idArr[motorNum].maxPos);
+    positionPerc = -positionPerc + motors[motorNum].homePos;
+    mappedTarget = max(min(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
     /*SERIAL_MONITOR.print("Val2: ");
       SERIAL_MONITOR.print(positionPerc);
       SERIAL_MONITOR.print("actual: ");
       SERIAL_MONITOR.println(mappedTarget);*/
   }
 
-  Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, 1000, LED_BLUE, idArr[motorNum].is0601); //move motor with 300 speed
+  Serial.print("Moving motor ");
+  Serial.print(motors[motorNum].hexID);
+  Serial.print(" to ");
+  Serial.println(mappedTarget);
+  Serial.print("Status: ");
+  Serial.print(Herkulex.stat(motors[motorNum].hexID));
+  Serial.print(", Angle: ");
+  Serial.println(Herkulex.getAngle(motors[motorNum].hexID, motors[motorNum].is0601));
+
+  Herkulex.moveOneAngle(motors[motorNum].hexID, mappedTarget, 1000, LED_BLUE, motors[motorNum].is0601); //move motor with 300 speed
 
 }
 
 void ArduinoPoppy::SetRotationOn() {
   int motorNum = getIntFromSerial("Enter Motor Index ");
   int goalSpeed = getIntFromSerial("Enter Motor Position ");
-  Herkulex.moveSpeedOne(idArr[motorNum].hexID, goalSpeed, 1000, LED_BLUE);
+  Herkulex.moveSpeedOne(motors[motorNum].hexID, goalSpeed, 1000, LED_BLUE);
 }
 
 void ArduinoPoppy::SetRotationOff() {
   int motorNum = getIntFromSerial("Enter Motor Index ");
-  Herkulex.moveSpeedOne(idArr[motorNum].hexID, 0, 1000, LED_BLUE); //set speed to 0s
+  Herkulex.moveSpeedOne(motors[motorNum].hexID, 0, 1000, LED_BLUE); //set speed to 0s
 }
 
 void ArduinoPoppy::SetPositionT() { //Set position with time of motion
@@ -226,41 +258,24 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   //Send parsed command to the motor
   int mappedTarget = 0;
   //Account for motor direction when setting limits
-  if (positionPerc, idArr[motorNum].minPos < idArr[motorNum].maxPos) {
-    positionPerc = positionPerc + idArr[motorNum].homePos;
-    mappedTarget = min(max(positionPerc, idArr[motorNum].minPos), idArr[motorNum].maxPos);
+  if (positionPerc, motors[motorNum].minPos < motors[motorNum].maxPos) {
+    positionPerc = positionPerc + motors[motorNum].homePos;
+    mappedTarget = min(max(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
     /*SERIAL_MONITOR.print("Val: ");
       SERIAL_MONITOR.print(positionPerc);
       SERIAL_MONITOR.print("actual: ");
       SERIAL_MONITOR.println(mappedTarget);*/
   } else {
-    positionPerc = -positionPerc + idArr[motorNum].homePos;
-    mappedTarget = max(min(positionPerc, idArr[motorNum].minPos), idArr[motorNum].maxPos);
+    positionPerc = -positionPerc + motors[motorNum].homePos;
+    mappedTarget = max(min(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
     /*SERIAL_MONITOR.print("Val2: ");
       SERIAL_MONITOR.print(positionPerc);
       SERIAL_MONITOR.print("actual: ");
       SERIAL_MONITOR.println(mappedTarget);*/
   }
 
-  Herkulex.moveOneAngle(idArr[motorNum].hexID, mappedTarget, tTime, LED_BLUE, idArr[motorNum].is0601); //move motor with 300 speed
+  Herkulex.moveOneAngle(motors[motorNum].hexID, mappedTarget, tTime, LED_BLUE, motors[motorNum].is0601); //move motor with 300 speed
 
-}
-
-//Caution: might move FAST when starting, no safties currently implemented for that
-void ArduinoPoppy::ArmMirror(/*int mirrorArray[4][2], bool armMirrorModeOn, int lastMirror*/) { //Set position, use default time of motion
-  //Assumes all arm motors being used in this function are HerkuleX motors, not Dynamixels
-  //Read setting number
-  armMirrorModeOn = getIntFromSerial("Enter Value (0 off, 1 on) ");
-
-  if (armMirrorModeOn) {
-    for (int i = 0; i < 4; i++) {
-      Herkulex.torqueOFF(idArr[mirrorArray[i][0]].hexID);
-    }
-  } else {
-    for (int i = 0; i < 4; i++) {
-      Herkulex.torqueON(idArr[mirrorArray[i][0]].hexID);
-    }
-  }
 }
 
 void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
@@ -277,9 +292,9 @@ void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
 
   //Send parsed command to the motor
   if (setTorqueOn)
-    Herkulex.torqueON(idArr[motorNum].hexID);
+    Herkulex.torqueON(motors[motorNum].hexID);
   else
-    Herkulex.torqueOFF(idArr[motorNum].hexID);
+    Herkulex.torqueOFF(motors[motorNum].hexID);
 }
 
 void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
@@ -437,22 +452,6 @@ else
 }
 
 void ArduinoPoppy::UpdateRobot() {
-  if (armMirrorModeOn) {
-    lastMirror = millis();
-    for (int i = 0; i < 4; i++) {
-      int rowRead = mirrorArray[i][0];
-      int rowSet = mirrorArray[i][1];
-      int pos1 = Herkulex.getAngle(idArr[rowRead].hexID, idArr[rowSet].is0601) - idArr[rowRead].homePos + idArr[rowSet].homePos;
-
-      if (pos1 > -164)
-      {
-
-        //Send parsed command to the motor
-        int mappedTarget = min(max(pos1, idArr[rowSet].minPos), idArr[rowSet].maxPos);
-        Herkulex.moveOneAngle(idArr[rowSet].hexID, mappedTarget, 200, LED_BLUE, idArr[rowSet].is0601); //move motor
-      }
-    }
-  }
 
   //Iterate over compliant motors
   int n = compliantMotorSet.first();
@@ -460,10 +459,10 @@ void ArduinoPoppy::UpdateRobot() {
   while (n != -1)
   {
     if (compliancePWMCounter % 10 < 2)
-      Herkulex.torqueOFF(idArr[n].hexID);
+      Herkulex.torqueOFF(motors[n].hexID);
     else
-      Herkulex.torqueON(idArr[n].hexID);
-    Herkulex.moveOneAngle(idArr[n].hexID, Herkulex.getAngle(idArr[n].hexID, idArr[n].is0601), 200, 2, idArr[n].is0601);
+      Herkulex.torqueON(motors[n].hexID);
+    Herkulex.moveOneAngle(motors[n].hexID, Herkulex.getAngle(motors[n].hexID, motors[n].is0601), 200, 2, motors[n].is0601);
     n = compliantMotorSet.next();
   }
   compliancePWMCounter++;
