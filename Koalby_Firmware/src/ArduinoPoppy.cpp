@@ -200,24 +200,16 @@ void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of mo
   /*SERIAL_MONITOR.print("out: ");
     SERIAL_MONITOR.println(motorNum);*/
 
-  //Read motor target position
-  int positionPerc = getIntFromSerial("Enter Motor Position ");
+  // Read motor target position
+  int position = getIntFromSerial("Enter Motor Position ");
 
-  //Send parsed command to the motor
+  // Send parsed command to the motor
   int mappedTarget = 0;
   Motor motor = GetMotorByID(motorID);
-  //Account for motor direction when setting limits
-  if (positionPerc, motor.minPos < motor.maxPos) {
-    positionPerc = positionPerc + motor.homePos;
-    mappedTarget = min(max(positionPerc, motor.minPos), motor.maxPos);
-  } else {
-    positionPerc = -positionPerc + motor.homePos;
-    mappedTarget = max(min(positionPerc, motor.minPos), motor.maxPos);
-    /*SERIAL_MONITOR.print("Val2: ");
-      SERIAL_MONITOR.print(positionPerc);
-      SERIAL_MONITOR.print("actual: ");
-      SERIAL_MONITOR.println(mappedTarget);*/
-  }
+  
+  // Account for home position
+  position = position + motor.homePos;
+  mappedTarget = min(max(position, motor.minPos), motor.maxPos);
 
   Serial.print("Moving motor ");
   Serial.print(motor.hexID);
@@ -248,7 +240,7 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   int motorNum = getIntFromSerial("Enter Motor Index ");
 
   //Read motor target position
-  int positionPerc = getIntFromSerial("Enter Motor Position ");
+  int position = getIntFromSerial("Enter Motor Position ");
 
   //Read time of motion
   int tTime = getIntFromSerial("Enter travel time (millis) ");
@@ -256,18 +248,18 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   //Send parsed command to the motor
   int mappedTarget = 0;
   //Account for motor direction when setting limits
-  if (positionPerc, motors[motorNum].minPos < motors[motorNum].maxPos) {
-    positionPerc = positionPerc + motors[motorNum].homePos;
-    mappedTarget = min(max(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
+  if (position, motors[motorNum].minPos < motors[motorNum].maxPos) {
+    position = position + motors[motorNum].homePos;
+    mappedTarget = min(max(position, motors[motorNum].minPos), motors[motorNum].maxPos);
     /*SERIAL_MONITOR.print("Val: ");
-      SERIAL_MONITOR.print(positionPerc);
+      SERIAL_MONITOR.print(position);
       SERIAL_MONITOR.print("actual: ");
       SERIAL_MONITOR.println(mappedTarget);*/
   } else {
-    positionPerc = -positionPerc + motors[motorNum].homePos;
-    mappedTarget = max(min(positionPerc, motors[motorNum].minPos), motors[motorNum].maxPos);
+    position = -position + motors[motorNum].homePos;
+    mappedTarget = max(min(position, motors[motorNum].minPos), motors[motorNum].maxPos);
     /*SERIAL_MONITOR.print("Val2: ");
-      SERIAL_MONITOR.print(positionPerc);
+      SERIAL_MONITOR.print(position);
       SERIAL_MONITOR.print("actual: ");
       SERIAL_MONITOR.println(mappedTarget);*/
   }
