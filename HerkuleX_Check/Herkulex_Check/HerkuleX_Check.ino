@@ -15,9 +15,11 @@ void setup()
   Herkulex.initialize(); //initialize motors
   Herkulex.torqueOFF(0xfe);
   Herkulex.clearError(0xfe);
+  Herkulex.setLed(0xfe, LED_GREEN);
 }
 
 void loop(){
+  int count;
   for(int i =0;i<0xFE;i++){
     int angle = Herkulex.getAngle(i, false); // Assume 0201, just see if the motor is hooked up
     if(angle != -166){

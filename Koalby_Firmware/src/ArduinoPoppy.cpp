@@ -20,7 +20,7 @@ void ArduinoPoppy::Setup() {
 #endif
 
     // Start HerkuleX
-    Herkulex.beginSerial3(115200); // open serial port 1 for HerkuleX's
+    Herkulex.beginSerial3(115200); // open serial port 3 for HerkuleX
     delay(100);
 
     // Initializes motorIndices array (for GetMotorByID)
@@ -37,10 +37,11 @@ Motor ArduinoPoppy::GetMotorByID(int motorID) {
     return motors[motorIndices[motorID]];
 }
 
-void ArduinoPoppy::SetupIMU() {
-}
-
 int ArduinoPoppy::ReadCommand() {
+#ifdef HUMAN_CONTROL
+    SERIAL_MONITOR.println("Enter Command ");
+#endif
+
     return getIntFromSerial();
 }
 
@@ -55,6 +56,8 @@ void ArduinoPoppy::Initialize() {
         Herkulex.torqueON(motor.hexID);
         Herkulex.moveOneAngle(motor.hexID, motor.homePos, 1000, LED_GREEN, motor.is0601);
     }
+
+    delay(1000);
 }
 
 void ArduinoPoppy::Shutdown() {
@@ -68,23 +71,24 @@ void ArduinoPoppy::Shutdown() {
     }
 }
 
-// Return position in the same range as setPosition
+// Return position (relative to home position) in the same range as setPosition
 void ArduinoPoppy::GetPosition() {
     // Get motor id
-    int motorID = getIntFromSerial("Enter Motor Id");
+    int motorID = getIntFromSerial("Enter Motor ID");
     Motor motor = GetMotorByID(motorID);
 
+#ifdef HUMAN_CONTROL
     // Debug print statements
-
-    // Serial.print("Getting position from motor ");
-    // Serial.println(motor.hexID);
-    // Serial.print("Angle: ");
-    // Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
+    Serial.print("Getting position from motor ");
+    Serial.println(motor.hexID);
+    Serial.print("Angle: ");
+    Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
+#endif
 
     float angle = 0;
     int attempt = 0;
 
-    do {
+    do { // attempt communication 10 times in case of loose connections
         angle = Herkulex.getAngle(motor.hexID, motor.is0601);
         attempt++;
     } while (angle < -164 && attempt < 10);
@@ -94,31 +98,38 @@ void ArduinoPoppy::GetPosition() {
 
 void ArduinoPoppy::SetPosition() { // Set position, use 1000 for time of motion
     // Read motor number
-    int motorID = getIntFromSerial("Enter Motor Index ");
+    Motor motor = GetMotorByID(getIntFromSerial("Enter Motor Index "));
 
-    // Read motor target position
+    // Read motor target position (relative to home position)
     float position = getFloatFromSerial("Enter Motor Position (float) ");
 
     // Send parsed command to the motor
     int mappedTarget = 0;
-    Motor motor = GetMotorByID(motorID);
 
     // Account for home position
     position = position + motor.homePos;
     mappedTarget = min(max(position, motor.minPos), motor.maxPos);
 
+
+#ifdef HUMAN_CONTROL
     // Debug print statements
+    Serial.print("Moving motor ");
+    Serial.print(motor.hexID);
+    Serial.print(" to ");
+    Serial.println(mappedTarget);
+#endif
 
-    // Serial.print("Moving motor ");
-    // Serial.print(motor.hexID);
-    // Serial.print(" to ");
-    // Serial.println(mappedTarget);
-    // Serial.print("Status: ");
-    // Serial.print(Herkulex.stat(motor.hexID));
-    // Serial.print(", Angle: ");
-    // Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
-
+    Herkulex.torqueON(motor.hexID);
     Herkulex.moveOneAngle(motor.hexID, mappedTarget, 1000, LED_BLUE, motor.is0601); // move motor with 300 speed
+
+#ifdef HUMAN_CONTROL
+    // Debug print statements
+    // delay(1100);
+    Serial.print("Status: ");
+    Serial.print(Herkulex.stat(motor.hexID));
+    Serial.print(", Angle: ");
+    Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
+#endif
 }
 
 void ArduinoPoppy::SetRotationOn() {
@@ -134,7 +145,7 @@ void ArduinoPoppy::SetRotationOff() {
 
 void ArduinoPoppy::SetPositionT() { // Set position with time of motion
     // Read motor number
-    int motorNum = getIntFromSerial("Enter Motor Index ");
+    Motor motor = GetMotorByID(getIntFromSerial("Enter Motor Index "));
 
     // Read motor target position
     float position = getFloatFromSerial("Enter Motor Position (float) ");
@@ -143,88 +154,32 @@ void ArduinoPoppy::SetPositionT() { // Set position with time of motion
     int tTime = getIntFromSerial("Enter travel time (millis) ");
 
     // Send parsed command to the motor
-    int mappedTarget = 0;
-    // Account for motor direction when setting limits
-    if (position, motors[motorNum].minPos < motors[motorNum].maxPos) {
-        position += motors[motorNum].homePos;
-        mappedTarget = min(max(position, motors[motorNum].minPos), motors[motorNum].maxPos);
-        /*SERIAL_MONITOR.print("Val: ");
-          SERIAL_MONITOR.print(position);
-          SERIAL_MONITOR.print("actual: ");
-          SERIAL_MONITOR.println(mappedTarget);*/
-    } else {
-        position = -position + motors[motorNum].homePos;
-        mappedTarget = max(min(position, motors[motorNum].minPos), motors[motorNum].maxPos);
-        /*SERIAL_MONITOR.print("Val2: ");
-          SERIAL_MONITOR.print(position);
-          SERIAL_MONITOR.print("actual: ");
-          SERIAL_MONITOR.println(mappedTarget);*/
-    }
+    position = position + motor.homePos;
+    int mappedTarget = min(max(position, motor.minPos), motor.maxPos);
 
-    Herkulex.moveOneAngle(motors[motorNum].hexID, mappedTarget, tTime, LED_BLUE, motors[motorNum].is0601); // move motor with 300 speed
+    Herkulex.torqueON(motor.hexID);
+    Herkulex.moveOneAngle(motor.hexID, mappedTarget, tTime, LED_BLUE, motor.is0601);
 }
 
 void ArduinoPoppy::SetTorque() { // Set position, use default time of motion
     // Read motor number
-#ifdef HUMAN_CONTROL
-    SERIAL_MONITOR.println("Enter Motor Index "); // Prompt User for input
-#endif
 
-    while (SERIAL_MONITOR.available() == 0) {} // wait for user input
-    int motorNum = SERIAL_MONITOR.parseInt(); // Read user input and hold it in a variable
+    Motor motor = GetMotorByID(getIntFromSerial("Enter Motor ID ")); // Read user input and hold it in a variable
 
     // Read motor target position
     int setTorqueOn = getIntFromSerial("Enter Motor Torque(0 = off, 1 = on) ");
 
     // Send parsed command to the motor
     if (setTorqueOn)
-        Herkulex.torqueON(motors[motorNum].hexID);
+        Herkulex.torqueON(motor.hexID);
     else
-        Herkulex.torqueOFF(motors[motorNum].hexID);
+        Herkulex.torqueOFF(motor.hexID);
 }
 
 void ArduinoPoppy::ReadBatteryLevel() {
     float analogValue = analogRead(A10);
     float voltage = 0.0048 * analogValue;
     SERIAL_MONITOR.println(voltage);
-}
-
-// Return position in the same range as setPosition
-void ArduinoPoppy::ReadIMUData() {
-    //  long int t1 = millis();
-    //  SERIAL_MONITOR.print(t1);
-    //  SERIAL_MONITOR.println("");
-
-    /* Get a new sensor event */
-    imu::Vector<3> gyroscope = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-
-    /* Display the floating point gyroscope data */
-    SERIAL_MONITOR.print(gyroscope.x());
-    SERIAL_MONITOR.print(",");
-    SERIAL_MONITOR.print(gyroscope.y());
-    SERIAL_MONITOR.print(",");
-    SERIAL_MONITOR.print(gyroscope.z());
-    SERIAL_MONITOR.print(",");
-
-    imu::Vector<3> acceleration = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-
-    /* Display the floating point accelerometr data */
-    SERIAL_MONITOR.print(acceleration.x());
-    SERIAL_MONITOR.print(",");
-    SERIAL_MONITOR.print(acceleration.y());
-    SERIAL_MONITOR.print(",");
-    SERIAL_MONITOR.print(acceleration.z());
-    SERIAL_MONITOR.print(",");
-
-    imu::Vector<3> magnometer = bno.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
-
-    /* Display the floating point magnetometer data */
-    SERIAL_MONITOR.print(magnometer.x());
-    SERIAL_MONITOR.print(",");
-    SERIAL_MONITOR.print(magnometer.y());
-    SERIAL_MONITOR.print(",");
-    SERIAL_MONITOR.print(magnometer.z());
-    SERIAL_MONITOR.println("");
 }
 
 void ArduinoPoppy::UpdateRobot() {
@@ -242,6 +197,7 @@ int ArduinoPoppy::getIntFromSerial(char *msg) {
     SERIAL_MONITOR.println(msg);
 #endif
 
+    SERIAL_MONITOR.readString(); // necessary to clear serial buffer
     return getIntFromSerial();
 }
 
@@ -255,5 +211,6 @@ float ArduinoPoppy::getFloatFromSerial(char *msg) {
     SERIAL_MONITOR.println(msg);
 #endif
 
+    SERIAL_MONITOR.readString(); // necessary to clear serial buffer
     return getFloatFromSerial();
 }

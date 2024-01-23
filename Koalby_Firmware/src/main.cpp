@@ -11,6 +11,10 @@ void setup() {
 }
 
 void loop() {
+    while(Serial.available()) { // Clear Serial Buffer
+        Serial.read();
+    }
+
     robot.command = robot.ReadCommand();
 #ifdef DEBUG
     if (robot.command != -1)
@@ -23,10 +27,6 @@ void loop() {
     #ifdef DEBUG
             Serial.println("\nINIT");
     #endif
-            break;
-
-        case InitIMU:
-            robot.SetupIMU();
             break;
 
         case GetPosition:
@@ -61,10 +61,6 @@ void loop() {
 
         case ReadBatteryLevel:
             robot.ReadBatteryLevel();
-            break;
-
-        case ReadIMUData:
-            robot.ReadIMUData();
             break;
 
         case Shutdown:

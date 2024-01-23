@@ -16,10 +16,8 @@ enum Commands {
     SetPositionT /*Set position with ID and time of motion*/ = 11,
     SetTorque = 20, /*Set torque to "on" or "off" based on ID*/
     ReadBatteryLevel = 30,
-    InitIMU = 40,
-    ReadIMUData = 41,
-    SetRotationOn = 74,
-    SetRotationOff = 76,
+    SetRotationOn = 40,
+    SetRotationOff = 41,
     Shutdown = 100
 };
 
@@ -44,7 +42,6 @@ class ArduinoPoppy {
         void SetPositionT();
         void SetTorque();
         void ReadBatteryLevel();
-        void ReadIMUData();
         void UpdateRobot();
 
         // Global Constants
