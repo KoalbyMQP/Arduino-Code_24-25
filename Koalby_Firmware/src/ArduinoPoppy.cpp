@@ -5,13 +5,6 @@
 #include <utility/imumaths.h>
 #define BNO055_SAMPLERATE_PERIOD_MS 10
 
-// #include <SoftwareSerial.h>
-// #include <HuskyLensProtocolCore.h>
-// #include <HUSKYLENSMindPlus.h>
-// #include <DFRobot_HuskyLens.h>
-// #include <HUSKYLENS.h>
-// #define SoftwareSerial tfluna
-
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x29);
 //SoftwareSerial tf(12, 13);
 
@@ -28,14 +21,6 @@ void ArduinoPoppy::Setup() {
 #ifdef HUMAN_CONTROL
   SERIAL_MONITOR.println("Begin");
 #endif
-  //Start Dynamixel shield
-  // Set Port baudrate to 115200. This has to match with DYNAMIXEL baudrate.
-#ifdef DYNAMIXEL_CONTROL
-  dxl.begin(115200);
-#endif
-
-  // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version - 1.0 for our motors
-//   dxl.setPortProtocolVersion(1.0); //This differs for Dynamixel 320's, will need to check before each command
 
   //Start HerkuleX
   Herkulex.beginSerial3(115200); //open serial port 1 for HerkuleX's
@@ -60,60 +45,6 @@ Motor ArduinoPoppy::GetMotorByID(int motorID)
 
 void ArduinoPoppy::SetupIMU() {
 
-
-}
-
-void ArduinoPoppy::SetupTFLuna() {
-  //  tf.begin(115200);
-  SERIAL_MONITOR.println ("Initializing...");
-
-}
-
-//void printResult(HUSKYLENSResult result){
-//    if (result.command == COMMAND_RETURN_BLOCK){
-//        Serial.println(String()+F("Block:xCenter=")+result.xCenter+F(",yCenter=")+result.yCenter+F(",width=")+result.width+F(",height=")+result.height+F(",ID=")+result.ID);
-//    }
-//   // else if (result.command == COMMAND_RETURN_ARROW){
-//   //     Serial.println(String()+F("Arrow:xOrigin=")+result.xOrigin+F(",yOrigin=")+result.yOrigin+F(",xTarget=")+result.xTarget+F(",yTarget=")+result.yTarget+F(",ID=")+result.ID);
-//    }
-//    else{
-//        Serial.println("Object unknown!");
-//    }
-//}
-
-
-//void printResult(HUSKYLENSResult result);
-
-// HUSKYLENS huskylens;
-// SoftwareSerial huskySerial(10, 11);
-//int ledPin = 13;
-// void printResult(HUSKYLENSResult result);
-
-void ArduinoPoppy::SetupHuskyLens() {
-
-  //    Serial.begin(115200);
-  // huskySerial.begin(9600);
-  pinMode (2, OUTPUT);
-  pinMode (3, OUTPUT);
-  pinMode (4, OUTPUT);
-  pinMode (7, OUTPUT);
-  pinMode (5, OUTPUT);
-  pinMode (6, OUTPUT);
-  //    pinMode(ledPin, OUTPUT);
-  //    analogWrite(5, 180); //motor1 enable pin
-  //    analogWrite(6, 180); //motor2 enable pin
-
-
-  // This code (and much of the other HuskyLens code) is causing errors,
-  // so I'm commenting it for now -Stephen
-
-  // while (!huskylens.begin(huskySerial))
-  // {
-    //Serial.println(F("Begin failed!"));
-    //Serial.println(F("1.Please recheck the "Protocol Type" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
-    //Serial.println(F("2.Please recheck the connection."));
-    delay(100);
-  // }
 }
 
 int ArduinoPoppy::ReadCommand() {
@@ -131,21 +62,17 @@ int ArduinoPoppy::ReadCommand() {
 void ArduinoPoppy::Initialize() {
   // initialize motors
   Herkulex.initialize();
-  for (Motor motor : motors)
-    Herkulex.reboot(motor.hexID);
+  Herkulex.reboot(0xfe);
   delay(500);
 
-  // Move each motor to initialized position
+  // Move each motor to home position (T-pose)
   for (Motor motor : motors)
   {
     Herkulex.torqueON(motor.hexID);
     Herkulex.moveOneAngle(motor.hexID, motor.homePos, 1000, LED_GREEN, motor.is0601);
-    // I cannot explain why this line is needed, but I swear on my life removing it makes the motor stop working right in init
-    Herkulex.getAngle(motor.hexID, motor.is0601);
   }
 }
 
-//TODO - update for DXL
 void ArduinoPoppy::Shutdown() {
 #ifdef HUMAN_CONTROL
   SERIAL_MONITOR.println("Robot Shutdown");
@@ -154,7 +81,6 @@ void ArduinoPoppy::Shutdown() {
   for (Motor motor : motors) {
       Herkulex.torqueOFF(motor.hexID);
       Herkulex.setLed(motor.hexID, LED_BLUE);
-    
   }
 }
 
@@ -179,7 +105,7 @@ void ArduinoPoppy::GetPosition() {
     attempt++;
   } while (angle < -164 && attempt < 10);
   
-  SERIAL_MONITOR.println((int)(angle - motor.homePos));
+  SERIAL_MONITOR.println(angle - motor.homePos);
 }
 
 void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of motion
@@ -187,7 +113,7 @@ void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of mo
   int motorID = getIntFromSerial("Enter Motor Index ");
 
   // Read motor target position
-  int position = getIntFromSerial("Enter Motor Position ");
+  float position = getFloatFromSerial("Enter Motor Position (float) ");
 
   // Send parsed command to the motor
   int mappedTarget = 0;
@@ -214,21 +140,21 @@ void ArduinoPoppy::SetPosition() { //Set position, use defauSetPosilt time of mo
 
 void ArduinoPoppy::SetRotationOn() {
   int motorNum = getIntFromSerial("Enter Motor Index ");
-  int goalSpeed = getIntFromSerial("Enter Motor Position ");
+  int goalSpeed = getIntFromSerial("Enter Motor Speed (int) ");
   Herkulex.moveSpeedOne(motors[motorNum].hexID, goalSpeed, 1000, LED_BLUE);
 }
 
 void ArduinoPoppy::SetRotationOff() {
   int motorNum = getIntFromSerial("Enter Motor Index ");
-  Herkulex.moveSpeedOne(motors[motorNum].hexID, 0, 1000, LED_BLUE); //set speed to 0s
+  Herkulex.moveSpeedOne(motors[motorNum].hexID, 0, 1000, LED_BLUE);
 }
 
 void ArduinoPoppy::SetPositionT() { //Set position with time of motion
-  //Read motor number}
+  //Read motor number
   int motorNum = getIntFromSerial("Enter Motor Index ");
 
   //Read motor target position
-  int position = getIntFromSerial("Enter Motor Position ");
+  float position = getFloatFromSerial("Enter Motor Position (float) ");
 
   //Read time of motion
   int tTime = getIntFromSerial("Enter travel time (millis) ");
@@ -237,7 +163,7 @@ void ArduinoPoppy::SetPositionT() { //Set position with time of motion
   int mappedTarget = 0;
   //Account for motor direction when setting limits
   if (position, motors[motorNum].minPos < motors[motorNum].maxPos) {
-    position = position + motors[motorNum].homePos;
+    position += motors[motorNum].homePos;
     mappedTarget = min(max(position, motors[motorNum].minPos), motors[motorNum].maxPos);
     /*SERIAL_MONITOR.print("Val: ");
       SERIAL_MONITOR.print(position);
@@ -274,28 +200,6 @@ void ArduinoPoppy::SetTorque() { //Set position, use default time of motion
   else
     Herkulex.torqueOFF(motors[motorNum].hexID);
 }
-
-void ArduinoPoppy::SetCompliant() { //Set position, use default time of motion
-  //Read motor number
-#ifdef HUMAN_CONTROL
-  SERIAL_MONITOR.println("Enter Motor Index ");        //Prompt User for input
-#endif
-
-  while (SERIAL_MONITOR.available() == 0) {}          // wait for user input
-  int motorNum = SERIAL_MONITOR.parseInt();                    //Read user input and hold it in a variable
-
-  //Read value
-  int setTorqueOn = getIntFromSerial("Enter Motor Compliance (0 = off, 1 = on) ");
-
-  //Send parsed command to the motor
-  if (setTorqueOn) {
-    //      SERIAL_MONITOR.print("Set to compliant: ");
-    SERIAL_MONITOR.println(motorNum);
-    compliantMotorSet.add(motorNum);
-  } else
-    compliantMotorSet.sub(motorNum);
-}
-
 
 void ArduinoPoppy::ReadBatteryLevel() {
   float analogValue = analogRead(A10);
@@ -345,105 +249,8 @@ void ArduinoPoppy::ReadIMUData() {
 
 }
 
-
-void ArduinoPoppy::ReadTFLunaData() {
-  //  tf.listen();
-  //  SERIAL_MONITOR.println(tf.read());
-
-
-  //const int HEADER = 0x59;
-  //const int HEADER = 173;
-  //int uart[9]; //save data measured by LiDAR
-  //int i;
-  //int dist; //actual distance measurements of LiDAR
-  //int check; //save check value
-
-  //  if (tf.available()) { //check if serial port has data input
-  //    if (tf.read() == HEADER) { //assess data package frame header 0x59
-  ////      Serial.println(HEADER);
-  //      uart[0] = HEADER;
-  //      if (tf.read() == HEADER) { //assess data package frame header 0x59
-  //        uart[1] = HEADER;
-  //        for (i = 2; i < 9; i++) { //save data in array
-  //          uart[i] = tf.read();
-  //        }
-  //        check = uart[0] + uart[1] + uart[2] + uart[3] + uart[4] + uart[5] + uart[6] + uart[7];
-  //        if (uart[8] == (check & 0xff)) { //verify the received data as per protocol
-  ////          uart[2] = uart[2] + 84;
-  ////          uart[3] = uart[3] + 84;
-  //          dist = uart[2] + uart[3] * 256; //calculate distance value
-  ////          Serial.print("2 = ");
-  ////          Serial.print(uart[2]); //output measure distance value of LiDAR
-  ////          Serial.print('\n');
-  ////          Serial.print("3 = ");
-  ////          Serial.print(uart[3]); //output measure distance value of LiDAR
-  ////          Serial.print('\n');
-  //
-  //          Serial.print("dist = ");
-  //          Serial.print(dist); //output measure distance value of LiDAR
-  //          Serial.print('\n');
-  //        }
-  //      }
-  //    }
-  //  }
-
-}
-
-void ArduinoPoppy::ReadHuskyLensData()
-{
-  // This code (and much of the other HuskyLens code) Leads to errors,
-  // so I'm commenting it for now -Stephen
-  /*
-Serial.print(huskylens.request());
-if (!huskylens.request())
-  SERIAL_MONITOR.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
-else if (!huskylens.isLearned())
-  SERIAL_MONITOR.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
-else if (!huskylens.available())
-  SERIAL_MONITOR.println(F("No block or arrow appears on the screen!"));
-else
-{
-  SERIAL_MONITOR.println(F("###########"));
-
-  while (huskylens.available())
-  {
-    HUSKYLENSResult result = huskylens.read();
-    if (result.command == COMMAND_RETURN_BLOCK) {
-      SERIAL_MONITOR.print(result.xCenter);
-      SERIAL_MONITOR.print(",");
-      SERIAL_MONITOR.print(result.yCenter);
-      SERIAL_MONITOR.print(",");
-      SERIAL_MONITOR.print(result.width);
-      SERIAL_MONITOR.print(",");
-      SERIAL_MONITOR.print(result.height);
-      SERIAL_MONITOR.print(",");
-      SERIAL_MONITOR.print(result.ID);
-      SERIAL_MONITOR.println("");
-    }
-    else {
-      SERIAL_MONITOR.println("Object unknown!");
-    }
-    //driveBot(result);
-  }
-}
-  */
-}
-
 void ArduinoPoppy::UpdateRobot() {
 
-  //Iterate over compliant motors
-  int n = compliantMotorSet.first();
-
-  while (n != -1)
-  {
-    if (compliancePWMCounter % 10 < 2)
-      Herkulex.torqueOFF(motors[n].hexID);
-    else
-      Herkulex.torqueON(motors[n].hexID);
-    Herkulex.moveOneAngle(motors[n].hexID, Herkulex.getAngle(motors[n].hexID, motors[n].is0601), 200, 2, motors[n].is0601);
-    n = compliantMotorSet.next();
-  }
-  compliancePWMCounter++;
 }
 
 //Return an integer entered over serial - options with and without a message
@@ -458,4 +265,17 @@ int ArduinoPoppy::getIntFromSerial(char* msg) {
 #endif
 
   return getIntFromSerial();
+}
+
+float ArduinoPoppy::getFloatFromSerial() {
+  while (SERIAL_MONITOR.available() == 0) {}
+  return SERIAL_MONITOR.parseFloat();
+}
+
+float ArduinoPoppy::getFloatFromSerial(char* msg) {
+#ifdef HUMAN_CONTROL
+  SERIAL_MONITOR.println(msg);
+#endif
+
+  return getFloatFromSerial();
 }
