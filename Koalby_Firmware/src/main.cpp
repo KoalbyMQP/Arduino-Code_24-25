@@ -1,86 +1,81 @@
-//Main firmware for Koalby humanoid robot
+// Main firmware for Koalby humanoid robot
 
 #include "ArduinoPoppy.h"
 
-//Defined in ArduinoPoppy.h, motor control methods
-ArduinoPoppy robot;
+ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods
 
-//Set up
-void setup()
-{
-  Serial.begin(115200);
-  Serial.println("Initializing");
-  robot.Setup();
+void setup() {
+    Serial.begin(115200);
+    Serial.println("Initializing");
+    robot.Setup();
 }
 
 void loop() {
-
-  robot.command = robot.ReadCommand();
+    robot.command = robot.ReadCommand();
 #ifdef DEBUG
-  if (robot.command != -1)
-    Serial.println(robot.command);
+    if (robot.command != -1)
+        Serial.println(robot.command);
 #endif
 
-  switch (robot.command) {
-    case Init:
-      robot.Initialize();
-#ifdef DEBUG
-      Serial.println("\nINIT");
-#endif
-      break;
+    switch (robot.command) {
+        case Init:
+            robot.Initialize();
+    #ifdef DEBUG
+            Serial.println("\nINIT");
+    #endif
+            break;
 
-    case InitIMU:
-      robot.SetupIMU();
-      break;
+        case InitIMU:
+            robot.SetupIMU();
+            break;
 
-    case GetPosition:
-      robot.GetPosition();
-#ifdef DEBUG
-      Serial.println("GET POSITION");
-#endif
-      break;
+        case GetPosition:
+            robot.GetPosition();
+    #ifdef DEBUG
+            Serial.println("GET POSITION");
+    #endif
+            break;
 
-    case SetPosition:
-      robot.SetPosition();
-#ifdef DEBUG
-      Serial.println("SET POSITION");
-#endif
-      break;
+        case SetPosition:
+            robot.SetPosition();
+    #ifdef DEBUG
+            Serial.println("SET POSITION");
+    #endif
+            break;
 
-    case SetRotationOn:
-      robot.SetRotationOn();
-      break;
+        case SetRotationOn:
+            robot.SetRotationOn();
+            break;
 
-    case SetRotationOff:
-      robot.SetRotationOff();
-      break;
+        case SetRotationOff:
+            robot.SetRotationOff();
+            break;
 
-    case SetPositionT:
-      robot.SetPositionT();
-      break;
+        case SetPositionT:
+            robot.SetPositionT();
+            break;
 
-    case SetTorque:
-      robot.SetTorque();
-      break;
+        case SetTorque:
+            robot.SetTorque();
+            break;
 
-    case ReadBatteryLevel:
-      robot.ReadBatteryLevel();
-      break;
+        case ReadBatteryLevel:
+            robot.ReadBatteryLevel();
+            break;
 
-    case ReadIMUData:
-      robot.ReadIMUData();
-      break;
+        case ReadIMUData:
+            robot.ReadIMUData();
+            break;
 
-    case Shutdown:
-      robot.Shutdown();
-      break;
+        case Shutdown:
+            robot.Shutdown();
+            break;
 
-    default:
-      break;
-  }
+        default:
+            break;
+    }
 
-
-//  Do other tasks
-  robot.UpdateRobot();
-  delay(5);
+    //  Do other tasks
+    robot.UpdateRobot();
+    delay(5);
 }
