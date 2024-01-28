@@ -54,7 +54,7 @@ void ArduinoPoppy::Initialize() {
         Herkulex.moveOneAngle(motor.hexID, motor.homePos, 1000, LED_GREEN, motor.is0601);
     }
 
-    delay(1000);
+    delay(1500);
 }
 
 // Return position (relative to home position) in the same range as setPosition
