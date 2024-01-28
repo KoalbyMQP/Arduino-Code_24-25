@@ -31,7 +31,7 @@ Motor Right_Leg_Abductor_Side_To_Side = {8, -14, 16, -2, false, "Right_Leg_Abduc
 Motor Left_Leg_Rotator = {14, -20, 160, 3, false, "Left_Leg_Rotator"};
 Motor Left_Leg_Abductor_Front_To_Back = {30, 19, 155, 122, true, "Left_Leg_Abductor_Front_To_Back"};
 Motor Left_Knee = {12, -125, -8, -3, false, "Left_Knee"};
-Motor Left_Ankle = {13, -75, -5, -38, false, "Left_Ankle"};
+Motor Left_Ankle = {13, -80, -5, -36, false, "Left_Ankle"};
 
 // Right Leg (Foot to Hip
 Motor Right_Leg_Rotator = {4, -120, 160, 0, false, "Right_Leg_Rotator"};
