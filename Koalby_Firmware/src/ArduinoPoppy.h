@@ -13,11 +13,9 @@ enum Commands {
     Init = 1,
     GetPosition = 5,
     SetPosition = 10,
-    SetPositionT /*Set position with ID and time of motion*/ = 11,
     SetTorque = 20, /*Set torque to "on" or "off" based on ID*/
     ReadBatteryLevel = 30,
-    SetRotationOn = 40,
-    SetRotationOff = 41,
+    SetRotation = 40,
     Shutdown = 100
 };
 
@@ -32,29 +30,19 @@ class ArduinoPoppy {
         // Global Methods
         void Setup();
         Motor GetMotorByID(int motorID);
-        int ReadCommand();
         void Initialize();
         void Shutdown();
-        void GetPosition();
-        void SetPosition();
-        void SetRotationOn();
-        void SetRotationOff();
-        void SetPositionT();
-        void SetTorque();
+        void GetPosition(int motorID);
+        void SetPosition(int motorID, float position, int tTime);
+        void SetRotation(int motorID, int goalSpeed);
+        void SetTorque(int motorID, int setTorqueOn);
         void ReadBatteryLevel();
         void UpdateRobot();
 
         // Global Constants
         int command = 0;
 
-    private:
-        // Private Methods
-        int getIntFromSerial();
-        int getIntFromSerial(char *msg);
-        float getFloatFromSerial();
-        float getFloatFromSerial(char *msg);
-
-        // List of motors now found in Ava.h
+    // List of motors now found in Ava.h        
 };
 
 #endif

@@ -22,6 +22,10 @@ void ArduinoPoppy::Setup() {
     // Start HerkuleX
     Herkulex.beginSerial3(115200); // open serial port 3 for HerkuleX
     delay(100);
+    Herkulex.reboot(0xfe); //reboot first motor
+
+    delay(10); 
+    Herkulex.initialize(); //initialize motors
 
     // Initializes motorIndices array (for GetMotorByID)
     for (int i = 0; i < 254; i++) {
@@ -37,14 +41,7 @@ Motor ArduinoPoppy::GetMotorByID(int motorID) {
     return motors[motorIndices[motorID]];
 }
 
-int ArduinoPoppy::ReadCommand() {
-#ifdef HUMAN_CONTROL
-    SERIAL_MONITOR.println("Enter Command ");
-#endif
-
-    return getIntFromSerial();
-}
-
+// command structure: '1'
 void ArduinoPoppy::Initialize() {
     // initialize motors
     Herkulex.initialize();
@@ -60,21 +57,10 @@ void ArduinoPoppy::Initialize() {
     delay(1000);
 }
 
-void ArduinoPoppy::Shutdown() {
-#ifdef HUMAN_CONTROL
-    SERIAL_MONITOR.println("Robot Shutdown");
-#endif
-
-    for (Motor motor : motors) {
-        Herkulex.torqueOFF(motor.hexID);
-        Herkulex.setLed(motor.hexID, LED_BLUE);
-    }
-}
-
 // Return position (relative to home position) in the same range as setPosition
-void ArduinoPoppy::GetPosition() {
-    // Get motor id
-    int motorID = getIntFromSerial("Enter Motor ID");
+// command structure: '5 id'
+// i.e. '5 5'
+void ArduinoPoppy::GetPosition(int motorID) {
     Motor motor = GetMotorByID(motorID);
 
 #ifdef HUMAN_CONTROL
@@ -96,62 +82,11 @@ void ArduinoPoppy::GetPosition() {
     SERIAL_MONITOR.println(angle - motor.homePos);
 }
 
-void ArduinoPoppy::SetPosition() { // Set position, use 1000 for time of motion
+// command structure: '10 id pos time'
+// i.e. '10 5 0.0 1000'
+void ArduinoPoppy::SetPosition(int motorID, float position, int tTime) { // Set position with time of motion
     // Read motor number
-    Motor motor = GetMotorByID(getIntFromSerial("Enter Motor Index "));
-
-    // Read motor target position (relative to home position)
-    float position = getFloatFromSerial("Enter Motor Position (float) ");
-
-    // Send parsed command to the motor
-    int mappedTarget = 0;
-
-    // Account for home position
-    position = position + motor.homePos;
-    mappedTarget = min(max(position, motor.minPos), motor.maxPos);
-
-
-#ifdef HUMAN_CONTROL
-    // Debug print statements
-    Serial.print("Moving motor ");
-    Serial.print(motor.hexID);
-    Serial.print(" to ");
-    Serial.println(mappedTarget);
-#endif
-
-    Herkulex.torqueON(motor.hexID);
-    Herkulex.moveOneAngle(motor.hexID, mappedTarget, 1000, LED_BLUE, motor.is0601); // move motor with 300 speed
-
-#ifdef HUMAN_CONTROL
-    // Debug print statements
-    // delay(1100);
-    Serial.print("Status: ");
-    Serial.print(Herkulex.stat(motor.hexID));
-    Serial.print(", Angle: ");
-    Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
-#endif
-}
-
-void ArduinoPoppy::SetRotationOn() {
-    int motorNum = getIntFromSerial("Enter Motor Index ");
-    int goalSpeed = getIntFromSerial("Enter Motor Speed (int) ");
-    Herkulex.moveSpeedOne(motors[motorNum].hexID, goalSpeed, 1000, LED_BLUE);
-}
-
-void ArduinoPoppy::SetRotationOff() {
-    int motorNum = getIntFromSerial("Enter Motor Index ");
-    Herkulex.moveSpeedOne(motors[motorNum].hexID, 0, 1000, LED_BLUE);
-}
-
-void ArduinoPoppy::SetPositionT() { // Set position with time of motion
-    // Read motor number
-    Motor motor = GetMotorByID(getIntFromSerial("Enter Motor Index "));
-
-    // Read motor target position
-    float position = getFloatFromSerial("Enter Motor Position (float) ");
-
-    // Read time of motion
-    int tTime = getIntFromSerial("Enter travel time (millis) ");
+    Motor motor = GetMotorByID(motorID);
 
     // Send parsed command to the motor
     position = position + motor.homePos;
@@ -161,13 +96,12 @@ void ArduinoPoppy::SetPositionT() { // Set position with time of motion
     Herkulex.moveOneAngle(motor.hexID, mappedTarget, tTime, LED_BLUE, motor.is0601);
 }
 
-void ArduinoPoppy::SetTorque() { // Set position, use default time of motion
+// command structure: '20 id turnOn'
+// i.e. '20 5 1'
+void ArduinoPoppy::SetTorque(int motorID, int setTorqueOn) { // Set position, use default time of motion
     // Read motor number
 
-    Motor motor = GetMotorByID(getIntFromSerial("Enter Motor ID ")); // Read user input and hold it in a variable
-
-    // Read motor target position
-    int setTorqueOn = getIntFromSerial("Enter Motor Torque(0 = off, 1 = on) ");
+    Motor motor = GetMotorByID(motorID); // Read user input and hold it in a variable
 
     // Send parsed command to the motor
     if (setTorqueOn)
@@ -176,41 +110,32 @@ void ArduinoPoppy::SetTorque() { // Set position, use default time of motion
         Herkulex.torqueOFF(motor.hexID);
 }
 
+// command structure: '30'
 void ArduinoPoppy::ReadBatteryLevel() {
     float analogValue = analogRead(A10);
     float voltage = 0.0048 * analogValue;
     SERIAL_MONITOR.println(voltage);
 }
 
+// command structure: '40 id speed'
+// i.e. '40 5 0'
+void ArduinoPoppy::SetRotation(int motorID, int goalSpeed) {
+    Motor motor = GetMotorByID(motorID);
+    Herkulex.moveSpeedOne(motor.hexID, goalSpeed, 1000, LED_BLUE);
+}
+
+// command structure: '100'
+void ArduinoPoppy::Shutdown() {
+#ifdef HUMAN_CONTROL
+    SERIAL_MONITOR.println("Robot Shutdown");
+#endif
+
+    for (Motor motor : motors) {
+        Herkulex.torqueOFF(motor.hexID);
+        Herkulex.setLed(motor.hexID, LED_BLUE);
+    }
+}
+
 void ArduinoPoppy::UpdateRobot() {
 
-}
-
-// Return an integer entered over serial - options with and without a message
-int ArduinoPoppy::getIntFromSerial() {
-    while (SERIAL_MONITOR.available() == 0) {}
-    return SERIAL_MONITOR.parseInt();
-}
-
-int ArduinoPoppy::getIntFromSerial(char *msg) {
-#ifdef HUMAN_CONTROL
-    SERIAL_MONITOR.println(msg);
-#endif
-
-    SERIAL_MONITOR.readString(); // necessary to clear serial buffer
-    return getIntFromSerial();
-}
-
-float ArduinoPoppy::getFloatFromSerial() {
-    while (SERIAL_MONITOR.available() == 0) {}
-    return SERIAL_MONITOR.parseFloat();
-}
-
-float ArduinoPoppy::getFloatFromSerial(char *msg) {
-#ifdef HUMAN_CONTROL
-    SERIAL_MONITOR.println(msg);
-#endif
-
-    SERIAL_MONITOR.readString(); // necessary to clear serial buffer
-    return getFloatFromSerial();
 }

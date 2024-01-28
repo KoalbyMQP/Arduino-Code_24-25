@@ -4,21 +4,56 @@
 
 ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods
 
+int getFirstInt(String s, int startIndex=0) {
+    return s.substring(startIndex, s.indexOf(" ", startIndex)).toInt();
+}
+
+float getFirstFloat(String s, int startIndex=0) {
+    return s.substring(startIndex, s.indexOf(" ", startIndex)).toFloat();
+}
+
+String removeFirstArg(String s) {
+    return s.substring(s.indexOf(" ") + 1);
+}
+
 void setup() {
     Serial.begin(115200);
+#ifdef HUMAN_CONTROL
     Serial.println("Initializing");
+#endif
     robot.Setup();
 }
 
+int motorID = 0;
+float position = 0;
+int speed = 0;
+int tTime = 0;
+int torqueOn = 0;
+
 void loop() {
-    while(Serial.available()) { // Clear Serial Buffer
-        Serial.read();
+#ifdef HUMAN_CONTROL
+    SERIAL_MONITOR.println("Enter Command ");
+#endif
+
+    while (!Serial.available()) {} // wait until command recieved
+    String cmd = SERIAL_MONITOR.readStringUntil('\n');
+#ifdef DEBUG
+        Serial.print("Full command: ");
+        Serial.println(cmd);
+#endif
+    int hasArgs = cmd.indexOf(" ") > -1;
+
+    if (hasArgs) {
+        robot.command = getFirstInt(cmd);
+        cmd = removeFirstArg(cmd);
+    } else {
+        robot.command = cmd.toInt();
     }
 
-    robot.command = robot.ReadCommand();
 #ifdef DEBUG
     if (robot.command != -1)
         Serial.println(robot.command);
+        Serial.println(cmd);
 #endif
 
     switch (robot.command) {
@@ -30,33 +65,51 @@ void loop() {
             break;
 
         case GetPosition:
-            robot.GetPosition();
+            motorID = cmd.toInt();
+
+            robot.GetPosition(motorID);
     #ifdef DEBUG
             Serial.println("GET POSITION");
+            Serial.println("Args:");
+            Serial.println(motorID);
     #endif
             break;
 
         case SetPosition:
-            robot.SetPosition();
+            motorID = getFirstInt(cmd);
+            cmd = removeFirstArg(cmd);
+
+            position = getFirstFloat(cmd);
+            tTime = cmd.substring(cmd.indexOf(" ") + 1).toInt();
+
+            robot.SetPosition(motorID, position, tTime);
     #ifdef DEBUG
             Serial.println("SET POSITION");
+            Serial.println("Args:");
+            Serial.println(motorID);
+            Serial.println(position);
+            Serial.println(tTime);
     #endif
             break;
 
-        case SetRotationOn:
-            robot.SetRotationOn();
-            break;
-
-        case SetRotationOff:
-            robot.SetRotationOff();
-            break;
-
-        case SetPositionT:
-            robot.SetPositionT();
-            break;
-
         case SetTorque:
-            robot.SetTorque();
+            motorID = getFirstInt(cmd);
+            torqueOn = cmd.substring(cmd.indexOf(" ") + 1).toInt();
+
+            robot.SetTorque(motorID, torqueOn);
+    #ifdef DEBUG
+        Serial.println("SET TORQUE");
+        Serial.println("Args:");
+        Serial.println(motorID);
+        Serial.println(torqueOn);
+    #endif
+            break;
+
+        case SetRotation:
+            motorID = getFirstInt(cmd);
+            speed = cmd.substring(cmd.indexOf(" ") + 1).toInt();
+
+            robot.SetRotation(motorID, speed);
             break;
 
         case ReadBatteryLevel:

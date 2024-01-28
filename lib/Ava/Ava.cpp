@@ -37,7 +37,7 @@ Motor Left_Ankle = {13, -75, -5, -38, false, "Left_Ankle"};
 Motor Right_Leg_Rotator = {4, -120, 160, 0, false, "Right_Leg_Rotator"};
 Motor Right_Leg_Abductor_Front_To_Back = {31, -160, 11, -89, true, "Right_Leg_Abductor_Front_To_Back"};
 Motor Right_Knee = {20, -105, 18, -100, false, "Right_Knee"};
-Motor Right_Ankle = {5, -35, 40, 0, false, "Right_Ankle"};
+Motor Right_Ankle = {5, -23, 54, 12, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
 // FYI ids 16, 23-24, and 29 are unused
