@@ -85,7 +85,9 @@ void loop() {
     Serial.print("Servo ");
     Serial.print(motors[i].hexID);
     Serial.print(" Angle: ");
-    Serial.println(angle);
+    Serial.print(angle);
+    Serial.print(" Stat: ");
+    Serial.println(Herkulex.stat(motors[i].hexID));
     Herkulex.setLed(motors[i].hexID, LED_BLUE);
     // count++;
   }
