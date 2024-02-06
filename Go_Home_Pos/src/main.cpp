@@ -3,7 +3,7 @@
 
 #define HOMING false
 #define FIND_BROKEN false
-#define GO_HOME true
+#define GO_HOME false
 
 int off[50];
 int angle = 0;
