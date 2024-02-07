@@ -3,7 +3,8 @@ import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 ser = serial.Serial('/dev/cu.usbmodem1101', 115200)  # Adjust with your port
-n = 20  # Number of data points to collect before plotting
+
+n = 100  # Number of data points to collect before plotting
 data_points = 0  # Number of data points collected so far
 
 with open('data.csv', 'w', newline='') as file:
