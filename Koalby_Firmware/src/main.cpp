@@ -2,6 +2,8 @@
 
 #include "ArduinoPoppy.h"
 
+#define CHECK_MOTOR_STATUSES false
+
 ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods
 
 int getFirstInt(String s, int startIndex=0) {
@@ -35,7 +37,12 @@ void loop() {
     SERIAL_MONITOR.println("Enter Command ");
 #endif
 
-    while (!Serial.available()) {} // wait until command recieved
+    while (!Serial.available()) {
+        if(CHECK_MOTOR_STATUSES) {
+            robot.CheckMotorStatuses();
+            delay(2000);
+        }
+    } // wait until command recieved
     String cmd = SERIAL_MONITOR.readStringUntil('\n');
 #ifdef DEBUG
         Serial.print("Full command: ");

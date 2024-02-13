@@ -38,6 +38,7 @@ class ArduinoPoppy {
         void SetTorque(int motorID, int setTorqueOn);
         void ReadBatteryLevel();
         void UpdateRobot();
+        void CheckMotorStatuses();
 
         // Global Constants
         int command = 0;

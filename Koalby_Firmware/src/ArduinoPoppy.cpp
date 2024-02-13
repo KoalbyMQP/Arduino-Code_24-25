@@ -137,5 +137,21 @@ void ArduinoPoppy::Shutdown() {
 }
 
 void ArduinoPoppy::UpdateRobot() {
+}
 
+void ArduinoPoppy::CheckMotorStatuses()
+{
+    Serial.println("Checking Motors");
+    for (Motor motor : motors)
+    {
+        byte stat = Herkulex.stat(motor.hexID);
+        if (stat != 0)
+        {
+            Serial.print(motor.hexID);
+            Serial.print(", ");
+            Serial.print(stat);
+            Serial.print(", ");
+            Serial.println(Herkulex.getAngle(motor.hexID, motor.is0601));
+        }
+    }
 }
