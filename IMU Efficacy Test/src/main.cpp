@@ -81,8 +81,8 @@
 //   // - VECTOR_GRAVITY       - m/s^2
 
 //   //calibration  time :)
-//   stepper.spinForRotation(0);
-//   delay(10000);
+// //   stepper.spinForRotation(0);
+// //   delay(10000);
 //   int delayTime = BNO055_SAMPLERATE_DELAY_MS;
 //   //int delayTime = 3000;
 

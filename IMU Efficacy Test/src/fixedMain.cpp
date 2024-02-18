@@ -5,7 +5,9 @@
 #include <motor_control.h>
 #include <Kalman.h>
 
-Kalman kalmanFilter;  
+#include "Kalman.h"
+
+Kalman kalman;  
 
 /* This driver reads raw data from the BNO055
 
@@ -66,26 +68,6 @@ void setup(void)
 
 }
 
-//Ignore this :)
-
-double kalmanFilterF(double z){
-  static const double R = 0.001; // measurement noise covariance
-  static const double HT = 1.00; //measurement function
-  //static double Q = 10; // motion noise
-  static double P = 1.0; // uncertainty Covariance
-  static double X_hat = 0.0; // initial estimated state 
-  static double K = 0.0; // Kalman Gain
-  static double I = 1.0; //identity matrix
-
-  ///////// (P × HT)/((H×P×HT)+R)          
-  K = (P*HT)/((HT*P*HT)+R); //Kalman Gain
-  X_hat = X_hat + K*(z-HT*X_hat); //update the estimate with measurement
-
-  P = (I - K*HT) * P; // updating uncertainty covariance
-
-  return X_hat;
-}
-
 
 
 
@@ -97,13 +79,7 @@ double kalmanFilterF(double z){
 /**************************************************************************/
 void loop(void)
 {
- //  stepper.spinForRotation(1);
 
- // Serial.print(" Accel=");
- // Serial.print(accel, DEC);
-
-  float prevAngle = 0.0f;
-  unsigned long prevTime = millis();
 
   //calibration  time :)
  //stepper.spinForRotation(0);
@@ -117,10 +93,19 @@ void loop(void)
     imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
     unsigned long currentTime = millis();
-    float dt = (currentTime - prevTime) / 1000.0;  //  time since the calculation was last performe
+    //float dt = (currentTime - prevTime) / 1000.0;  //  time since the calculation was last performe
     float accelX = accel.x();
 
-    float kalmanX = kalmanFilter.getAngle(euler.x(), accelX, currentTime);
+    //float kalmanX = kalman.kalmanFilter(euler.x());
+  // R is the process noise (internal noise of the system)
+  // Q is the measurement noise (how much noise is caused by your measurements)
+  // A, B, C are the system parameters. The system is described as x[k + 1] = A x[k] + B u[k]
+
+
+
+    Kalman *F = new Kalman(0.03, 0.001, 1, 1, 1);
+    F->filter(euler.x(), 0);
+    
 
     /* Display the floating point data */
     stepper.spinForRotation(.5);
@@ -130,12 +115,14 @@ void loop(void)
     Serial.print("IMU_X: ");
     Serial.print(euler.x());
     Serial.print(" FILTERED_X: ");
-    Serial.print(kalmanX);
+    Serial.print(F->filter(euler.x(), 0));
     Serial.println("\t\t");
 
-    // Update previous state
-    prevAngle = euler.x();
-    prevTime = currentTime;
+    
+
+    // // Update previous state
+    // prevAngle = euler.x();
+    // prevTime = currentTime;
     
     delay(delayTime);
 
@@ -143,9 +130,9 @@ void loop(void)
     euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
     currentTime = millis();
-    dt = (currentTime - prevTime) / 1000.0;  // Convert to seconds
+    // dt = (currentTime - prevTime) / 1000.0;  // Convert to seconds
     accelX = accel.x(); 
-    kalmanX = kalmanFilter.getAngle(euler.x(), accelX, currentTime);
+    // kalmanX = kalman.kalmanFilter(euler.x());
 
     /* Display the floating point data */
     stepper.spinForRotation(-.5);
@@ -154,12 +141,12 @@ void loop(void)
     Serial.print("IMU_X: ");
     Serial.print(euler.x());
     Serial.print(" FILTERED_X: ");
-    Serial.print(kalmanX);
+    Serial.print(F->filter(euler.x(), 0));
     Serial.println("\t\t");
 
     // Update previous state
-    prevAngle = euler.x();
-    prevTime = currentTime;
+    // prevAngle = euler.x();
+    // prevTime = currentTime;
     delay(delayTime);
 
 
@@ -167,5 +154,4 @@ void loop(void)
 
 }
 }
-
  

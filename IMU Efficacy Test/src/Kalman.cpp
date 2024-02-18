@@ -1,93 +1,81 @@
-/* Copyright (C) 2012 Kristian Lauszus, TKJ Electronics. All rights reserved.
+// #include "Kalman.h"
+// #include <cmath>
 
- This software may be distributed and modified under the terms of the GNU
- General Public License version 2 (GPL2) as published by the Free Software
- Foundation and appearing in the file GPL2.TXT included in the packaging of
- this file. Please note that GPL2 Section 2[b] requires that all works based
- on this software must also be made publicly available under the terms of
- the GPL2 ("Copyleft").
+// #define ANGLE_FILTER_KAPPA = 
+// #define pitch
+// #define pitch_bias
+// #define DELTA_TIME_S
+// #define PI
 
- Contact information
- -------------------
 
- Kristian Lauszus, TKJ Electronics
- Web      :  http://www.tkjelectronics.com
- e-mail   :  kristianl@tkjelectronics.com
- */
+// double kalmanFilter(double z){
+//   static const double R = 0.001; // measurement noise covariance
+//   static const double HT = 1.00; //measurement function
+//   //static double Q = 10; // motion noise
+//   static double P = 1.0; // uncertainty Covariance
+//   static double X_hat = 0.0; // initial estimated state 
+//   static double K = 0.0; // Kalman Gain
+//   static double I = 1.0; //identity matrix
+
+//   ///////// (P × HT)/((H×P×HT)+R)          
+//   K = (P*HT)/((HT*P*HT)+R); //Kalman Gain
+//   X_hat = X_hat + K*(z-HT*X_hat); //update the estimate with measurement
+
+//   P = (I - K*HT) * P; // updating uncertainty covariance
+
+//   return X_hat;
+// }
+
+
+// void updatePitch()
+// {
+//     double gyro_pitch_dps = (imu.g.y - pitch_bias) * imu.mdpsPerLSB / 1000.0;
+//     double prediction = pitch + (DELTA_TIME_S * gyro_pitch_dps * PI / 180);
+//     double imuX = imu.a.x * imu.mgPerLSB;
+//     double imuZ = imu.a.z * imu.mgPerLSB;
+//     double observation = atan2(imuX, imuZ);
+//     pitch = prediction + ANGLE_FILTER_KAPPA * (observation - prediction);
+//     pitch_bias = pitch_bias - GYRO_BIAS_EPSILON * (GYRO_NOISE_STDEV / DELTA_TIME_S) * (observation - prediction);
+// }
+
 
 #include "Kalman.h"
 
-Kalman::Kalman() {
-    /* We will set the variables like so, these can also be tuned by the user */
-    Q_angle = 0.001f;
-    Q_bias = 0.003f;
-    R_measure = 0.03f;
+Kalman::Kalman(float r, float q, float a, float b, float c) {
+  R = r;
+  Q = q;
+  A = a;
+  B = b;
+  C = c;
+  init = false;
+}
 
-    angle = 0.0f; // Reset the angle
-    bias = 0.0f; // Reset bias
+float Kalman::filter(float z, float u) {
+  if (!init) {
+    x = 1 / C * z;
+    cov = Q / (C * C);
+    init = true;
+  }
 
-    P[0][0] = 0.0f; // Since we assume that the bias is 0 and we know the starting angle (use setAngle), the error covariance matrix is set like so - see: http://en.wikipedia.org/wiki/Kalman_filter#Example_application.2C_technical
-    P[0][1] = 0.0f;
-    P[1][0] = 0.0f;
-    P[1][1] = 0.0f;
-};
+  else {
+    float pred = predict(u);
+    float p_cov = uncertainty();
 
-// The angle should be in degrees and the rate should be in degrees per second and the delta time in seconds
-float Kalman::getAngle(float newAngle, float newRate, float dt) {
-    // KasBot V2  -  Kalman filter module - http://www.x-firm.com/?page_id=145
-    // Modified by Kristian Lauszus
-    // See my blog post for more information: http://blog.tkjelectronics.dk/2012/09/a-practical-approach-to-kalman-filter-and-how-to-implement-it
+    float K = p_cov * C / (C * C * p_cov + Q);
 
-    // Discrete Kalman filter time update equations - Time Update ("Predict")
-    // Update xhat - Project the state ahead
-    /* Step 1 */
-    rate = newRate - bias;
-    angle += dt * rate;
+    x = pred + K * (z - C * pred);
+    cov = p_cov - K * C * p_cov;
 
-    // Update estimation error covariance - Project the error covariance ahead
-    /* Step 2 */
-    P[0][0] += dt * (dt*P[1][1] - P[0][1] - P[1][0] + Q_angle);
-    P[0][1] -= dt * P[1][1];
-    P[1][0] -= dt * P[1][1];
-    P[1][1] += Q_bias * dt;
+  }
 
-    // Discrete Kalman filter measurement update equations - Measurement Update ("Correct")
-    // Calculate Kalman gain - Compute the Kalman gain
-    /* Step 4 */
-    float S = P[0][0] + R_measure; // Estimate error
-    /* Step 5 */
-    float K[2]; // Kalman gain - This is a 2x1 vector
-    K[0] = P[0][0] / S;
-    K[1] = P[1][0] / S;
+  return x;
 
-    // Calculate angle and bias - Update estimate with measurement zk (newAngle)
-    /* Step 3 */
-    float y = newAngle - angle; // Angle difference
-    /* Step 6 */
-    angle += K[0] * y;
-    bias += K[1] * y;
+}
 
-    // Calculate estimation error covariance - Update the error covariance
-    /* Step 7 */
-    float P00_temp = P[0][0];
-    float P01_temp = P[0][1];
+float Kalman::predict(float u) {
+  return A * x + B * u;
+}
 
-    P[0][0] -= K[0] * P00_temp;
-    P[0][1] -= K[0] * P01_temp;
-    P[1][0] -= K[1] * P00_temp;
-    P[1][1] -= K[1] * P01_temp;
-
-    return angle;
-};
-
-void Kalman::setAngle(float angle) { this->angle = angle; }; // Used to set angle, this should be set as the starting angle
-float Kalman::getRate() { return this->rate; }; // Return the unbiased rate
-
-/* These are used to tune the Kalman filter */
-void Kalman::setQangle(float Q_angle) { this->Q_angle = Q_angle; };
-void Kalman::setQbias(float Q_bias) { this->Q_bias = Q_bias; };
-void Kalman::setRmeasure(float R_measure) { this->R_measure = R_measure; };
-
-float Kalman::getQangle() { return this->Q_angle; };
-float Kalman::getQbias() { return this->Q_bias; };
-float Kalman::getRmeasure() { return this->R_measure; };
+float Kalman::uncertainty() {
+  return A * A * cov + R;
+}
