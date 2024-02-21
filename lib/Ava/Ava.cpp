@@ -17,8 +17,8 @@ Motor Top_Neck = {28, -133, -62, -118, false, "Top_Neck"};
 Motor Bottom_Neck = {27, -160, 100, -90, false, "Bottom_Neck"};
 Motor Left_Shoulder = {7, -160, 145, -55, true, "Left_Shoulder"};
 Motor Right_Shoulder = {15, -160, 160, 2, true, "Right_Shoulder"};
-Motor Front_Chest = {18, -30, 43, -5, false, "Front_Chest"};
-Motor Back_Chest = {17, -70, 55, -5, false, "Back_Chest"};
+Motor Front_Chest = {18, -30-45, -30+45, -30, false, "Front_Chest"};
+Motor Back_Chest = {17, 26-90, 26+90, 26, false, "Back_Chest"};
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
 Motor Hips_Rotate_Upper_Body = {19, -140, 160, 15, false, "Hips_Rotate_Upper_Body"};
