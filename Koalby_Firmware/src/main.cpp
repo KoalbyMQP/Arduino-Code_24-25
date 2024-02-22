@@ -2,7 +2,7 @@
 
 #include "ArduinoPoppy.h"
 
-#define CHECK_MOTOR_STATUSES false
+#define CHECK_MOTOR_STATUSES true
 
 ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods
 
@@ -31,13 +31,13 @@ float position = 0;
 int speed = 0;
 int tTime = 0;
 int torqueOn = 0;
+bool initOnStartup = false;
 
 void loop() {
 #ifdef HUMAN_CONTROL
     SERIAL_MONITOR.println("Enter Command ");
 #endif
-
-    while (!Serial.available()) {
+    while (!Serial.available() && !initOnStartup) {
         if(CHECK_MOTOR_STATUSES) {
             robot.CheckMotorStatuses();
             delay(2000);
@@ -57,6 +57,12 @@ void loop() {
         robot.command = cmd.toInt();
     }
 
+    if(initOnStartup)
+    {
+        initOnStartup = false;
+        robot.command = Init;
+    }
+
 #ifdef DEBUG
     if (robot.command != -1)
         Serial.println(robot.command);
@@ -66,20 +72,20 @@ void loop() {
     switch (robot.command) {
         case Init:
             robot.Initialize();
-    #ifdef DEBUG
+            #ifdef DEBUG
             Serial.println("\nINIT");
-    #endif
+            #endif
             break;
 
         case GetPosition:
             motorID = cmd.toInt();
 
             robot.GetPosition(motorID);
-    #ifdef DEBUG
+            #ifdef DEBUG
             Serial.println("GET POSITION");
             Serial.println("Args:");
             Serial.println(motorID);
-    #endif
+            #endif
             break;
 
         case SetPosition:
@@ -90,13 +96,13 @@ void loop() {
             tTime = cmd.substring(cmd.indexOf(" ") + 1).toInt();
 
             robot.SetPosition(motorID, position, tTime);
-    #ifdef DEBUG
+            #ifdef DEBUG
             Serial.println("SET POSITION");
             Serial.println("Args:");
             Serial.println(motorID);
             Serial.println(position);
             Serial.println(tTime);
-    #endif
+            #endif
             break;
 
         case SetTorque:
@@ -104,12 +110,12 @@ void loop() {
             torqueOn = cmd.substring(cmd.indexOf(" ") + 1).toInt();
 
             robot.SetTorque(motorID, torqueOn);
-    #ifdef DEBUG
-        Serial.println("SET TORQUE");
-        Serial.println("Args:");
-        Serial.println(motorID);
-        Serial.println(torqueOn);
-    #endif
+            #ifdef DEBUG
+            Serial.println("SET TORQUE");
+            Serial.println("Args:");
+            Serial.println(motorID);
+            Serial.println(torqueOn);
+            #endif
             break;
 
         case SetRotation:
@@ -125,6 +131,10 @@ void loop() {
 
         case Shutdown:
             robot.Shutdown();
+            break;
+
+        case CheckMotors:
+            robot.CheckMotorStatuses();
             break;
 
         default:

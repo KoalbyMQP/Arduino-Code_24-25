@@ -16,6 +16,7 @@ enum Commands {
     SetTorque = 20, /*Set torque to "on" or "off" based on ID*/
     ReadBatteryLevel = 30,
     SetRotation = 40,
+    CheckMotors = 50,
     Shutdown = 100
 };
 

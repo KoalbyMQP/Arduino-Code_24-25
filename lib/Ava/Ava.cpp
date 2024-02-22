@@ -23,20 +23,20 @@ Motor Back_Chest = {17, 26-90, 26+90, 26, false, "Back_Chest"};
 // Pelvis (Top to Bottom, Left to Right, Front to Back
 Motor Hips_Rotate_Upper_Body = {19, -140, 160, 15, false, "Hips_Rotate_Upper_Body"};
 Motor Hips_Lean_Side_To_Side = {21, -2, 156, 78, true, "Hips_Lean_Side_To_Side"};
-Motor Hips_Bend_Over = {22, -85, -20, -30, true, "Hips_Bend_Over"};
+Motor Hips_Bend_Over = {22, -85, -20, -34, true, "Hips_Bend_Over"};
 Motor Left_Leg_Abductor_Side_To_Side = {8, -2, 11, -1, false, "Left_Leg_Abductor_Side_To_Side"};
 Motor Right_Leg_Abductor_Side_To_Side = {9, 91, 107, 105, false, "Right_Leg_Abductor_Side_To_Side"};
 
 // Left Leg (Foot to Hip)
 Motor Left_Leg_Rotator = {14, -20, 160, 3, false, "Left_Leg_Rotator"};
-Motor Left_Leg_Abductor_Front_To_Back = {30, 19, 155, 122, true, "Left_Leg_Abductor_Front_To_Back"};
+Motor Left_Leg_Abductor_Front_To_Back = {30, 19, 155, 119, true, "Left_Leg_Abductor_Front_To_Back"};
 Motor Left_Knee = {12, -125, -8, -3, false, "Left_Knee"};
-Motor Left_Ankle = {13, -80, -5, -36, false, "Left_Ankle"};
+Motor Left_Ankle = {13, -80, -5, -40, false, "Left_Ankle"};
 
 // Right Leg (Foot to Hip)
 Motor Right_Leg_Rotator = {4, -120, 160, 0, false, "Right_Leg_Rotator"};
-Motor Right_Leg_Abductor_Front_To_Back = {31, -160, 11, -89, true, "Right_Leg_Abductor_Front_To_Back"};
-Motor Right_Knee = {20, -130, 18, -125, false, "Right_Knee"};
+Motor Right_Leg_Abductor_Front_To_Back = {31, -160, 11, -86, true, "Right_Leg_Abductor_Front_To_Back"};
+Motor Right_Knee = {20, -50, -38+90, -35, false, "Right_Knee"};
 Motor Right_Ankle = {5, -23, 54, 12, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
