@@ -20,7 +20,7 @@ void ArduinoPoppy::Setup() {
 #endif
 
     // Start HerkuleX
-    Herkulex.beginSerial3(115200); // open serial port 3 for HerkuleX
+    Herkulex.beginSerial2(115200); // open serial port 3 for HerkuleX
     delay(100);
     Herkulex.reboot(0xfe); //reboot first motor
 
@@ -141,9 +141,12 @@ void ArduinoPoppy::UpdateRobot() {
 
 void ArduinoPoppy::CheckMotorStatuses()
 {
+    Herkulex.getAngle(motors[0].hexID, motors[0].is0601); // This updates the status registers of all motors
+                                                          // Herkulex.stat does not do this, only getAngle does. Ask Herkulex why idk.
     for (Motor motor : motors)
     {
         byte stat = Herkulex.stat(motor.hexID);
+        
         if (stat != 0)
         {
             Serial.print(motor.hexID);
