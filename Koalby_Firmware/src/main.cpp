@@ -2,7 +2,7 @@
 
 #include "ArduinoPoppy.h"
 
-#define CHECK_MOTOR_STATUSES true
+#define CHECK_MOTOR_STATUSES false
 
 ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods
 
