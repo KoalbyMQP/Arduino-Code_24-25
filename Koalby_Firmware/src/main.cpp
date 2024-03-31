@@ -3,6 +3,7 @@
 #include "ArduinoPoppy.h"
 
 #define CHECK_MOTOR_STATUSES false
+#define TIME_BETWEEN_CHECKS 2000 // Time between motor status checks in ms
 
 ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods
 
@@ -33,21 +34,24 @@ int tTime = 0;
 int torqueOn = 0;
 bool initOnStartup = false;
 
+unsigned long lastStatusCheck = 0;
+
 void loop() {
-#ifdef HUMAN_CONTROL
-    SERIAL_MONITOR.println("Enter Command ");
-#endif
-    while (!Serial.available() && !initOnStartup) {
-        if(CHECK_MOTOR_STATUSES) {
+    #ifdef HUMAN_CONTROL
+        SERIAL_MONITOR.println("Enter Command ");
+    #endif
+    if (!Serial.available() && !initOnStartup) {
+        if(CHECK_MOTOR_STATUSES && millis() > lastStatusCheck + TIME_BETWEEN_CHECKS) {
             robot.CheckMotorStatuses();
-            delay(2000);
+            lastStatusCheck = millis();
         }
+        return;
     } // wait until command recieved
     String cmd = SERIAL_MONITOR.readStringUntil('\n');
-#ifdef DEBUG
+    #ifdef DEBUG
         Serial.print("Full command: ");
         Serial.println(cmd);
-#endif
+    #endif
     int hasArgs = cmd.indexOf(" ") > -1;
 
     if (hasArgs) {
@@ -56,24 +60,25 @@ void loop() {
     } else {
         robot.command = cmd.toInt();
     }
-
+    
+    // Inits on startup
     if(initOnStartup)
     {
         initOnStartup = false;
         robot.command = Init;
     }
 
-#ifdef DEBUG
-    if (robot.command != -1)
-        Serial.println(robot.command);
-        Serial.println(cmd);
-#endif
+    #ifdef DEBUG
+        if (robot.command != -1)
+            Serial.println(robot.command);
+            Serial.println(cmd);
+    #endif
 
     switch (robot.command) {
         case Init:
             robot.Initialize();
             #ifdef DEBUG
-            Serial.println("\nINIT");
+                Serial.println("\nINIT");
             #endif
             break;
 
@@ -82,9 +87,9 @@ void loop() {
 
             robot.GetPosition(motorID);
             #ifdef DEBUG
-            Serial.println("GET POSITION");
-            Serial.println("Args:");
-            Serial.println(motorID);
+                Serial.println("GET POSITION");
+                Serial.println("Args:");
+                Serial.println(motorID);
             #endif
             break;
 
@@ -97,11 +102,11 @@ void loop() {
 
             robot.SetPosition(motorID, position, tTime);
             #ifdef DEBUG
-            Serial.println("SET POSITION");
-            Serial.println("Args:");
-            Serial.println(motorID);
-            Serial.println(position);
-            Serial.println(tTime);
+                Serial.println("SET POSITION");
+                Serial.println("Args:");
+                Serial.println(motorID);
+                Serial.println(position);
+                Serial.println(tTime);
             #endif
             break;
 
@@ -110,12 +115,14 @@ void loop() {
             torqueOn = cmd.substring(cmd.indexOf(" ") + 1).toInt();
 
             robot.SetTorque(motorID, torqueOn);
+
             #ifdef DEBUG
-            Serial.println("SET TORQUE");
-            Serial.println("Args:");
-            Serial.println(motorID);
-            Serial.println(torqueOn);
+                Serial.println("SET TORQUE");
+                Serial.println("Args:");
+                Serial.println(motorID);
+                Serial.println(torqueOn);
             #endif
+
             break;
 
         case SetRotation:
