@@ -20,7 +20,7 @@ void setup() {
 
 void loop() {
   Herkulex.torqueOFF(0xfe);
-
+  int count = 0;
   for(int i = 0; i < motorsLen; i++) {
     int angle = Herkulex.getAngle(motors[i].hexID, motors[i].is0601);
     Serial.print("Servo ");
@@ -30,7 +30,9 @@ void loop() {
     Serial.print(" Stat: ");
     Serial.println(Herkulex.stat(motors[i].hexID));
     Herkulex.setLed(motors[i].hexID, LED_BLUE);
+    if(Herkulex.stat(motors[i].hexID) == 0) count++;
   }
+  Serial.println(count);
 
   Serial.println("Cycle");
   delay(1000);
