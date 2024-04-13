@@ -40,7 +40,7 @@ Motor Right_Knee = {20, -160, 160, -95, false, "Right_Knee"};
 Motor Right_Ankle = {5, -160, 160, 56, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
-// FYI ids 16, 23-24, and 29 are unused
+// FYI ids 16, 23-24, and 29 are unused.
 int motorsLen = MOTOR_COUNT;
 Motor motors[MOTOR_COUNT] = {
     Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, Right_Leg_Rotator, Right_Ankle,                                       // 1-5
