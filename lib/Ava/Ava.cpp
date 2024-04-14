@@ -1,28 +1,28 @@
 #include "Ava.h"
 
 // Left Arm (Wrist to Shoulder)
-Motor Left_Wrist_Abductor = {26, -160, 150, 26, false, "Left_Wrist_Abductor"};
-Motor Left_Elbow = {1, -160, 160, -120, true, "Left_Elbow"};
+Motor Left_Wrist_Abductor = {26, -160, 150, -95, false, "Left_Wrist_Abductor"};
+Motor Left_Elbow = {1, -160, 160, 11, true, "Left_Elbow"};
 Motor Left_Arm_Rotator = {2, -160, 160, 87, false, "Left_Arm_Rotator"};
 Motor Left_Arm_Abductor = {3, -160, 160, -10, true, "Left_Arm_Abductor"}; // limited by wire
 
 // Right Arm (Wrist to Shoulder)
-Motor Right_Wrist_Abductor = {25, -160, 160, 27, false, "Right_Wrist_Abductor"};
-Motor Right_Elbow = {11, -160, 160, -110, true, "Right_Elbow"};
+Motor Right_Wrist_Abductor = {25, -160, 160, 57, false, "Right_Wrist_Abductor"};
+Motor Right_Elbow = {11, -160, 160, -117, true, "Right_Elbow"};
 Motor Right_Arm_Rotator = {10, -160, 160, -83, false, "Right_Arm_Rotator"};
 Motor Right_Arm_Abductor = {6, -160, 160, -15, true, "Right_Arm_Abductor"};
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
 Motor Top_Neck = {28, -160, 160, -118, false, "Top_Neck"};
 Motor Bottom_Neck = {27, -160, 160, -90, false, "Bottom_Neck"};
-Motor Left_Shoulder = {7, -160, 160, -9, true, "Left_Shoulder"};
-Motor Right_Shoulder = {15, -160, 160, -39, true, "Right_Shoulder"};
+Motor Left_Shoulder = {7, -160, 160, -11, true, "Left_Shoulder"};
+Motor Right_Shoulder = {15, -160, 160, 55, true, "Right_Shoulder"};
 Motor Front_Chest = {18, -160, 160, -1, false, "Front_Chest"};
 Motor Back_Chest = {17, -160, 160, -62, false, "Back_Chest"};
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
 Motor Hips_Rotate_Upper_Body = {19, -160, 160, -18, false, "Hips_Rotate_Upper_Body"};
-Motor Hips_Lean_Side_To_Side = {21, -160, 160, 78, true, "Hips_Lean_Side_To_Side"};
+Motor Hips_Lean_Side_To_Side = {21, -160, 160, 31, true, "Hips_Lean_Side_To_Side"};
 Motor Hips_Bend_Over = {22, -37, 25, 15, true, "Hips_Bend_Over"};
 Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 160, -1, false, "Left_Leg_Abductor_Side_To_Side"};
 Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, 140, false, "Right_Leg_Abductor_Side_To_Side"};
