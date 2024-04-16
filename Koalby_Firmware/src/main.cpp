@@ -2,7 +2,7 @@
 
 #include "ArduinoPoppy.h"
 
-#define CHECK_MOTOR_STATUSES false
+#define CHECK_MOTOR_STATUSES true
 #define TIME_BETWEEN_CHECKS 2000 // Time between motor status checks in ms
 
 ArduinoPoppy robot; // Defined in ArduinoPoppy.h, motor control methods

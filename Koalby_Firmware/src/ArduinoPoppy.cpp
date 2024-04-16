@@ -20,7 +20,7 @@ void ArduinoPoppy::Setup() {
 #endif
 
     // Start HerkuleX
-    Herkulex.beginSerial2(115200); // open serial port 3 for HerkuleX
+    Herkulex.beginSerial1(115200); // open serial port 3 for HerkuleX
     delay(100);
     Herkulex.reboot(0xfe); //reboot first motor
 

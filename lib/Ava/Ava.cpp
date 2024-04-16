@@ -1,29 +1,32 @@
 #include "Ava.h"
 
 // Left Arm (Wrist to Shoulder)
-Motor Left_Wrist_Abductor = {26, -160, 150, 26, false, "Left_Wrist_Abductor"};
-Motor Left_Elbow = {1, -160, 160, -120, true, "Left_Elbow"};
-Motor Left_Arm_Rotator = {2, -160, 160, 87, false, "Left_Arm_Rotator"};
-Motor Left_Arm_Abductor = {3, -160, 160, -10, true, "Left_Arm_Abductor"}; // limited by wire
+Motor Left_Wrist_Abductor = {6, -160, 150, -102, false, "Left_Wrist_Abductor"}; //done
+Motor Left_Elbow = {11, -160, 160, -74, true, "Left_Elbow"}; //DONE
+Motor Left_Arm_Rotator = {10, -160, 160, -142, false, "Left_Arm_Rotator"}; //DONE
+Motor Left_Arm_Abductor = {1, -160, 160, 38, true, "Left_Arm_Abductor"}; // limited by wire DONE
+//Motor Left_Hand = {3, -160, 160, -103, false, "Left_Hand"};//done
 
 // Right Arm (Wrist to Shoulder)
-Motor Right_Wrist_Abductor = {25, -160, 160, 27, false, "Right_Wrist_Abductor"};
-Motor Right_Elbow = {11, -160, 160, -110, true, "Right_Elbow"};
-Motor Right_Arm_Rotator = {10, -160, 160, -83, false, "Right_Arm_Rotator"};
-Motor Right_Arm_Abductor = {6, -160, 160, -15, true, "Right_Arm_Abductor"};
+Motor Right_Wrist_Abductor = {25, -160, 160, 27, false, "Right_Wrist_Abductor"}; //not done yet
+Motor Right_Elbow = {7, -160, 160, 60, true, "Right_Elbow"}; //done
+Motor Right_Arm_Rotator = {17, -160, 160, 0, false, "Right_Arm_Rotator"}; //done
+Motor Right_Arm_Abductor = {16, -160, 160, -14, true, "Right_Arm_Abductor"}; //done
+//Motor Right_Hand = {2, -160, 160, 20, false, "Right_Hand"}; //not done yet
+
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
-Motor Top_Neck = {28, -160, 160, -118, false, "Top_Neck"};
-Motor Bottom_Neck = {27, -160, 160, -90, false, "Bottom_Neck"};
-Motor Left_Shoulder = {7, -160, 160, -9, true, "Left_Shoulder"};
-Motor Right_Shoulder = {15, -160, 160, -39, true, "Right_Shoulder"};
+Motor Top_Neck = {28, -160, 160, -118, false, "Top_Neck"}; //missing
+Motor Bottom_Neck = {27, -160, 160, -90, false, "Bottom_Neck"}; //missing
+Motor Left_Shoulder = {22, -160, 160, 9, true, "Left_Shoulder"}; //DONE
+Motor Right_Shoulder = {15, -160, 160, -6, true, "Right_Shoulder"};//done
 Motor Front_Chest = {18, -160, 160, -1, false, "Front_Chest"};
-Motor Back_Chest = {17, -160, 160, -62, false, "Back_Chest"};
+Motor Back_Chest = {29, -160, 160, -62, false, "Back_Chest"};
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
 Motor Hips_Rotate_Upper_Body = {19, -160, 160, -18, false, "Hips_Rotate_Upper_Body"};
 Motor Hips_Lean_Side_To_Side = {21, -160, 160, 78, true, "Hips_Lean_Side_To_Side"};
-Motor Hips_Bend_Over = {22, -37, 25, 15, true, "Hips_Bend_Over"};
+Motor Hips_Bend_Over = {23, -37, 25, 15, true, "Hips_Bend_Over"};
 Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 160, -1, false, "Left_Leg_Abductor_Side_To_Side"};
 Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, 140, false, "Right_Leg_Abductor_Side_To_Side"};
 
@@ -40,7 +43,7 @@ Motor Right_Knee = {20, -160, 160, -95, false, "Right_Knee"};
 Motor Right_Ankle = {5, -160, 160, 56, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
-// FYI ids 16, 23-24, and 29 are unused
+// FYI ids 16, 24, and 29 are unused
 int motorsLen = MOTOR_COUNT;
 Motor motors[MOTOR_COUNT] = {
     Left_Elbow, Left_Arm_Rotator, Left_Arm_Abductor, Right_Leg_Rotator, Right_Ankle,                                       // 1-5
