@@ -29,14 +29,14 @@ Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, 140, false, "Right_Leg_Ab
 
 // Left Leg (Foot to Hip)
 Motor Left_Leg_Rotator = {14, -160, 160, 57, false, "Left_Leg_Rotator"};
-Motor Left_Leg_Abductor_Front_To_Back = {30, -160, 160, 119, true, "Left_Leg_Abductor_Front_To_Back"};
-Motor Left_Knee = {12, -160, 160, -68, false, "Left_Knee"};
+Motor Left_Leg_Abductor_Front_To_Back = {30, -160, 160, 22, true, "Left_Leg_Abductor_Front_To_Back"};
+Motor Left_Knee = {12, -160, 160, -14, true, "Left_Knee"};
 Motor Left_Ankle = {13, -160, 160, -1, false, "Left_Ankle"};
 
 // Right Leg (Foot to Hip)
 Motor Right_Leg_Rotator = {4, -160, 160, 0, false, "Right_Leg_Rotator"};
 Motor Right_Leg_Abductor_Front_To_Back = {31, -160, 160, -86, true, "Right_Leg_Abductor_Front_To_Back"};
-Motor Right_Knee = {20, -160, 160, -95, false, "Right_Knee"};
+Motor Right_Knee = {20, -160, 160, -6, true, "Right_Knee"};
 Motor Right_Ankle = {5, -160, 160, 55, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
