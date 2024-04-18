@@ -149,7 +149,7 @@ void ArduinoPoppy::CheckMotorStatuses()
         
         if (stat != 0)
         {
-            Serial.print(motor.hexID);
+            Serial.print(motor.description);
             Serial.print(" ");
             Serial.print(stat);
             Serial.print(" ");
