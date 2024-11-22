@@ -1,0 +1,4 @@
+Please place sample standalone Arduino testing code for the analog pressure-force sensors here.
+
+(an equivalent folder and set of code can be created for RPi/HAT use in 
+RaspberryPi-Code_24-25\test\io\inputs\sensors\analog\force-pressure\)
