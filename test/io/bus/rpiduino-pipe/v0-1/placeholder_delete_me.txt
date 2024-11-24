@@ -1,0 +1,3 @@
+Please place working code here for the Arduino side of the RPi <-> Arduino usb command layer.
+
+This interface layer should start to be included with all Arduino firmware builds to enable more remote command functionality from RPi.
