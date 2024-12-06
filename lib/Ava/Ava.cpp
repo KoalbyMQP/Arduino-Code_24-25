@@ -3,19 +3,19 @@
 // Left Arm (Wrist to Shoulder)
 Motor Left_Wrist_Abductor = {26, -160, 150, -95, false, "Left_Wrist_Abductor"};
 Motor Left_Elbow = {1, -160, 160, 11, true, "Left_Elbow"};
-Motor Left_Arm_Rotator = {2, -160, 160, 87, false, "Left_Arm_Rotator"};
+Motor Left_Arm_Rotator = {2, -160, 160, -102, false, "Left_Arm_Rotator"};
 Motor Left_Arm_Abductor = {3, -160, 160, -10, true, "Left_Arm_Abductor"}; // limited by wire
 
 // Right Arm (Wrist to Shoulder)
 Motor Right_Wrist_Abductor = {25, -160, 160, 76, false, "Right_Wrist_Abductor"};
 Motor Right_Elbow = {11, -160, 160, -117, true, "Right_Elbow"};
-Motor Right_Arm_Rotator = {10, -160, 160, -55, false, "Right_Arm_Rotator"}; 
+Motor Right_Arm_Rotator = {10, -160, 160, 162, false, "Right_Arm_Rotator"}; 
 Motor Right_Arm_Abductor = {6, -160, 160, -15, true, "Right_Arm_Abductor"};
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
-Motor Top_Neck = {28, -160, 160, -29, false, "Top_Neck"};
-Motor Bottom_Neck = {27, -160, 160, 97, false, "Bottom_Neck"};
-Motor Left_Shoulder = {7, -160, 160, -7, true, "Left_Shoulder"};
+Motor Top_Neck = {28, -160, 160, 48, false, "Top_Neck"};
+Motor Bottom_Neck = {27, -160, 160, -96, false, "Bottom_Neck"};
+Motor Left_Shoulder = {7, -160, 160, 160, true, "Left_Shoulder"};
 Motor Right_Shoulder = {15, -160, 160, -130, true, "Right_Shoulder"};
 Motor Front_Chest = {18, -160, 160, -1, false, "Front_Chest"};
 Motor Back_Chest = {17, -160, 160, -62, false, "Back_Chest"};
@@ -24,8 +24,8 @@ Motor Back_Chest = {17, -160, 160, -62, false, "Back_Chest"};
 Motor Hips_Rotate_Upper_Body = {19, -160, 160, 138, false, "Hips_Rotate_Upper_Body"}; 
 Motor Hips_Lean_Side_To_Side = {21, -160, 160, 31, true, "Hips_Lean_Side_To_Side"};
 Motor Hips_Bend_Over = {22, -38, 22, 12, true, "Hips_Bend_Over"};
-Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 160, -71, false, "Left_Leg_Abductor_Side_To_Side"}; 
-Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, 140, false, "Right_Leg_Abductor_Side_To_Side"};
+Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 160, -159, false, "Left_Leg_Abductor_Side_To_Side"}; 
+Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, -50, false, "Right_Leg_Abductor_Side_To_Side"};
 
 // Left Leg (Foot to Hip)
 Motor Left_Leg_Rotator = {14, -160, 160, 151, false, "Left_Leg_Rotator"};
