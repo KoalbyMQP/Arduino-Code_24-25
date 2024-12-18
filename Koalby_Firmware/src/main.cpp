@@ -21,6 +21,10 @@ String removeFirstArg(String s) {
 
 void setup() {
     Serial.begin(115200);
+    delay(1000);
+    // Herkulex.clearError(10);
+    // Herkulex.clearError(28);
+    // Herkulex.clearError(7);
 #ifdef HUMAN_CONTROL
     Serial.println("Initializing");
 #endif
@@ -37,6 +41,10 @@ bool initOnStartup = false;
 unsigned long lastStatusCheck = 0;
 
 void loop() {
+    // Herkulex.clearError(15);
+    // Herkulex.clearError(6);
+    // Herkulex.clearError(7);
+
     #ifdef HUMAN_CONTROL
         SERIAL_MONITOR.println("Enter Command ");
     #endif
