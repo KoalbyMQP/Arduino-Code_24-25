@@ -1,8 +1,9 @@
 #include <Herkulex.h>
 
+
 #define HOMING false
 #define FIND_BROKEN false
-#define GO_HOME true
+#define GO_HOME false
 
 struct Motor{
   int hexID;
