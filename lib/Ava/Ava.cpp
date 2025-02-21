@@ -2,15 +2,15 @@
 
 // Left Arm (Wrist to Shoulder)
 Motor Left_Wrist_Abductor = {26, -160, 150, -59, false, "Left_Wrist_Abductor"};
-Motor Left_Elbow = {1, -160, 160, -3, true, "Left_Elbow"};
+Motor Left_Elbow = {1, -160, 160, -33, true, "Left_Elbow"};
 Motor Left_Arm_Rotator = {2, -160, 160, 90, false, "Left_Arm_Rotator"};
-Motor Left_Arm_Abductor = {3, -200, 160, -106, true, "Left_Arm_Abductor"}; // limited by wire
+Motor Left_Arm_Abductor = {3, -200, 160, -81, true, "Left_Arm_Abductor"}; // limited by wire
 
 // Right Arm (Wrist to Shoulder)
 Motor Right_Wrist_Abductor = {25, -160, 160, 55, false, "Right_Wrist_Abductor"};
-Motor Right_Elbow = {11, -160, 160, -115, true, "Right_Elbow"};
+Motor Right_Elbow = {11, -160, 160, -150, true, "Right_Elbow"};
 Motor Right_Arm_Rotator = {10, -160, 160, -21, false, "Right_Arm_Rotator"}; 
-Motor Right_Arm_Abductor = {6, -160, 160, -19, true, "Right_Arm_Abductor"};
+Motor Right_Arm_Abductor = {6, -160, 160, -165, true, "Right_Arm_Abductor"};
 
 // Chest/Neck (Top to Bottom, Left to Right, Front to Back)
 Motor Top_Neck = {28, -160, 160, 48, false, "Top_Neck"};
@@ -28,15 +28,15 @@ Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 250, 166, true, "Left_Leg_Abduc
 Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, -50, true, "Right_Leg_Abductor_Side_To_Side"};
 
 // Left Leg (Foot to Hip)
-Motor Left_Leg_Rotator = {14, -160, 160, -107, true, "Left_Leg_Rotator"};
+Motor Left_Leg_Rotator = {14, -160, 160, -18, true, "Left_Leg_Rotator"};
 Motor Left_Leg_Abductor_Front_To_Back = {30, -318, 160, 59, true, "Left_Leg_Abductor_Front_To_Back"};
 Motor Left_Knee = {12, -160, 160, -20, true, "Left_Knee"};
 Motor Left_Ankle = {13, -160, 160, 83, false, "Left_Ankle"};
 
 // Right Leg (Foot to Hip)
-Motor Right_Leg_Rotator = {4, -160, 160, 8, true, "Right_Leg_Rotator"};
-Motor Right_Leg_Abductor_Front_To_Back = {31, -288, 160, -98, true, "Right_Leg_Abductor_Front_To_Back"};
-Motor Right_Knee = {20, -160, 160, -6, true, "Right_Knee"};
+Motor Right_Leg_Rotator = {4, -160, 160, 25, true, "Right_Leg_Rotator"};
+Motor Right_Leg_Abductor_Front_To_Back = {31, -288, 160, -129, true, "Right_Leg_Abductor_Front_To_Back"};
+Motor Right_Knee = {20, -160, 160, -164, true, "Right_Knee"};
 Motor Right_Ankle = {5, -160, 160, 57, false, "Right_Ankle"};
 
 // Ordered in motors array by id (first value of struct)
