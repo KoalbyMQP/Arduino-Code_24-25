@@ -21,20 +21,20 @@ Motor Front_Chest = {18, -160, 160, -1, false, "Front_Chest"};
 Motor Back_Chest = {17, -160, 160, -62, false, "Back_Chest"};
 
 // Pelvis (Top to Bottom, Left to Right, Front to Back
-Motor Hips_Rotate_Upper_Body = {19, -160, 160, -13, false, "Hips_Rotate_Upper_Body"}; 
+Motor Hips_Rotate_Upper_Body = {19, -160, 160, 50, true, "Hips_Rotate_Upper_Body"}; 
 Motor Hips_Lean_Side_To_Side = {21, -160, 160, 29, true, "Hips_Lean_Side_To_Side"};
 Motor Hips_Bend_Over = {22, -38, 50, 26, true, "Hips_Bend_Over"};
-Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 250, 166, false, "Left_Leg_Abductor_Side_To_Side"}; 
-Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, -50, false, "Right_Leg_Abductor_Side_To_Side"};
+Motor Left_Leg_Abductor_Side_To_Side = {8, -160, 250, 166, true, "Left_Leg_Abductor_Side_To_Side"}; 
+Motor Right_Leg_Abductor_Side_To_Side = {9, -160, 160, -50, true, "Right_Leg_Abductor_Side_To_Side"};
 
 // Left Leg (Foot to Hip)
-Motor Left_Leg_Rotator = {14, -160, 160, -107, false, "Left_Leg_Rotator"};
+Motor Left_Leg_Rotator = {14, -160, 160, -107, true, "Left_Leg_Rotator"};
 Motor Left_Leg_Abductor_Front_To_Back = {30, -318, 160, 59, true, "Left_Leg_Abductor_Front_To_Back"};
 Motor Left_Knee = {12, -160, 160, -20, true, "Left_Knee"};
 Motor Left_Ankle = {13, -160, 160, 83, false, "Left_Ankle"};
 
 // Right Leg (Foot to Hip)
-Motor Right_Leg_Rotator = {4, -160, 160, 8, false, "Right_Leg_Rotator"};
+Motor Right_Leg_Rotator = {4, -160, 160, 8, true, "Right_Leg_Rotator"};
 Motor Right_Leg_Abductor_Front_To_Back = {31, -288, 160, -98, true, "Right_Leg_Abductor_Front_To_Back"};
 Motor Right_Knee = {20, -160, 160, -6, true, "Right_Knee"};
 Motor Right_Ankle = {5, -160, 160, 57, false, "Right_Ankle"};
