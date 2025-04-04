@@ -9,7 +9,7 @@ ArduinoPoppy robot;
 
 
 #include <SoftwareSerial.h> //header file of software serial port
-SoftwareSerial tf(12, 13); //define software serial port name as Serial1 and define pin2 as RX and pin3
+SoftwareSerial tf(16, 17); //define software serial port name as Serial1 and define pin2 as RX and pin3
 
 
 //Set up
